@@ -13,3 +13,4 @@ Consequências. Uma decisão só muda com um novo ADR que substitui o anterior.
 | [0006](0006-dinheiro-em-centavos.md) | Dinheiro em centavos inteiros; arredondamento por linha |
 | [0007](0007-sociedade-anonima.md) | S.A. com avatar controlador e acionista NPC minoritário |
 | [0008](0008-escopo-mvp-campanha.md) | O MVP é a campanha dos capítulos 1 a 7, com 6 estabelecimentos |
+| [0009](0009-biome.md) | Biome como linter e formatter |

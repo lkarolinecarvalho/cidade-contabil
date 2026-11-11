@@ -7,14 +7,29 @@
   "npc": "marta-contadora",
   "requisitos": [],
   "dialogo": [
-    { "fala": "npc", "texto": "Vamos constituir a Mercado Vila Nova S.A. O estatuto autoriza um capital de até R$ 500.000,00, mas autorizar não é receber: isso não gera lançamento." },
-    { "fala": "npc", "texto": "Você e o Sr. Osvaldo vão subscrever R$ 300.000,00 e integralizar R$ 200.000,00 agora, no banco. Lembre-se: a sua carteira é sua; a conta bancária é da empresa." }
+    {
+      "fala": "npc",
+      "texto": "Vamos constituir a Mercado Vila Nova S.A. O estatuto autoriza um capital de até R$ 500.000,00, mas autorizar não é receber: isso não gera lançamento."
+    },
+    {
+      "fala": "npc",
+      "texto": "Você e o Sr. Osvaldo vão subscrever R$ 300.000,00 e integralizar R$ 200.000,00 agora, no banco. Lembre-se: a sua carteira é sua; a conta bancária é da empresa."
+    }
   ],
   "operacoes": [
-    { "tipo": "subscricao", "valorCentavos": 30000000, "participacoes": { "avatar": 0.9, "osvaldo": 0.1 } },
+    {
+      "tipo": "subscricao",
+      "valorCentavos": 30000000,
+      "participacoes": { "avatar": 0.9, "osvaldo": 0.1 }
+    },
     { "tipo": "integralizacao", "valorCentavos": 20000000, "meio": "bancos" }
   ],
   "ajudaLancamento": "pronto",
-  "conceitos": ["capital-autorizado", "capital-subscrito", "capital-a-integralizar", "principio-entidade"],
+  "conceitos": [
+    "capital-autorizado",
+    "capital-subscrito",
+    "capital-a-integralizar",
+    "principio-entidade"
+  ],
   "recompensa": { "pontos": 50 }
 }

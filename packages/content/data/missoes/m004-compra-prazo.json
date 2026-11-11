@@ -7,12 +7,17 @@
   "npc": "joao-fornecedor",
   "requisitos": ["m004-compra-avista"],
   "dialogo": [
-    { "fala": "npc", "texto": "Tenho mais 4.000 unidades a R$ 5,00, R$ 20.000,00 no total, com pagamento em 30 dias. Fechamos?" }
+    {
+      "fala": "npc",
+      "texto": "Tenho mais 4.000 unidades a R$ 5,00, R$ 20.000,00 no total, com pagamento em 30 dias. Fechamos?"
+    }
   ],
   "operacoes": [
     {
       "tipo": "compra",
-      "itens": [{ "produto": "mercadorias-diversas", "quantidade": 4000, "precoUnitarioCentavos": 500 }],
+      "itens": [
+        { "produto": "mercadorias-diversas", "quantidade": 4000, "precoUnitarioCentavos": 500 }
+      ],
       "ipiAliquota": 0,
       "freteCentavos": 0,
       "condicao": { "tipo": "prazo", "dias": 30 }
