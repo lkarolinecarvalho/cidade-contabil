@@ -7,8 +7,9 @@ os lançamentos.
 
 **Público:** concurseiros (principal) e estudantes de Ciências Contábeis.
 
-**Status:** marcos M0 (monorepo e app vazio em retrato) e M1 (motor contábil em
-`packages/ledger`) concluídos. O próximo é o M2, o conteúdo.
+**Status:** marcos M0 (monorepo e app vazio em retrato), M1 (motor contábil em
+`packages/ledger`) e M2 (conteúdo em `packages/content`) concluídos. O próximo é o M3,
+a casca do app e o HUD.
 
 ## Documentos
 
