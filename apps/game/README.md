@@ -6,6 +6,7 @@ App do jogo: Vite + React (HUD e painéis) + Phaser (mapa), empacotado com Capac
 src/
 ├── main.tsx     # monta a UI em React e, quando ela avisa, o mundo em Phaser
 ├── palco.ts     # viewport de referência em retrato (390×844)
+├── arte/        # desenhos em SVG (prédios, personagens, cenário), usados pelo mundo e pela UI
 ├── world/       # Phaser: cenas, mapa, avatar, NPCs
 ├── ui/          # React: HUD, bottom sheet, painéis
 ├── state/       # estado do jogo (regras puras em jogo.ts) e a store Zustand

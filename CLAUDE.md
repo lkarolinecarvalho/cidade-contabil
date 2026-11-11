@@ -85,3 +85,5 @@ As versões das dependências ficam no `catalog` de `pnpm-workspace.yaml`. O CI
 - Dúvida contábil/tributária → pergunte, citando a regra mais próxima.
 - Dúvida de design de jogo → siga o GDD; se não estiver lá, proponha e pergunte.
 - Os mockups em `docs/referencias/` são **referência visual**, não especificação.
+  Mas **abra-os antes de qualquer trabalho de interface ou de arte**: o visual do jogo
+  deve seguir a direção deles (ver `docs/referencias/assets.md`).
