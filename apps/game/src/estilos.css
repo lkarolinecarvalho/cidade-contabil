@@ -1,3 +1,16 @@
+:root {
+  --fundo: #0e151d;
+  --mundo: #1d2b3a;
+  --painel: #16212d;
+  --painel-borda: #2b3b4d;
+  --texto: #e8eef4;
+  --texto-suave: #9fb0c2;
+  --pessoal: #f2b45a;
+  --empresa: #5ec4a6;
+  --destaque: #5ec4a6;
+  --erro: #ff8f80;
+}
+
 *,
 *::before,
 *::after {
@@ -9,7 +22,8 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: #0e151d;
+  background: var(--fundo);
+  color: var(--texto);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -18,6 +32,12 @@ body {
 body {
   display: flex;
   justify-content: center;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
 /*
@@ -29,7 +49,7 @@ body {
   height: 100dvh;
   width: min(100vw, calc(100dvh * var(--palco-largura) / var(--palco-altura)));
   overflow: hidden;
-  background: #1d2b3a;
+  background: var(--mundo);
 }
 
 #mundo,
@@ -42,8 +62,11 @@ body {
   display: block;
 }
 
-/* A UI fica por cima do canvas e só captura toque onde houver painel. */
+/* A UI fica por cima do canvas e só captura toque onde houver HUD ou painel. */
 #ui {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   pointer-events: none;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
     env(safe-area-inset-left);
@@ -53,11 +76,240 @@ body {
   pointer-events: auto;
 }
 
-.titulo-provisorio {
-  margin: 24px 0 0;
-  text-align: center;
-  font-size: 1.125rem;
+/* HUD */
+.hud {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  background: linear-gradient(to bottom, rgb(14 21 29 / 92%), rgb(14 21 29 / 70%));
+  border-bottom: 1px solid var(--painel-borda);
+}
+
+.hud-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hud-nivel,
+.hud-data,
+.hud-pontos {
+  font-size: 0.8125rem;
+  color: var(--texto-suave);
+}
+
+.hud-nivel {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--painel-borda);
+  color: var(--texto);
   font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #e8eef4;
+}
+
+.hud-pontos {
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.hud-saldo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--painel);
+  border-left: 4px solid;
+}
+
+.hud-saldo-pessoal {
+  border-color: var(--pessoal);
+}
+
+.hud-saldo-empresa {
+  border-color: var(--empresa);
+}
+
+.hud-rotulo {
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+}
+
+.hud-saldo strong {
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hud-nota {
+  font-size: 0.6875rem;
+  color: var(--texto-suave);
+}
+
+.carregando {
+  margin: 0;
+  text-align: center;
+  color: var(--texto-suave);
+  pointer-events: none;
+}
+
+/* Atalhos da base */
+.atalhos {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  background: linear-gradient(to top, rgb(14 21 29 / 92%), rgb(14 21 29 / 70%));
+  border-top: 1px solid var(--painel-borda);
+}
+
+.atalhos button {
+  flex: 1;
+  min-height: 48px;
+  padding: 6px 4px;
+  border: 1px solid var(--painel-borda);
+  border-radius: 12px;
+  background: var(--painel);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.atalhos button:active {
+  background: var(--painel-borda);
+}
+
+/* Bottom sheet */
+.folha-fundo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.folha-veu {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(5 9 13 / 55%);
+}
+
+.folha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 78%;
+  border-radius: 18px 18px 0 0;
+  background: var(--painel);
+  border-top: 1px solid var(--painel-borda);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 35%);
+  animation: folha-sobe 180ms ease-out;
+}
+
+@keyframes folha-sobe {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folha {
+    animation: none;
+  }
+}
+
+.folha-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 8px 8px 16px;
+}
+
+.folha-cabecalho h2 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
+.folha-fechar {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--texto-suave);
+}
+
+.folha-conteudo {
+  overflow-y: auto;
+  padding: 4px 16px calc(20px + env(safe-area-inset-bottom));
+}
+
+/* Conteúdo dos painéis */
+.folha-conteudo h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.painel-sobretitulo {
+  margin: 0 0 2px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--destaque);
+}
+
+.painel-texto,
+.painel-fala {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.painel-nota {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--texto-suave);
+}
+
+.painel-erro {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  color: var(--erro);
+}
+
+.botao-principal {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--destaque);
+  color: #06261d;
+  font-weight: 700;
+}
+
+.painel-balanco table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.painel-balanco td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--painel-borda);
+}
+
+.painel-balanco td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.painel-balanco tr.total td {
+  font-weight: 700;
 }

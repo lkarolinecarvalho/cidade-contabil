@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { bus } from "./bus";
 import { aplicarProporcaoDoPalco } from "./palco";
 import { App } from "./ui/App";
 import { criarMundo } from "./world/criarMundo";
@@ -12,9 +13,17 @@ function elemento(id: string): HTMLElement {
 }
 
 // Phaser e React são montados lado a lado e não se importam entre si:
-// a comunicação será pelo event bus tipado (M3).
+// toda a comunicação passa pelo event bus tipado.
 aplicarProporcaoDoPalco(elemento("palco"));
-criarMundo(elemento("mundo"));
+
+// O mundo só nasce depois que a UI avisa que está ouvindo (uma única vez).
+let mundoCriado = false;
+bus.ouvir("ui:pronta", () => {
+  if (mundoCriado) return;
+  mundoCriado = true;
+  criarMundo(elemento("mundo"));
+});
+
 createRoot(elemento("ui")).render(
   <StrictMode>
     <App />
