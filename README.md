@@ -7,9 +7,10 @@ os lançamentos.
 
 **Público:** concurseiros (principal) e estudantes de Ciências Contábeis.
 
-**Status:** marcos M0 a M6 concluídos: motor contábil, conteúdo, HUD e painéis, mapa da cidade,
-ciclo completo da missão e calendário com fechamento do mês. A campanha dos capítulos 1 a 7 é
-jogável de ponta a ponta. O próximo é o M7 (revisão, repetição espaçada e modo banca).
+**Status:** marcos M0 a M7 concluídos: motor contábil, conteúdo, HUD e painéis, mapa da cidade,
+ciclo completo da missão, calendário com fechamento do mês, repetição espaçada, Revisão,
+Progresso e modo banca. A campanha dos capítulos 1 a 7 é jogável de ponta a ponta. Falta o M8
+(persistência e build mobile), que fica para depois de uma rodada de ajustes de layout.
 
 ## Documentos
 

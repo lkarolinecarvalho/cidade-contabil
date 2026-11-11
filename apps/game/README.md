@@ -9,7 +9,7 @@ src/
 ├── arte/        # desenhos em SVG (prédios, personagens, cenário), usados pelo mundo e pela UI
 ├── world/       # Phaser: cenas, mapa, avatar, NPCs
 ├── ui/          # React: HUD, bottom sheet, painéis
-├── state/       # estado do jogo (regras puras em jogo.ts) e a store Zustand
+├── state/       # estado do jogo (jogo.ts), calendário, repetição espaçada (estudo.ts) e a store
 ├── bus/         # event bus tipado Phaser ↔ React
 ├── orquestrador/ # ciclo da missão: efeito, seleção de afirmativas, ajuda e conferência do lançamento
 └── texto/       # formatação de dinheiro, texto das afirmativas e das regras
