@@ -1,3 +1,16 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Versões únicas para todo o monorepo (ADR-0001: estáveis mais recentes no M0).
+catalog:
+  "@biomejs/biome": 2.6.6
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  "@vitejs/plugin-react": ^6.3.0
+  phaser: ^4.2.1
+  react: ^19.3.1
+  react-dom: ^19.3.1
+  typescript: ^7.0.2
+  vite: ^8.3.5
+  vitest: ^5.1.0
