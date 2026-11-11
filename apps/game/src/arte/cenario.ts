@@ -1,146 +1,249 @@
-import { CONTORNO, svg } from "./svg";
+import { clarear, criarIso, escurecer, type Iso, type PontoDeTela } from "./iso";
+import { svg } from "./svg";
 
-export interface GeometriaDoCenario {
+type NaGrade = readonly [gx: number, gy: number];
+
+/** Planta do chão, na grade isométrica do mapa. */
+export interface PlantaDoChao {
   readonly largura: number;
   readonly altura: number;
-  /** Rua central, vertical. */
-  readonly rua: { readonly x: number; readonly largura: number };
-  /** Portas dos edifícios: cada uma ganha uma calçada até a rua. */
-  readonly portas: readonly { readonly x: number; readonly y: number }[];
-  /** Retângulos ocupados pelos edifícios, para a vegetação não ficar por baixo deles. */
-  readonly edificios: readonly {
-    readonly x: number;
-    readonly y: number;
-    readonly largura: number;
-    readonly altura: number;
-  }[];
+  /** Meia largura de um ladrilho, em pixels. */
+  readonly unidade: number;
+  /** Onde o ponto (0, 0) da grade cai na tela. */
+  readonly centro: PontoDeTela;
+  /** Trechos de caminho: alinhados à grade ou na diagonal dela (verticais na tela). */
+  readonly trechos: readonly (readonly [NaGrade, NaGrade])[];
+  /** Meio lado da praça, centrada em (0, 0). */
+  readonly raioDaPraca: number;
+  /** Centro da base de cada edifício; cada um ganha uma calçada em volta. */
+  readonly edificios: readonly NaGrade[];
+  readonly ladoDoEdificio: number;
 }
 
-const FINO = `stroke="${CONTORNO}" stroke-width="1.4" stroke-linejoin="round"`;
+const MEIA_LARGURA_DO_CAMINHO = 1.5;
+const FOLGA_DA_CALCADA = 1;
 
-function arvore(x: number, y: number, escala = 1): string {
-  return `<g transform="translate(${x} ${y}) scale(${escala})">
-    <ellipse cx="0" cy="2" rx="17" ry="4.5" fill="#000" opacity="0.16"/>
-    <rect x="-3.5" y="-16" width="7" height="18" rx="2" fill="#8a5a3a" ${FINO}/>
-    <circle cx="-11" cy="-24" r="12" fill="#5f9a4e" ${FINO}/>
-    <circle cx="11" cy="-25" r="13" fill="#6aa856" ${FINO}/>
-    <circle cx="0" cy="-36" r="15" fill="#76b660" ${FINO}/>
-    <circle cx="-5" cy="-40" r="5" fill="#9bd07e" opacity="0.7"/>
-  </g>`;
-}
-
-function arbusto(x: number, y: number): string {
-  return `<g transform="translate(${x} ${y})"><circle cx="-6" cy="0" r="7" fill="#5f9a4e" ${FINO}/><circle cx="6" cy="1" r="6.5" fill="#6aa856" ${FINO}/><circle cx="0" cy="-5" r="7.5" fill="#76b660" ${FINO}/></g>`;
-}
-
-function poste(x: number, y: number): string {
-  return `<g transform="translate(${x} ${y})">
-    <ellipse cx="0" cy="1" rx="6" ry="2" fill="#000" opacity="0.18"/>
-    <rect x="-1.6" y="-30" width="3.2" height="31" fill="#3b3f47" ${FINO}/>
-    <circle cx="0" cy="-33" r="9" fill="#ffe9a3" opacity="0.35"/>
-    <path d="M-5 -30 h10 l-2 -9 h-6z" fill="#ffd96b" ${FINO}/>
-    <path d="M-6 -39 h12" stroke="${CONTORNO}" stroke-width="2.2" stroke-linecap="round"/>
-  </g>`;
-}
-
-function banco(x: number, y: number): string {
-  return `<g transform="translate(${x} ${y})">
-    <ellipse cx="0" cy="7" rx="14" ry="3" fill="#000" opacity="0.16"/>
-    <rect x="-13" y="-8" width="26" height="6" rx="1.5" fill="#b9823f" ${FINO}/>
-    <rect x="-13" y="0" width="26" height="5" rx="1.5" fill="#c9924b" ${FINO}/>
-    <path d="M-10 5 v4 M10 5 v4" stroke="${CONTORNO}" stroke-width="2" stroke-linecap="round"/>
-  </g>`;
-}
-
-function flores(x: number, y: number, cor: string): string {
+/** Cantos, na grade, da faixa de caminho em volta de um trecho. */
+function faixa([a, b]: readonly [NaGrade, NaGrade], w: number): NaGrade[] {
+  const [x0, y0] = [Math.min(a[0], b[0]), Math.min(a[1], b[1])];
+  const [x1, y1] = [Math.max(a[0], b[0]), Math.max(a[1], b[1])];
+  if (Math.abs(a[0] - b[0]) < 1e-9 || Math.abs(a[1] - b[1]) < 1e-9) {
+    return [
+      [x0 - w, y0 - w],
+      [x1 + w, y0 - w],
+      [x1 + w, y1 + w],
+      [x0 - w, y1 + w],
+    ];
+  }
+  // Diagonal da grade: o contorno dos dois quadrados das pontas.
   return [
-    [0, 0],
-    [7, 3],
-    [-6, 4],
-    [3, -5],
-  ]
-    .map(
-      ([dx = 0, dy = 0]) =>
-        `<circle cx="${x + dx}" cy="${y + dy}" r="2.2" fill="${cor}" stroke="${CONTORNO}" stroke-width="0.7"/><circle cx="${x + dx}" cy="${y + dy}" r="0.8" fill="#fff3b0"/>`,
-    )
-    .join("");
+    [x0 - w, y0 - w],
+    [x0 + w, y0 - w],
+    [x1 + w, y1 - w],
+    [x1 + w, y1 + w],
+    [x1 - w, y1 + w],
+    [x0 - w, y0 + w],
+  ];
 }
 
-/** Fundo do mapa: grama, rua de pedra, calçadas até as portas, árvores e mobiliário. */
-export function desenharCenario(g: GeometriaDoCenario): string {
-  const meiaRua = g.rua.largura / 2;
-  const caminhos = [
-    `<rect x="${g.rua.x - meiaRua}" y="-20" width="${g.rua.largura}" height="${g.altura + 40}" rx="6"/>`,
-    ...g.portas.map((porta) => {
-      const esquerda = Math.min(porta.x, g.rua.x) - 30;
-      const direita = Math.max(porta.x, g.rua.x) + 30;
-      return `<rect x="${esquerda}" y="${porta.y - 17}" width="${direita - esquerda}" height="34" rx="14"/>`;
-    }),
-  ].join("");
+const quadrado = ([gx, gy]: NaGrade, r: number): NaGrade[] => [
+  [gx - r, gy - r],
+  [gx + r, gy - r],
+  [gx + r, gy + r],
+  [gx - r, gy + r],
+];
 
-  // Manchas de grama clara e escura, para o chão não ficar chapado.
-  const manchas = [
-    [40, 150, 46, 20, "#9ccb78"],
-    [330, 190, 52, 22, "#84b862"],
-    [70, 360, 60, 22, "#84b862"],
-    [320, 400, 50, 20, "#9ccb78"],
-    [50, 580, 56, 22, "#9ccb78"],
-    [340, 600, 50, 20, "#84b862"],
-    [90, 790, 70, 24, "#84b862"],
-    [300, 800, 64, 22, "#9ccb78"],
-  ]
-    .map(
-      ([x, y, rx, ry, cor]) =>
-        `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${cor}" opacity="0.6"/>`,
-    )
+/** Padrão de ladrilhos em losango, em dois tons, alinhado à grade. */
+function padrao(id: string, p: PlantaDoChao, ladrilhos: number, a: string, b: string): string {
+  const largura = 2 * p.unidade * ladrilhos;
+  const altura = largura / 2;
+  return `<pattern id="${id}" width="${largura}" height="${altura}" patternUnits="userSpaceOnUse" patternTransform="translate(${p.centro.x - largura / 2} ${p.centro.y})">
+    <rect width="${largura}" height="${altura}" fill="${a}"/>
+    <path d="M0 ${altura / 2} L${largura / 2} 0 L${largura} ${altura / 2} L${largura / 2} ${altura}z" fill="${b}"/>
+  </pattern>`;
+}
+
+/** Chão do mapa: gramado, caminhos de ladrilho, calçadas dos edifícios e a praça. */
+export function desenharChao(p: PlantaDoChao): string {
+  const iso = criarIso({ unidade: p.unidade, origem: p.centro });
+  const forma = (cantos: readonly NaGrade[]): string =>
+    `<polygon points="${cantos
+      .map(([gx, gy]) => {
+        const { x, y } = iso.ponto(gx, gy, 0);
+        return `${x},${y}`;
+      })
+      .join(" ")}"/>`;
+
+  const caminhos = p.trechos.map((t) => forma(faixa(t, MEIA_LARGURA_DO_CAMINHO))).join("");
+  const calcadas = p.edificios
+    .map((e) => forma(quadrado(e, p.ladoDoEdificio / 2 + FOLGA_DA_CALCADA)))
     .join("");
-
-  const [alturaDoEdificio = 130] = g.edificios.map((e) => e.altura);
-  const linhas = [...new Set(g.edificios.map((e) => e.y))].sort((a, b) => a - b);
-  // Vegetação e mobiliário nas faixas livres entre as linhas de edifícios.
-  const enfeites = linhas
-    .map((topo, indice) => {
-      const y = topo + alturaDoEdificio + 58;
-      const par = indice % 2 === 0;
-      return [
-        arvore(22, y, 0.9),
-        arvore(g.largura - 22, y + 4, 0.95),
-        arbusto(64, y + 2),
-        arbusto(g.largura - 66, y - 2),
-        par ? poste(g.rua.x - meiaRua - 9, y + 6) : poste(g.rua.x + meiaRua + 9, y + 6),
-        par ? banco(g.rua.x + meiaRua + 34, y + 2) : banco(g.rua.x - meiaRua - 34, y + 2),
-        flores(par ? 104 : g.largura - 104, y + 8, par ? "#f08fa8" : "#f2c94c"),
-        flores(par ? g.largura - 118 : 118, y - 6, par ? "#f2c94c" : "#c9a2f0"),
-      ].join("");
-    })
-    .join("");
-
-  const topoDoMapa = linhas[0] ?? 170;
-  const copas = [
-    arvore(30, topoDoMapa - 14, 1.05),
-    arvore(g.largura - 28, topoDoMapa - 18, 1.1),
-    arvore(132, topoDoMapa - 22, 0.8),
-    arvore(g.largura - 130, topoDoMapa - 24, 0.8),
-  ].join("");
+  const praca = forma(quadrado([0, 0], p.raioDaPraca));
+  const piso = caminhos + calcadas + praca;
 
   return svg(
-    g.largura,
-    g.altura,
+    p.largura,
+    p.altura,
     `<defs>
-      <pattern id="pedras" width="22" height="16" patternUnits="userSpaceOnUse">
-        <rect x="1" y="1" width="9" height="6" rx="2.5" fill="#d9c394"/>
-        <rect x="12" y="1" width="9" height="6" rx="2.5" fill="#e9d6ab"/>
-        <rect x="-4" y="9" width="9" height="6" rx="2.5" fill="#e9d6ab"/>
-        <rect x="7" y="9" width="9" height="6" rx="2.5" fill="#d9c394"/>
-        <rect x="18" y="9" width="9" height="6" rx="2.5" fill="#e9d6ab"/>
-      </pattern>
+      ${padrao("grama", p, 2, "#86cf5c", "#7dc653")}
+      ${padrao("ladrilho", p, 1, "#f7dca4", "#efcd8c")}
+      ${padrao("ladrilho-da-praca", p, 1, "#fbd3bc", "#f5c0a4")}
     </defs>
-    <rect width="${g.largura}" height="${g.altura}" fill="#8fc26c"/>
-    ${manchas}
-    <g fill="#c2a877" stroke="#a88f5f" stroke-width="5" stroke-linejoin="round">${caminhos}</g>
-    <g fill="#e2cfa0">${caminhos}</g>
-    <g fill="url(#pedras)">${caminhos}</g>
-    ${copas}
-    ${enfeites}`,
+    <rect width="${p.largura}" height="${p.altura}" fill="url(#grama)"/>
+    <g fill="#5fa53f" transform="translate(0 3.5)" stroke="#5fa53f" stroke-width="2" stroke-linejoin="round">${piso}</g>
+    <g fill="#d9a968" transform="translate(0 2)">${piso}</g>
+    <g fill="url(#ladrilho)" stroke="#fbe7bd" stroke-width="1" stroke-linejoin="round">${piso}</g>
+    <g fill="url(#ladrilho)">${piso}</g>
+    <g fill="url(#ladrilho-da-praca)" stroke="#fde6d6" stroke-width="1.5" stroke-linejoin="round">${praca}</g>`,
   );
+}
+
+export type Enfeite =
+  | "arvore"
+  | "arvore-alta"
+  | "poste"
+  | "banco"
+  | "fonte"
+  | "canteiro"
+  | "barraca";
+
+interface DesenhoDoEnfeite {
+  readonly largura: number;
+  readonly altura: number;
+  /** Ponto do desenho que fica sobre a posição do enfeite no mapa. */
+  readonly ancoraX: number;
+  readonly ancoraY: number;
+  readonly unidade: number;
+  readonly desenhar: (i: Iso) => string;
+}
+
+const TRONCO = "#9c6238";
+
+function arvore(i: Iso): string {
+  const copa = "#2f9a30";
+  return [
+    i.sombra(-1.3, -1.3, 3.4, 3.4),
+    i.caixa(-0.5, -0.5, 0, 1, 1, 2, TRONCO),
+    i.caixa(-1.7, -1.7, 2, 3.4, 3.4, 2.1, copa),
+    i.caixa(-1.1, -1.1, 4.1, 2.2, 2.2, 1.5, clarear(copa, 0.12)),
+    i.caixa(0.2, 0.9, 2.6, 1.2, 1.2, 1.1, clarear(copa, 0.06)),
+  ].join("");
+}
+
+function arvoreAlta(i: Iso): string {
+  const copa = "#258a3a";
+  return [
+    i.sombra(-1.2, -1.2, 3.2, 3.2),
+    i.caixa(-0.5, -0.5, 0, 1, 1, 2.4, TRONCO),
+    i.caixa(-1.6, -1.6, 2.4, 3.2, 3.2, 1.7, copa),
+    i.caixa(-1.2, -1.2, 4.1, 2.4, 2.4, 1.6, clarear(copa, 0.08)),
+    i.caixa(-0.7, -0.7, 5.7, 1.4, 1.4, 1.3, clarear(copa, 0.18)),
+  ].join("");
+}
+
+function poste(i: Iso): string {
+  const ferro = "#3d4257";
+  const lampada = i.ponto(0, 0, 5.1);
+  return [
+    i.sombra(-0.5, -0.5, 1.2, 1.2),
+    `<circle cx="${lampada.x}" cy="${lampada.y}" r="13" fill="#ffe27a" opacity="0.3"/>`,
+    i.caixa(-0.45, -0.45, 0, 0.9, 0.9, 0.4, ferro),
+    i.caixa(-0.18, -0.18, 0.4, 0.36, 0.36, 4.1, ferro),
+    i.caixa(-0.55, -0.55, 4.5, 1.1, 1.1, 0.2, ferro),
+    i.caixa(-0.45, -0.45, 4.7, 0.9, 0.9, 1, "#ffe07a"),
+    i.caixa(-0.65, -0.65, 5.7, 1.3, 1.3, 0.25, ferro),
+  ].join("");
+}
+
+function banco(i: Iso): string {
+  const madeira = "#c98845";
+  return [
+    i.sombra(-1.5, -0.4, 3.4, 1.4),
+    i.caixa(-1.7, -0.6, 0.5, 3.4, 0.25, 1.1, madeira),
+    i.caixa(-1.5, 0.3, 0, 0.3, 0.3, 0.5, "#6b4a35"),
+    i.caixa(1.2, 0.3, 0, 0.3, 0.3, 0.5, "#6b4a35"),
+    i.caixa(-1.7, -0.35, 0.5, 3.4, 1, 0.25, clarear(madeira, 0.1)),
+  ].join("");
+}
+
+function fonte(i: Iso): string {
+  const pedra = "#ece4d8";
+  const agua = "#63cdf2";
+  return [
+    i.sombra(-2, -2, 4.6, 4.6),
+    i.caixa(-2.2, -2.2, 0, 4.4, 4.4, 0.8, pedra),
+    i.topo(-1.8, -1.8, 0.82, 3.6, 3.6, agua),
+    i.topo(-1.8, -1.8, 0.82, 3.6, 0.5, escurecer(agua, 0.12)),
+    i.topo(-1.8, -1.8, 0.82, 0.5, 3.6, escurecer(agua, 0.12)),
+    i.caixa(-0.6, -0.6, 0.8, 1.2, 1.2, 1.3, pedra),
+    i.caixa(-1.2, -1.2, 2.1, 2.4, 2.4, 0.5, pedra),
+    i.topo(-0.95, -0.95, 2.62, 1.9, 1.9, agua),
+    // Água caindo e o jato.
+    i.faceX(1.2, -0.45, 0.82, 0.9, 1.5, "#b6ecfc"),
+    i.faceY(1.2, -0.45, 0.82, 0.9, 1.5, "#c9f2fd"),
+    i.caixa(-0.3, -0.3, 2.6, 0.6, 0.6, 1.3, "#c4f0fd"),
+    i.caixa(-0.5, -0.5, 3.9, 1, 1, 0.3, "#e3f9ff"),
+  ].join("");
+}
+
+function canteiro(i: Iso): string {
+  const folha = "#4fae4b";
+  const flor = (x: number, y: number, cor: string) => i.caixa(x, y, 0.9, 0.45, 0.45, 0.4, cor);
+  return [
+    i.sombra(-1.5, -0.5, 3.3, 1.5),
+    i.caixa(-1.6, -0.7, 0, 3.2, 1.4, 0.9, folha),
+    flor(-1.3, -0.5, "#ff8fb3"),
+    flor(-0.4, 0, "#ffd84a"),
+    flor(0.4, -0.5, "#ffffff"),
+    flor(1, 0.1, "#ff8fb3"),
+  ].join("");
+}
+
+function barraca(i: Iso): string {
+  const listras = ["#ec5a4e", "#ffffff"];
+  const toldo = Array.from({ length: 6 }, (_, k) =>
+    i.caixa(-1.7 + k * 0.6, -1.3, 2.6, 0.6, 2.6, 0.3, listras[k % 2] as string),
+  ).join("");
+  return [
+    i.sombra(-1.5, -1, 3.6, 2.6),
+    i.caixa(-1.5, -1.1, 0, 0.2, 0.2, 2.6, TRONCO),
+    i.caixa(1.5, -1.1, 0, 0.2, 0.2, 2.6, TRONCO),
+    i.caixa(-1.6, -0.9, 0, 3.2, 1.8, 1.1, "#c98845"),
+    i.caixa(-1.4, -0.7, 1.1, 0.8, 0.8, 0.5, "#ff9a3a"),
+    i.caixa(-0.4, -0.7, 1.1, 0.8, 0.8, 0.5, "#62b34f"),
+    i.caixa(0.6, -0.7, 1.1, 0.8, 0.8, 0.5, "#ec5a4e"),
+    i.caixa(-0.9, 0.2, 1.1, 0.8, 0.6, 0.4, "#ffd84a"),
+    i.caixa(0.1, 0.2, 1.1, 0.8, 0.6, 0.4, "#ff9a3a"),
+    i.caixa(-1.5, 0.9, 0, 0.2, 0.2, 2.6, TRONCO),
+    i.caixa(1.5, 0.9, 0, 0.2, 0.2, 2.6, TRONCO),
+    toldo,
+  ].join("");
+}
+
+/** Árvores, postes, bancos e demais enfeites: cada um é um desenho à parte no mapa. */
+export const ENFEITES: Readonly<Record<Enfeite, DesenhoDoEnfeite>> = {
+  arvore: { largura: 56, altura: 76, ancoraX: 28, ancoraY: 60, unidade: 7, desenhar: arvore },
+  "arvore-alta": {
+    largura: 52,
+    altura: 86,
+    ancoraX: 26,
+    ancoraY: 72,
+    unidade: 7,
+    desenhar: arvoreAlta,
+  },
+  poste: { largura: 30, altura: 50, ancoraX: 15, ancoraY: 42, unidade: 6, desenhar: poste },
+  banco: { largura: 48, altura: 38, ancoraX: 24, ancoraY: 24, unidade: 6, desenhar: banco },
+  fonte: { largura: 72, altura: 64, ancoraX: 36, ancoraY: 42, unidade: 6.5, desenhar: fonte },
+  canteiro: { largura: 44, altura: 34, ancoraX: 22, ancoraY: 20, unidade: 6, desenhar: canteiro },
+  barraca: { largura: 64, altura: 64, ancoraX: 32, ancoraY: 42, unidade: 7, desenhar: barraca },
+};
+
+export function desenharEnfeite(tipo: Enfeite, espelhado = false): string {
+  const e = ENFEITES[tipo];
+  const iso = criarIso({
+    unidade: e.unidade,
+    origem: { x: e.ancoraX, y: e.ancoraY },
+    espelhado,
+  });
+  return svg(e.largura, e.altura, e.desenhar(iso));
 }

@@ -14,9 +14,6 @@ export interface Aparencia {
   readonly gravata?: string;
 }
 
-/** Tamanho do desenho de corpo inteiro; os pés ficam na base, no centro. */
-export const PERSONAGEM = { largura: 44, altura: 60 } as const;
-
 const AVATAR: Aparencia = {
   pele: "#f6cfa8",
   cabelo: "#6b3f2a",
@@ -165,16 +162,6 @@ function cabeca(a: Aparencia): string {
     );
   }
   return partes.join("");
-}
-
-/** Personagem de corpo inteiro, de frente. */
-export function desenharPersonagem(id: string): string {
-  const a = aparenciaDe(id);
-  return svg(
-    PERSONAGEM.largura,
-    PERSONAGEM.altura,
-    `<ellipse cx="22" cy="56.5" rx="12" ry="3" fill="#000" opacity="0.22"/>${corpo(a)}${cabeca(a)}`,
-  );
 }
 
 /** Retrato (cabeça e ombros), para o HUD e para os balões de fala. */
