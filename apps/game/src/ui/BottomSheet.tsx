@@ -3,12 +3,14 @@ import { type ReactNode, useEffect, useId } from "react";
 interface Props {
   readonly aberto: boolean;
   readonly titulo: string;
+  /** Ícone ao lado do título, na faixa do cabeçalho. */
+  readonly icone?: ReactNode;
   readonly aoFechar: () => void;
   readonly children: ReactNode;
 }
 
 /** Folha que sobe da base da tela, sobre o mapa. Base de todos os painéis do jogo. */
-export function BottomSheet({ aberto, titulo, aoFechar, children }: Props) {
+export function BottomSheet({ aberto, titulo, icone, aoFechar, children }: Props) {
   const idDoTitulo = useId();
 
   useEffect(() => {
@@ -26,7 +28,10 @@ export function BottomSheet({ aberto, titulo, aoFechar, children }: Props) {
       <button type="button" className="folha-veu" aria-label="Fechar painel" onClick={aoFechar} />
       <section className="folha" role="dialog" aria-modal="true" aria-labelledby={idDoTitulo}>
         <header className="folha-cabecalho">
-          <h2 id={idDoTitulo}>{titulo}</h2>
+          <h2 id={idDoTitulo} className="folha-faixa">
+            {icone}
+            {titulo}
+          </h2>
           <button type="button" className="folha-fechar" aria-label="Fechar" onClick={aoFechar}>
             ×
           </button>

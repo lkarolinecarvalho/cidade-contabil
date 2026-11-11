@@ -4,12 +4,16 @@ import { disponibilidadesDaEmpresa, nivelDoJogador } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
+import { IconeAperto, IconeBalanca, IconeBarras, IconeMapa } from "./icones";
 import {
   PainelDeMissoes,
   PainelDeProgresso,
   PainelDoEscritorio,
   PainelDoEstabelecimento,
 } from "./paineis";
+
+/** Nome da empresa do jogador na campanha (docs/campanha.md). */
+const EMPRESA = "Mercado Vila Nova";
 
 type Atalho = "missoes" | "escritorio" | "progresso";
 
@@ -22,23 +26,40 @@ interface DefinicaoDoAtalho {
   /** Texto curto do botão na base da tela. */
   readonly rotulo: string;
   readonly titulo: string;
+  readonly icone: () => ReactNode;
   readonly conteudo: () => ReactNode;
 }
 
 const ATALHOS: Readonly<Record<Atalho, DefinicaoDoAtalho>> = {
-  missoes: { rotulo: "Missões", titulo: "Missões", conteudo: () => <PainelDeMissoes /> },
+  missoes: {
+    rotulo: "Missões",
+    titulo: "Missões",
+    icone: () => <IconeMapa />,
+    conteudo: () => <PainelDeMissoes />,
+  },
   escritorio: {
     rotulo: "Escritório",
     titulo: "Escritório Contábil",
+    icone: () => <IconeBalanca />,
     conteudo: () => <PainelDoEscritorio />,
   },
-  progresso: { rotulo: "Progresso", titulo: "Progresso", conteudo: () => <PainelDeProgresso /> },
+  progresso: {
+    rotulo: "Progresso",
+    titulo: "Progresso",
+    icone: () => <IconeBarras />,
+    conteudo: () => <PainelDeProgresso />,
+  },
 };
 
 function tituloDo(painel: Painel): string {
   if (painel.tipo === "atalho") return ATALHOS[painel.atalho].titulo;
   const estabelecimento = conteudo.estabelecimentos.find((e) => e.id === painel.estabelecimento);
   return estabelecimento?.nome ?? painel.estabelecimento;
+}
+
+function iconeDo(painel: Painel): ReactNode {
+  if (painel.tipo === "atalho") return ATALHOS[painel.atalho].icone();
+  return painel.estabelecimento === "escritorio-contabil" ? <IconeBalanca /> : <IconeAperto />;
 }
 
 function conteudoDo(painel: Painel): ReactNode {
@@ -57,6 +78,7 @@ export function App() {
   const pontos = useJogo((jogo) => jogo.pontos);
   const data = useJogo((jogo) => jogo.data);
   const nivel = useJogo((jogo) => nivelDoJogador(jogo, conteudo.missoes));
+  const concluidas = useJogo((jogo) => jogo.missoesConcluidas.length);
 
   useEffect(() => {
     const cancelarPronto = bus.ouvir("mundo:pronto", () => setMundoPronto(true));
@@ -81,7 +103,9 @@ export function App() {
   return (
     <>
       <Hud
+        empresa={EMPRESA}
         nivel={nivel}
+        progresso={concluidas / conteudo.missoes.length}
         carteiraCentavos={carteiraCentavos}
         disponibilidadesCentavos={disponibilidadesCentavos}
         pontos={pontos}
@@ -91,6 +115,7 @@ export function App() {
       <nav className="atalhos" aria-label="Atalhos">
         {(Object.keys(ATALHOS) as Atalho[]).map((atalho) => (
           <button key={atalho} type="button" onClick={() => setPainel({ tipo: "atalho", atalho })}>
+            {ATALHOS[atalho].icone()}
             {ATALHOS[atalho].rotulo}
           </button>
         ))}
@@ -98,6 +123,7 @@ export function App() {
       <BottomSheet
         aberto={painel !== null}
         titulo={painel ? tituloDo(painel) : ""}
+        icone={painel ? iconeDo(painel) : null}
         aoFechar={fechar}
       >
         {painel && conteudoDo(painel)}

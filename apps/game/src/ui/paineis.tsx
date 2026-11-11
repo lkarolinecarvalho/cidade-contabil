@@ -4,6 +4,7 @@ import { useState } from "react";
 import { proximaMissao } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
+import { IconeCerto, IconeEstrela, Retrato } from "./icones";
 
 const nomeDoEstabelecimento = (id: string): string =>
   conteudo.estabelecimentos.find((e) => e.id === id)?.nome ?? id;
@@ -32,18 +33,34 @@ function CartaoDaMissao({ missao }: { readonly missao: Missao }) {
     <article className="painel-missao">
       <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
       <h3>{missao.titulo}</h3>
-      {missao.dialogo.map((fala) => (
-        <p key={fala.texto} className="painel-fala">
-          <strong>{fala.fala === "npc" ? npc?.nome : "Você"}:</strong> {fala.texto}
-        </p>
-      ))}
+      <div className="conversa">
+        <div className="conversa-quem">
+          <Retrato personagem={missao.npc} nome={npc?.nome ?? ""} />
+          <strong>{npc?.nome}</strong>
+          <span>{npc?.papel}</span>
+        </div>
+        <div className="conversa-falas">
+          {missao.dialogo.map((fala) => (
+            <p key={fala.texto} className="balao">
+              {fala.texto}
+            </p>
+          ))}
+        </div>
+      </div>
       {erro && (
         <p className="painel-erro" role="alert">
           {erro}
         </p>
       )}
+      <div className="recompensa">
+        <IconeEstrela />
+        <span>
+          Recompensa: <strong>+{missao.recompensa.pontos} pts</strong>
+        </span>
+      </div>
       <button type="button" className="botao-principal" onClick={concluir}>
-        Concluir missão (+{missao.recompensa.pontos} pts)
+        <IconeCerto />
+        Concluir Missão
       </button>
       <p className="painel-nota">
         Provisório: por enquanto a missão é concluída direto. As afirmativas e o lançamento entram
@@ -64,7 +81,7 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
         // A chave reinicia o cartão (e a mensagem de erro) quando a missão muda.
         <CartaoDaMissao key={missao.id} missao={missao} />
       ) : (
-        <div>
+        <div className="cartao">
           <p className="painel-texto">Ninguém aqui tem uma proposta para você agora.</p>
           {missao && (
             <p className="painel-nota">
@@ -86,15 +103,19 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
 export function PainelDeMissoes() {
   const missao = useProximaMissao();
   if (!missao) {
-    return <p className="painel-texto">Você concluiu todas as missões da campanha.</p>;
+    return (
+      <div className="cartao">
+        <p className="painel-texto">Você concluiu todas as missões da campanha.</p>
+      </div>
+    );
   }
   return (
-    <article className="painel-missao">
+    <article className="cartao">
       <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
       <h3>{missao.titulo}</h3>
       <p className="painel-texto">
         Vá até <strong>{nomeDoEstabelecimento(missao.estabelecimento)}</strong>: toque no prédio com
-        o sinal <span className="sinal-oferta">!</span> no mapa.
+        o balão <span className="sinal-oferta">!</span> no mapa.
       </p>
     </article>
   );
@@ -111,7 +132,7 @@ export function PainelDoEscritorio() {
   ];
 
   return (
-    <div className="painel-balanco">
+    <div className="cartao painel-balanco">
       <h3>Balanço Patrimonial</h3>
       <table>
         <tbody>
@@ -152,7 +173,7 @@ export function PainelDeProgresso() {
   const pontos = useJogo((jogo) => jogo.pontos);
   const concluidas = useJogo((jogo) => jogo.missoesConcluidas);
   return (
-    <div className="painel-progresso">
+    <div className="cartao painel-progresso">
       <p className="painel-texto">
         <strong>{pontos}</strong> pontos
       </p>

@@ -13,6 +13,7 @@
   "dependencies": {
     "@cidade/content": "workspace:*",
     "@cidade/ledger": "workspace:*",
+    "@fontsource-variable/nunito": "catalog:",
     "phaser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

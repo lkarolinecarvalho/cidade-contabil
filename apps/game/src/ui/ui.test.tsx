@@ -6,7 +6,9 @@ import { Hud } from "./Hud";
 describe("Hud", () => {
   const html = renderToStaticMarkup(
     <Hud
+      empresa="Mercado Vila Nova"
       nivel={2}
+      progresso={0.5}
       carteiraCentavos={1_000_000}
       disponibilidadesCentavos={6_050_000}
       pontos={410}
@@ -21,8 +23,10 @@ describe("Hud", () => {
     expect(html).toContain("R$ 60.500,00");
   });
 
-  it("mostra nível, pontos e dia/mês", () => {
+  it("mostra a empresa, o nível, o avanço, os pontos e o dia/mês", () => {
+    expect(html).toContain("Mercado Vila Nova");
     expect(html).toContain("Nível 2");
+    expect(html).toContain('aria-valuenow="50"');
     expect(html).toContain("410 pts");
     expect(html).toContain("Dia 12 · Mês 3");
   });

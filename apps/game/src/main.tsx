@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@fontsource-variable/nunito";
 import { bus } from "./bus";
 import { aplicarProporcaoDoPalco } from "./palco";
 import { App } from "./ui/App";
@@ -16,12 +17,14 @@ function elemento(id: string): HTMLElement {
 // toda a comunicação passa pelo event bus tipado.
 aplicarProporcaoDoPalco(elemento("palco"));
 
-// O mundo só nasce depois que a UI avisa que está ouvindo (uma única vez).
+// O mundo só nasce depois que a UI avisa que está ouvindo (uma única vez) e que a
+// fonte carregou: o Phaser desenha os textos uma vez só, com a fonte que houver.
 let mundoCriado = false;
 bus.ouvir("ui:pronta", () => {
   if (mundoCriado) return;
   mundoCriado = true;
-  criarMundo(elemento("mundo"));
+  const criar = () => criarMundo(elemento("mundo"));
+  document.fonts.load('800 13px "Nunito Variable"').then(criar, criar);
 });
 
 createRoot(elemento("ui")).render(
