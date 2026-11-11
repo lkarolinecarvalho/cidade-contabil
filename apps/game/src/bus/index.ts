@@ -6,6 +6,8 @@ export interface EventosDoJogo {
   "ui:pronta": undefined;
   /** Phaser → React: a cena da cidade terminou de carregar. */
   "mundo:pronto": undefined;
+  /** Phaser → React: o avatar chegou à porta de um estabelecimento. */
+  "estabelecimento:alcancado": { readonly estabelecimento: string };
   /** React → Phaser: um painel abriu ou fechou; com painel aberto, o mundo não recebe toques. */
   "painel:mudou": { readonly aberto: boolean };
 }
