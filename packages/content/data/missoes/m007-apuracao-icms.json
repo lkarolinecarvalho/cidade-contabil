@@ -1,0 +1,29 @@
+{
+  "id": "m007-apuracao-icms",
+  "titulo": "O primeiro fechamento",
+  "capitulo": 7,
+  "nivel": 4,
+  "estabelecimento": "posto-fiscal",
+  "npc": "sergio-fiscal",
+  "requisitos": ["m007-depreciacao"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Fim do mês: hora de apurar o ICMS. Vamos confrontar o imposto das suas vendas com o das suas compras."
+    },
+    {
+      "fala": "npc",
+      "texto": "Depois da apuração, a Marta espera você no Escritório com a DRE e o Balanço do mês."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "apuracao_icms"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["apuracao-icms", "dre", "balanco-patrimonial"],
+  "recompensa": {
+    "pontos": 120
+  }
+}

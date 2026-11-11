@@ -1,0 +1,31 @@
+{
+  "id": "m003-integralizacao-final",
+  "titulo": "Os acionistas cumprem o compromisso",
+  "capitulo": 3,
+  "nivel": 1,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m002-compra-imovel"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Chegou a hora de integralizar os R$ 100.000,00 que faltam: R$ 90.000,00 seus e R$ 10.000,00 do Sr. Osvaldo."
+    },
+    {
+      "fala": "npc",
+      "texto": "Com isso o capital social fica totalmente integralizado, e a empresa tem caixa para equipar a loja."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "integralizacao",
+      "valorCentavos": 10000000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["capital-a-integralizar", "principio-entidade"],
+  "recompensa": {
+    "pontos": 50
+  }
+}

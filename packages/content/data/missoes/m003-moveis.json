@@ -1,0 +1,36 @@
+{
+  "id": "m003-moveis",
+  "titulo": "Balcões e prateleiras",
+  "capitulo": 3,
+  "nivel": 1,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m003-integralizacao-final"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "A loja está vazia! Os balcões e as prateleiras saem por R$ 15.000,00, à vista, pelo banco."
+    },
+    {
+      "fala": "npc",
+      "texto": "São para a gente usar no dia a dia, não para vender."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "compra_imobilizado",
+      "itens": [
+        {
+          "classe": "moveis_utensilios",
+          "valorCentavos": 1500000
+        }
+      ],
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["imobilizado-uso-proprio"],
+  "recompensa": {
+    "pontos": 40
+  }
+}

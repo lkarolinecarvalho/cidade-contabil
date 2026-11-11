@@ -1,0 +1,32 @@
+{
+  "id": "m003-equipamentos",
+  "titulo": "Computadores e equipamentos",
+  "capitulo": 3,
+  "nivel": 1,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m003-moveis"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Falta o caixa! O computador e os equipamentos custam R$ 5.000,00, à vista, pelo banco."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "compra_imobilizado",
+      "itens": [
+        {
+          "classe": "equipamentos",
+          "valorCentavos": 500000
+        }
+      ],
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["imobilizado-uso-proprio"],
+  "recompensa": {
+    "pontos": 40
+  }
+}

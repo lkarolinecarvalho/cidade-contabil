@@ -5,31 +5,30 @@
   "nivel": 1,
   "estabelecimento": "escritorio-contabil",
   "npc": "marta-contadora",
-  "requisitos": [],
+  "requisitos": ["m001-capital-autorizado"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Vamos constituir a Mercado Vila Nova S.A. O estatuto autoriza um capital de até R$ 500.000,00, mas autorizar não é receber: isso não gera lançamento."
+      "texto": "Agora sim temos um fato contábil. Você e o Sr. Osvaldo vão subscrever R$ 300.000,00 em ações: R$ 270.000,00 seus e R$ 30.000,00 dele."
     },
     {
       "fala": "npc",
-      "texto": "Você e o Sr. Osvaldo vão subscrever R$ 300.000,00 e integralizar R$ 200.000,00 agora, no banco. Lembre-se: a sua carteira é sua; a conta bancária é da empresa."
+      "texto": "Subscrever é assumir o compromisso de entregar o dinheiro. Enquanto ele não entra, o valor fica em Capital a Integralizar, que reduz o Patrimônio Líquido."
     }
   ],
   "operacoes": [
     {
       "tipo": "subscricao",
       "valorCentavos": 30000000,
-      "participacoes": { "avatar": 0.9, "osvaldo": 0.1 }
-    },
-    { "tipo": "integralizacao", "valorCentavos": 20000000, "meio": "bancos" }
+      "participacoes": {
+        "avatar": 9000,
+        "osvaldo": 1000
+      }
+    }
   ],
-  "ajudaLancamento": "pronto",
-  "conceitos": [
-    "capital-autorizado",
-    "capital-subscrito",
-    "capital-a-integralizar",
-    "principio-entidade"
-  ],
-  "recompensa": { "pontos": 50 }
+  "ajudaLancamento": "auto",
+  "conceitos": ["capital-subscrito", "capital-a-integralizar"],
+  "recompensa": {
+    "pontos": 50
+  }
 }

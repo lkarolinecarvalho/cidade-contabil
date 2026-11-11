@@ -16,14 +16,23 @@
     {
       "tipo": "compra",
       "itens": [
-        { "produto": "mercadorias-diversas", "quantidade": 4000, "precoUnitarioCentavos": 500 }
+        {
+          "produto": "mercadorias-diversas",
+          "quantidade": 4000,
+          "precoUnitarioCentavos": 500
+        }
       ],
       "ipiAliquota": 0,
       "freteCentavos": 0,
-      "condicao": { "tipo": "prazo", "dias": 30 }
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      }
     }
   ],
   "ajudaLancamento": "auto",
   "conceitos": ["icms-por-dentro", "compra-a-prazo-fornecedores", "custo-aquisicao"],
-  "recompensa": { "pontos": 80 }
+  "recompensa": {
+    "pontos": 80
+  }
 }

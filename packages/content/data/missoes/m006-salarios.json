@@ -1,0 +1,36 @@
+{
+  "id": "m006-salarios",
+  "titulo": "A folha do mês",
+  "capitulo": 6,
+  "nivel": 3,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m006-pagamento-fornecedor"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O mês está fechando. Os salários da equipe somam R$ 4.000,00: primeiro a empresa reconhece a despesa do mês, depois paga pelo banco."
+    },
+    {
+      "fala": "npc",
+      "texto": "São dois momentos diferentes, mesmo quando acontecem no mesmo dia."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "provisao_salarios",
+      "valorCentavos": 400000
+    },
+    {
+      "tipo": "pagamento",
+      "obrigacao": "salarios",
+      "valorCentavos": 400000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["competencia", "pagamento-de-obrigacoes"],
+  "recompensa": {
+    "pontos": 110
+  }
+}

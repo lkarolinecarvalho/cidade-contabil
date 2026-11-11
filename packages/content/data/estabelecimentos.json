@@ -1,0 +1,26 @@
+[
+  {
+    "id": "minha-loja",
+    "nome": "Minha Loja"
+  },
+  {
+    "id": "fornecedor",
+    "nome": "Fornecedor (Distribuidora)"
+  },
+  {
+    "id": "banco",
+    "nome": "Banco"
+  },
+  {
+    "id": "escritorio-contabil",
+    "nome": "Escritório Contábil"
+  },
+  {
+    "id": "posto-fiscal",
+    "nome": "Posto Fiscal (SEFAZ)"
+  },
+  {
+    "id": "imobiliaria",
+    "nome": "Imobiliária"
+  }
+]

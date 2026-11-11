@@ -1,0 +1,55 @@
+[
+  {
+    "id": "marta-contadora",
+    "nome": "Marta",
+    "papel": "Contadora",
+    "estabelecimento": "escritorio-contabil"
+  },
+  {
+    "id": "osvaldo",
+    "nome": "Sr. Osvaldo",
+    "papel": "Acionista minoritário"
+  },
+  {
+    "id": "helena-gerente",
+    "nome": "Helena",
+    "papel": "Gerente do banco",
+    "estabelecimento": "banco"
+  },
+  {
+    "id": "rui-corretor",
+    "nome": "Rui",
+    "papel": "Corretor de imóveis",
+    "estabelecimento": "imobiliaria"
+  },
+  {
+    "id": "joao-fornecedor",
+    "nome": "João",
+    "papel": "Dono da distribuidora",
+    "estabelecimento": "fornecedor"
+  },
+  {
+    "id": "bia-funcionaria",
+    "nome": "Bia",
+    "papel": "Funcionária da loja",
+    "estabelecimento": "minha-loja"
+  },
+  {
+    "id": "lurdes-cliente",
+    "nome": "Dona Lurdes",
+    "papel": "Cliente da loja",
+    "estabelecimento": "minha-loja"
+  },
+  {
+    "id": "antonio-restaurante",
+    "nome": "Antônio",
+    "papel": "Dono do restaurante",
+    "estabelecimento": "minha-loja"
+  },
+  {
+    "id": "sergio-fiscal",
+    "nome": "Sérgio",
+    "papel": "Auditor fiscal",
+    "estabelecimento": "posto-fiscal"
+  }
+]

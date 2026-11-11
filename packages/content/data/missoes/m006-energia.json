@@ -1,0 +1,28 @@
+{
+  "id": "m006-energia",
+  "titulo": "A conta de energia",
+  "capitulo": 6,
+  "nivel": 3,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m006-salarios"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Chegou a conta de energia elétrica da loja: R$ 1.000,00. Vamos pagar agora mesmo, pelo banco."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "despesa",
+      "natureza": "energia_eletrica",
+      "valorCentavos": 100000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["despesas-operacionais"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

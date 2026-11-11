@@ -1,0 +1,28 @@
+{
+  "id": "m006-pagamento-fornecedor",
+  "titulo": "O fornecedor cobra a dívida",
+  "capitulo": 6,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m005-venda-prazo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O título de R$ 20.000,00 venceu. Sei que o mês está apertado: aceito R$ 10.000,00 agora, pelo banco, e o resto depois."
+    }
+  ],
+  "operacoes": [
+    {
+      "tipo": "pagamento",
+      "obrigacao": "fornecedores",
+      "valorCentavos": 1000000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["pagamento-de-obrigacoes"],
+  "recompensa": {
+    "pontos": 100
+  }
+}
