@@ -10,7 +10,7 @@ no estilo de banca. A contabilidade é a própria mecânica do jogo.
 1. `docs/roadmap.md` — marcos e critérios de aceite. Trabalhe um marco por vez.
 2. `docs/regras-contabeis.md` — **fonte da verdade contábil e tributária.**
 3. `docs/arquitetura.md` — camadas e fluxo de dados.
-4. `docs/gdd.md` e `docs/fluxo-afirmativas.md` — design do jogo.
+4. `docs/gdd.md`, `docs/campanha.md` e `docs/fluxo-afirmativas.md` — design do jogo.
 5. `docs/adr/` — decisões já tomadas. Não as reverta sem pedir.
 
 ## Regras inegociáveis
@@ -19,8 +19,11 @@ no estilo de banca. A contabilidade é a própria mecânica do jogo.
 - **Nunca invente regra contábil ou tributária.** Se um caso não está em
   `docs/regras-contabeis.md`, pare e pergunte. Não "complete" com o que parecer razoável.
 - Toda regra implementada referencia o ID da regra (ex.: `// R-ICMS-02`) e tem teste.
-- O cenário de `docs/cenario-referencia.md` é o **teste dourado**: precisa passar
-  centavo por centavo, sempre.
+- Os cenários `docs/cenario-campanha.md` (principal) e `docs/cenario-referencia.md`
+  (tributos e custo médio) são os **testes dourados**: precisam passar centavo por
+  centavo, sempre.
+- Regras marcadas com 📘 são simplificações didáticas: implemente como descrito e
+  exponha a "nota didática" na UI.
 - Invariantes checados em todo teste do ledger:
   - débitos = créditos em cada lançamento;
   - Ativo = Passivo + PL após cada operação (com resultado apurado);

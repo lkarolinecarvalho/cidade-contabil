@@ -42,8 +42,9 @@ Regra explícita do jogo (ADR-0004):
 - **Caixa e Bancos da empresa:** fazem parte do razão.
 - O HUD mostra as duas, com rótulos e ícones diferentes ("Sua carteira" e
   "Caixa da empresa").
-- A primeira missão é a **integralização de capital**: o avatar transfere dinheiro da
-  carteira para a empresa (D Caixa / C Capital Social).
+- A empresa é a **Mercado Vila Nova S.A.**: o avatar é o acionista controlador (90%) e
+  um investidor NPC tem 10% (ADR-0007). No capítulo 1, o avatar subscreve e integraliza
+  capital, e a carteira diminui pela parte dele.
 - Pagar uma despesa pessoal com o caixa da empresa é bloqueado e gera uma explicação
   sobre o princípio da entidade.
 
@@ -57,18 +58,25 @@ Regra explícita do jogo (ADR-0004):
 5. **Lançar:** montar ou confirmar o lançamento (o nível de ajuda varia; seção 9).
 6. **Evoluir:** pontos, progresso por conceito e desbloqueios.
 
-## 7. Estabelecimentos do MVP (5)
+## 7. Estabelecimentos do MVP (6)
 
 | Estabelecimento | Operações na v1 | Conteúdos |
 |---|---|---|
-| Minha Loja | Vendas à vista e a prazo para clientes NPC; ver estoque | Receita bruta, deduções, CMV, Clientes |
-| Fornecedor (fábrica) | Compras à vista e a prazo; nota com ICMS, IPI e frete | Custo de aquisição, ICMS a Recuperar, Fornecedores |
-| Banco | Depósitos, saques, pagamentos e recebimentos | Disponibilidades |
-| Escritório Contábil | Livro Diário, Razão, Balancete, Balanço, DRE; Revisão | Demonstrações; repetição espaçada |
+| Minha Loja | Vendas à vista e a prazo; equipar a loja; salários e energia | Receita, deduções, CMV, Clientes, imobilizado, despesas |
+| Fornecedor (Distribuidora) | Compras à vista e a prazo; nota com ICMS, IPI e frete; pagamentos | Custo de aquisição, ICMS a Recuperar, Fornecedores |
+| Banco | Integralizações, depósitos, pagamentos e recebimentos | Disponibilidades |
+| Escritório Contábil | Constituição da empresa; Diário, Razão, Balancete, DRE, Balanço; Revisão | Capital social, demonstrações, repetição espaçada |
 | Posto Fiscal (SEFAZ) | Apuração e pagamento do ICMS | Não cumulatividade, ICMS a Recolher |
+| Imobiliária | Compra do imóvel da loja | Imobilizado x Estoque x Propriedade para Investimento |
 
-Depois do MVP: Prefeitura (taxas municipais, alvará), Transportadora, Imobiliária,
-funcionários, empréstimos e imobilizado.
+Depois do MVP: Prefeitura (taxas municipais, alvará), Transportadora, empréstimos,
+veículos e propriedade para investimento (capítulo 8 da campanha).
+
+## 7A. Campanha
+
+O MVP é a campanha "O Primeiro Negócio", capítulos 1 a 7 ([campanha.md](campanha.md),
+ADR-0008). Os tributos sobre mercadorias entram no capítulo 4. Depois da campanha, o
+jogo segue em modo livre: o jogador continua operando a loja com as mesmas regras.
 
 ## 8. Tempo de jogo
 
@@ -82,15 +90,15 @@ funcionários, empréstimos e imobilizado.
 
 ## 9. Progressão
 
-| Nível | Etapa | Conteúdo | Ajuda no lançamento |
-|---|---|---|---|
-| 1 | Microempreendedor | Ativo, Passivo, PL; integralização; entidade | Lançamento pronto, só confirmar |
-| 2 | Comerciante | Compras e vendas; CMV; custo médio | Contas sugeridas; jogador escolhe D/C |
-| 3 | Empresário | Operações a prazo; ICMS, IPI e frete na compra | Jogador escolhe contas, D/C e valores |
-| 4 | Administrador | Deduções da receita; apuração do ICMS; DRE | Lançamento livre |
-| 5 | Grande empresário | Balanço, DRE e análise | Lançamento livre + fechamento mensal |
+| Nível | Etapa | Capítulos | Conteúdo | Ajuda no lançamento |
+|---|---|---|---|---|
+| 1 | Fundador | 1–3 | PL, capital social, entidade, imobilizado | Lançamento pronto, só confirmar |
+| 2 | Comerciante | 4–5 | Compras com ICMS, vendas, CMV, custo médio | Contas sugeridas; jogador escolhe D/C |
+| 3 | Empresário | 6 | Passivo, despesas, competência | Jogador escolhe contas, D/C e valores |
+| 4 | Administrador | 7 | Depreciação, apuração do ICMS, DRE e Balanço | Lançamento livre |
+| 5 | Grande empresário | 8 | Empréstimos, PPI, inadimplência, fechamento anual | Lançamento livre (pós-MVP) |
 
-O MVP cobre os níveis 1 a 4. O nível 5 completo e os conteúdos fora do MVP vêm depois.
+O MVP cobre os níveis 1 a 4.
 
 ## 10. HUD (retrato)
 
@@ -105,5 +113,6 @@ O MVP cobre os níveis 1 a 4. O nível 5 completo e os conteúdos fora do MVP v�
 - ICMS interestadual, ST, DIFAL; alíquotas diferentes por produto.
 - Crédito de PIS/COFINS (Lucro Real).
 - IRPJ/CSLL do Lucro Presumido (apuração trimestral).
-- Folha de pagamento, imobilizado, depreciação e empréstimos.
+- Encargos sobre a folha, ICMS no imobilizado (CIAP), ITBI (simplificações 📘).
+- Empréstimos, veículos, propriedade para investimento, perdas de crédito (capítulo 8).
 - Arte final: a v1 usa placeholders ou pacote de assets livre.

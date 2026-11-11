@@ -11,3 +11,5 @@ Consequências. Uma decisão só muda com um novo ADR que substitui o anterior.
 | [0004](0004-entidade.md) | Carteira pessoal separada do caixa da empresa |
 | [0005](0005-lancamento-do-jogador.md) | O lançamento do jogador é comparado, nunca gravado |
 | [0006](0006-dinheiro-em-centavos.md) | Dinheiro em centavos inteiros; arredondamento por linha |
+| [0007](0007-sociedade-anonima.md) | S.A. com avatar controlador e acionista NPC minoritário |
+| [0008](0008-escopo-mvp-campanha.md) | O MVP é a campanha dos capítulos 1 a 7, com 6 estabelecimentos |

@@ -52,6 +52,8 @@ criarEmpresa(parametros): EstadoContabil
 preverLancamentos(estado, operacao, data): { lancamentos, novoEstado }
 aplicar(estado, operacao, data): EstadoContabil
 compararLancamento(esperado, informado): ResultadoComparacao
+simularLancamentoInformado(estado, informado, data): { dre, balanco }  // prévia do erro, nunca grava
+depreciarMes(estado, mes): Operacao
 saldos(estado, ate?): Saldo[]
 balancete(estado, ate?): Balancete
 dre(estado, periodo): DRE

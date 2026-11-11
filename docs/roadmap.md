@@ -14,16 +14,19 @@ passam e os testes e o typecheck estão verdes.
 
 ## M1 — Motor contábil (`packages/ledger`)
 - Plano de contas como config; lançamentos; razão; saldos; balancete.
+- Capital social de S.A. (subscrição, integralização, capital a integralizar).
+- Imobilizado e depreciação mensal; despesas e obrigações.
 - Estoque permanente com custo médio móvel.
 - Tributos: ICMS, IPI, frete, PIS/COFINS cumulativo, apuração do ICMS.
 - DRE e Balanço (com "Resultado do período" no PL).
-- **Aceite:** um teste por regra de `regras-contabeis.md`; o cenário de referência
-  passa centavo por centavo; testes de propriedade dos invariantes.
+- Prévia do erro (`simularLancamentoInformado`).
+- **Aceite:** um teste por regra de `regras-contabeis.md`; `cenario-campanha.md` e
+  `cenario-referencia.md` passam centavo por centavo; testes de propriedade dos invariantes.
 
 ## M2 — Conteúdo (`packages/content`)
 - Schemas zod de missão, afirmativa, NPC, produto e estabelecimento.
 - Carregador com validação e as regras de `modelo-de-conteudo.md`.
-- Conteúdo mínimo dos níveis 1–4: ~12 missões e ~40 afirmativas (≥3 por conceito).
+- Missões dos capítulos 1–7 da campanha (`campanha.md`) e ~50 afirmativas (≥3 por conceito).
 - Opcional: script que extrai os cards do deck Anki (`docs/referencias/anki/`) para um
   arquivo de candidatos a afirmativa, para revisão manual.
 - **Aceite:** todo o conteúdo valida; teste falha com conteúdo inválido.
@@ -35,7 +38,7 @@ passam e os testes e o typecheck estão verdes.
 - **Aceite:** HUD reflete o estado do ledger; a carteira pessoal nunca aparece no razão.
 
 ## M4 — Mapa da cidade
-- Mapa pequeno com os 5 estabelecimentos do MVP, tocar para andar, NPCs com
+- Mapa pequeno com os 6 estabelecimentos do MVP, tocar para andar, NPCs com
   indicador de oferta.
 - Arte placeholder ou pacote livre (registrar a licença em `docs/referencias/assets.md`).
 - **Aceite:** andar até um estabelecimento abre o painel correspondente.
@@ -45,8 +48,9 @@ passam e os testes e o typecheck estão verdes.
 - Painel de efeito (contas que sobem e descem) e painel de lançamento com os 4 níveis
   de ajuda.
 - Feedback de erro por linha do lançamento, com a regra.
-- **Aceite:** a sequência do cenário de referência pode ser jogada de ponta a ponta,
-  e o Balanço do jogo bate com o documento.
+- Prévia do erro com comentário do contador (`campanha.md`, "Erros didáticos").
+- **Aceite:** a campanha dos capítulos 1–7 pode ser jogada de ponta a ponta, e a DRE e o
+  Balanço do jogo batem com `cenario-campanha.md`.
 
 ## M6 — Calendário e fechamento
 - Dias, ações por dia, vencimentos de títulos, alertas.
@@ -65,6 +69,6 @@ passam e os testes e o typecheck estão verdes.
 - **Aceite:** fechar e reabrir o app mantém o progresso; o build Android roda num aparelho.
 
 ## Depois da v1
-Prefeitura e taxas, Transportadora, folha de pagamento, empréstimos e juros,
-imobilizado e depreciação, Lucro Real (créditos de PIS/COFINS), modo pós-reforma
+Capítulo 8 da campanha (empréstimos, veículos, propriedade para investimento,
+inadimplência, fechamento anual), Prefeitura e taxas, Transportadora, encargos da folha, Lucro Real (créditos de PIS/COFINS), modo pós-reforma
 (CBS/IBS), arte final, conta online e sincronização.

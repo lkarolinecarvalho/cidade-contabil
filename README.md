@@ -15,8 +15,10 @@ os lançamentos.
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Regras de trabalho para o agente de código |
 | [docs/gdd.md](docs/gdd.md) | Design do jogo (versão refinada do conceito) |
+| [docs/campanha.md](docs/campanha.md) | Campanha "O Primeiro Negócio" (capítulos 1–7 no MVP) |
 | [docs/regras-contabeis.md](docs/regras-contabeis.md) | Plano de contas e regras contábeis/tributárias, com IDs |
-| [docs/cenario-referencia.md](docs/cenario-referencia.md) | Cenário completo com valores esperados (teste dourado) |
+| [docs/cenario-campanha.md](docs/cenario-campanha.md) | Campanha completa com valores esperados (teste dourado principal) |
+| [docs/cenario-referencia.md](docs/cenario-referencia.md) | Cenário de tributos e custo médio (teste dourado) |
 | [docs/fluxo-afirmativas.md](docs/fluxo-afirmativas.md) | Como, quando e quantas afirmativas aparecem |
 | [docs/modelo-de-conteudo.md](docs/modelo-de-conteudo.md) | Formato de missões e afirmativas |
 | [docs/arquitetura.md](docs/arquitetura.md) | Camadas, fluxo de dados e estado |

@@ -8,13 +8,14 @@ Valores calculados com arredondamento meio para cima por linha (R-GER-02).
 
 ## Operações
 
-### Op 1 — Integralização de capital (R-ENT-02)
-Carteira pessoal: 12.000,00 → 2.000,00 (fora do razão).
+### Op 1 — Subscrição e integralização no mesmo ato (R-CAP-03, R-ENT-02)
+Carteira pessoal: 12.000,00 → 2.000,00 (fora do razão). Subscrição e integralização
+simultâneas: os lançamentos em (−) Capital a Integralizar se anulam, e o efeito líquido é:
 
 | Conta | D | C |
 |---|---:|---:|
 | Caixa | 10.000,00 | |
-| Capital Social | | 10.000,00 |
+| Capital Social Subscrito | | 10.000,00 |
 
 ### Op 2 — Depósito no banco
 | Conta | D | C |
@@ -117,7 +118,7 @@ A recolher 990,00; a recuperar 819,00 → compensa 819,00; saldo devedor 171,00.
 | ICMS a Recolher | 0,00 |
 | PIS a Recolher | 29,32 C |
 | COFINS a Recolher | 135,30 C |
-| Capital Social | 10.000,00 C |
+| Capital Social Subscrito | 10.000,00 C |
 | Receita Bruta de Vendas | 5.500,00 C |
 | ICMS sobre Vendas | 990,00 D |
 | PIS sobre Faturamento | 29,32 D |
@@ -145,7 +146,7 @@ Balancete: total devedor = total credor = **15.664,62**.
 | Caixa | 8.000,00 | PIS a Recolher | 29,32 |
 | Bancos | 1.129,00 | COFINS a Recolher | 135,30 |
 | Clientes | 1.500,00 | **Passivo Circulante** | **164,62** |
-| Estoque | 1.034,93 | Capital Social | 10.000,00 |
+| Estoque | 1.034,93 | Capital Social Subscrito | 10.000,00 |
 | | | Resultado do período | 1.499,31 |
 | | | **Patrimônio Líquido** | **11.499,31** |
 | **Total do Ativo** | **11.663,93** | **Total Passivo + PL** | **11.663,93** |
