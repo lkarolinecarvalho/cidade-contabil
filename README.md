@@ -22,7 +22,7 @@ os lançamentos.
 | [docs/arquitetura.md](docs/arquitetura.md) | Camadas, fluxo de dados e estado |
 | [docs/roadmap.md](docs/roadmap.md) | Marcos M0–M8 com critérios de aceite |
 | [docs/adr/](docs/adr/) | Decisões de arquitetura e de domínio |
-| [docs/referencias/](docs/referencias/) | Conceito original e mockups (só referência visual) |
+| [docs/referencias/](docs/referencias/) | Conceito original, história da campanha, mockups e deck Anki (referência, não especificação) |
 
 ## Estrutura
 

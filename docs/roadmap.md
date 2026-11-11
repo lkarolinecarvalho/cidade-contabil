@@ -24,6 +24,8 @@ passam e os testes e o typecheck estão verdes.
 - Schemas zod de missão, afirmativa, NPC, produto e estabelecimento.
 - Carregador com validação e as regras de `modelo-de-conteudo.md`.
 - Conteúdo mínimo dos níveis 1–4: ~12 missões e ~40 afirmativas (≥3 por conceito).
+- Opcional: script que extrai os cards do deck Anki (`docs/referencias/anki/`) para um
+  arquivo de candidatos a afirmativa, para revisão manual.
 - **Aceite:** todo o conteúdo valida; teste falha com conteúdo inválido.
 
 ## M3 — Casca do app e HUD
