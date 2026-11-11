@@ -14,6 +14,7 @@ import {
   executarProximaOperacao,
   jogarMissaoInteira,
   novoJogo,
+  prepararParaOperacao,
   registrarResposta,
 } from "../state/jogo";
 import { lerReais } from "../texto/dinheiro";
@@ -437,6 +438,7 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
       }
 
       for (const operacaoDaMissao of m.operacoes) {
+        estado = prepararParaOperacao(estado, m);
         const operacao = paraOperacaoDoMotor(operacaoDaMissao, { mes: estado.data });
         const { lancamentos } = preverLancamentos(estado.contabil, operacao, estado.data);
         // Efeito: toda operação da campanha mexe em pelo menos duas contas.

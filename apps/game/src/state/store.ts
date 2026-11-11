@@ -4,9 +4,14 @@ import { createStore } from "zustand/vanilla";
 import {
   concluirMissao,
   type EstadoDoJogo,
+  encerrarDia,
   executarProximaOperacao,
+  fecharMes,
+  irParaOUltimoDia,
+  liquidarTitulo,
   novoJogo,
   type OpcoesDaOperacao,
+  pagarIcms,
   registrarResposta,
 } from "./jogo";
 
@@ -19,6 +24,11 @@ interface Acoes {
   executarProximaOperacao(missao: Missao, opcoes?: OpcoesDaOperacao): void;
   concluirMissao(missao: Missao): void;
   registrarResposta(afirmativa: string, acertou: boolean): void;
+  encerrarDia(): void;
+  irParaOUltimoDia(): void;
+  fecharMes(): void;
+  liquidarTitulo(id: number): void;
+  pagarIcms(): void;
   reiniciar(): void;
 }
 
@@ -38,6 +48,21 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   },
   registrarResposta(afirmativa, acertou) {
     set(registrarResposta(get(), afirmativa, acertou));
+  },
+  encerrarDia() {
+    set(encerrarDia(get()));
+  },
+  irParaOUltimoDia() {
+    set(irParaOUltimoDia(get()));
+  },
+  fecharMes() {
+    set(fecharMes(get()));
+  },
+  liquidarTitulo(id) {
+    set(liquidarTitulo(get(), id));
+  },
+  pagarIcms() {
+    set(pagarIcms(get()));
   },
   reiniciar() {
     set(novoJogo());
