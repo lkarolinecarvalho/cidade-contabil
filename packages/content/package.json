@@ -10,8 +10,13 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@cidade/ledger": "workspace:*",
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   }
 }
