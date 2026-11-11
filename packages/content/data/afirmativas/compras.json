@@ -1,0 +1,92 @@
+[
+  {
+    "id": "af-compra-prazo-01",
+    "conceitoId": "compra-a-prazo-fornecedores",
+    "nivelMin": 2,
+    "enunciado": "A compra de mercadorias a prazo gera uma despesa imediata para a empresa.",
+    "gabarito": "E",
+    "explicacao": "A mercadoria comprada é um Ativo (Estoque). Ela só vira custo (CMV) quando é vendida. A obrigação vai para Fornecedores, no Passivo.",
+    "regras": ["R-COM-03", "R-VEN-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-compra-prazo-02",
+    "conceitoId": "compra-a-prazo-fornecedores",
+    "nivelMin": 2,
+    "enunciado": "Na compra a prazo, a obrigação assumida com o vendedor é registrada a crédito da conta Fornecedores.",
+    "gabarito": "C",
+    "explicacao": "Fornecedores é uma conta do Passivo, de natureza credora. Ela aumenta a crédito quando surge a obrigação.",
+    "regras": ["R-COM-02"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-compra-prazo-03",
+    "conceitoId": "compra-a-prazo-fornecedores",
+    "nivelMin": 2,
+    "enunciado": "A compra de mercadorias a prazo aumenta o Ativo e o Passivo da empresa, sem alterar o Patrimônio Líquido.",
+    "gabarito": "C",
+    "explicacao": "É um fato permutativo entre grupos: entra estoque (Ativo) e surge a dívida (Passivo), no mesmo valor. O PL não muda.",
+    "regras": ["R-COM-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-icms-por-dentro-01",
+    "conceitoId": "icms-por-dentro",
+    "nivelMin": 3,
+    "enunciado": "Na compra de mercadorias para revenda por R$ {{totalNota}} com ICMS de 18%, o estoque deve ser registrado por R$ {{totalNota}}.",
+    "gabarito": "E",
+    "explicacao": "O ICMS recuperável não compõe o custo. O estoque entra por R$ {{custoEstoque}}, e R$ {{icms}} vão para ICMS a Recuperar.",
+    "regras": ["R-ICMS-02", "R-ICMS-04", "R-COM-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-icms-por-dentro-02",
+    "conceitoId": "icms-por-dentro",
+    "nivelMin": 3,
+    "enunciado": "O ICMS é calculado \"por dentro\", ou seja, o imposto integra a sua própria base de cálculo.",
+    "gabarito": "C",
+    "explicacao": "O ICMS está incluído no valor da operação. Por isso o destaque é feito sobre o preço, sem somar o imposto ao total da nota.",
+    "regras": ["R-ICMS-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-icms-por-dentro-03",
+    "conceitoId": "icms-por-dentro",
+    "nivelMin": 3,
+    "enunciado": "Numa nota de R$ 3.000,00 com ICMS de 18%, o valor total a pagar ao fornecedor é de R$ 3.540,00.",
+    "gabarito": "E",
+    "explicacao": "O ICMS já está dentro dos R$ 3.000,00. O total da nota continua R$ 3.000,00; os R$ 540,00 são a parcela de ICMS contida nele.",
+    "regras": ["R-ICMS-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-comercio-01",
+    "conceitoId": "ipi-no-custo-comercio",
+    "nivelMin": 3,
+    "enunciado": "O comerciante que adquire mercadorias para revenda pode recuperar o IPI destacado na nota fiscal do fabricante.",
+    "gabarito": "E",
+    "explicacao": "O comerciante não é contribuinte do IPI, então não aproveita o crédito. O IPI integra o custo de aquisição da mercadoria.",
+    "regras": ["R-IPI-01", "R-COM-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-comercio-02",
+    "conceitoId": "ipi-no-custo-comercio",
+    "nivelMin": 3,
+    "enunciado": "Para uma empresa comercial, o IPI pago na compra de mercadorias para revenda integra o custo do estoque.",
+    "gabarito": "C",
+    "explicacao": "Como o IPI não é recuperável pelo comerciante, ele faz parte do custo de aquisição.",
+    "regras": ["R-IPI-01", "R-COM-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-comercio-03",
+    "conceitoId": "ipi-no-custo-comercio",
+    "nivelMin": 3,
+    "enunciado": "Na compra de mercadorias para revenda, o IPI deve ser debitado em conta de despesa tributária.",
+    "gabarito": "E",
+    "explicacao": "O IPI não recuperável não é despesa do período: ele entra no Estoque e só afeta o resultado como parte do CMV, quando a mercadoria for vendida.",
+    "regras": ["R-IPI-01", "R-COM-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  }
+]

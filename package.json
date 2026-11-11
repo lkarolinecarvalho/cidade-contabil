@@ -1,0 +1,9 @@
+{
+  "name": "cidade-contabil",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {}
+}

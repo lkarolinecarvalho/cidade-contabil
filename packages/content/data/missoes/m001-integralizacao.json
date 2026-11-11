@@ -1,0 +1,20 @@
+{
+  "id": "m001-integralizacao",
+  "titulo": "Abrindo a empresa",
+  "nivel": 1,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": [],
+  "dialogo": [
+    { "fala": "npc", "texto": "Bem-vinda! Para a loja começar a funcionar, você precisa colocar dinheiro na empresa. Esse é o capital social." },
+    { "fala": "npc", "texto": "Lembre-se: o dinheiro da sua carteira é seu. O caixa é da empresa. São pessoas diferentes para a Contabilidade." }
+  ],
+  "operacao": {
+    "tipo": "integralizacao",
+    "valorCentavos": 1000000,
+    "meio": "caixa"
+  },
+  "ajudaLancamento": "pronto",
+  "conceitos": ["principio-entidade", "capital-social"],
+  "recompensa": { "pontos": 50 }
+}
