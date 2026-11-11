@@ -1,6 +1,13 @@
 import type { Centavos, DataJogo } from "@cidade/ledger";
 import { formatarReais } from "../texto/dinheiro";
-import { IconeCalendario, IconeCarteira, IconeEstrela, IconeMoeda, Retrato } from "./icones";
+import {
+  IconeCalendario,
+  IconeCarteira,
+  IconeEngrenagem,
+  IconeEstrela,
+  IconeMoeda,
+  Retrato,
+} from "./icones";
 
 export interface DadosDoHud {
   readonly empresa: string;
@@ -13,6 +20,7 @@ export interface DadosDoHud {
   readonly disponibilidadesCentavos: Centavos;
   readonly pontos: number;
   readonly data: DataJogo;
+  readonly aoAbrirConfiguracoes?: () => void;
 }
 
 /**
@@ -27,6 +35,7 @@ export function Hud({
   disponibilidadesCentavos,
   pontos,
   data,
+  aoAbrirConfiguracoes,
 }: DadosDoHud) {
   const porcentagem = Math.round(Math.min(Math.max(progresso, 0), 1) * 100);
   return (
@@ -50,10 +59,22 @@ export function Hud({
           </div>
         </div>
         <div className="hud-direita">
-          <span className="chip">
-            <IconeEstrela />
-            {pontos} pts
-          </span>
+          <div className="hud-topo">
+            <span className="chip">
+              <IconeEstrela />
+              {pontos} pts
+            </span>
+            {aoAbrirConfiguracoes && (
+              <button
+                type="button"
+                className="chip chip-botao"
+                aria-label="Configurações"
+                onClick={aoAbrirConfiguracoes}
+              >
+                <IconeEngrenagem />
+              </button>
+            )}
+          </div>
           <span className="chip">
             <IconeCalendario />
             Dia {data.dia} · Mês {data.mes}

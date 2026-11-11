@@ -1,4 +1,4 @@
-import { type Afirmativa, type Missao, paraOperacaoDoMotor } from "@cidade/content";
+import { type Missao, paraOperacaoDoMotor } from "@cidade/content";
 import {
   ErroDeOperacao,
   type Lancamento,
@@ -15,10 +15,10 @@ import {
   conferirLancamento,
   linhasEsperadas,
 } from "../orquestrador/lancamento";
-import { acoesRestantes, operacoesExecutadas, PONTOS_POR_AFIRMATIVA } from "../state/jogo";
+import { acoesRestantes, operacoesExecutadas } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
-import { preencherAfirmativa } from "../texto/afirmativas";
 import { formatarReais } from "../texto/dinheiro";
+import { JulgarAfirmativas } from "./Afirmativas";
 import { PainelDaDre } from "./Demonstracoes";
 import { EditorDeLancamento } from "./EditorDeLancamento";
 import { IconeCerto, IconeEstrela, Retrato } from "./icones";
@@ -58,7 +58,7 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
 
   // Escolhidas uma vez, ao abrir a missão.
   const [afirmativas] = useState(() =>
-    selecionarAfirmativas(missao, conteudo.afirmativas, jogoStore.getState().afirmativasVistas),
+    selecionarAfirmativas(missao, conteudo.afirmativas, jogoStore.getState()),
   );
   const [afirmativasFeitas, setAfirmativasFeitas] = useState(feitas > 0);
   const [etapa, setEtapa] = useState<Etapa>(() => {
@@ -175,7 +175,7 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
       )}
 
       {etapa === "afirmativas" && (
-        <EtapaDasAfirmativas
+        <JulgarAfirmativas
           afirmativas={afirmativas}
           valores={valores}
           aoContinuar={aposAfirmativas}
@@ -299,72 +299,6 @@ function EtapaDoEfeito({
         >
           Conferir
         </button>
-      )}
-    </section>
-  );
-}
-
-/** Passo "Julgue a Afirmação": Certo ou Errado, com a explicação e a regra. */
-function EtapaDasAfirmativas({
-  afirmativas,
-  valores,
-  aoContinuar,
-}: {
-  readonly afirmativas: readonly Afirmativa[];
-  readonly valores: Parameters<typeof preencherAfirmativa>[1];
-  readonly aoContinuar: () => void;
-}) {
-  const [indice, setIndice] = useState(0);
-  const [resposta, setResposta] = useState<"C" | "E" | null>(null);
-  const afirmativa = afirmativas[indice];
-  if (!afirmativa) return null;
-  const texto = preencherAfirmativa(afirmativa, valores);
-  const acertou = resposta === afirmativa.gabarito;
-
-  const responder = (escolha: "C" | "E") => {
-    setResposta(escolha);
-    jogoStore.getState().registrarResposta(afirmativa.id, escolha === afirmativa.gabarito);
-  };
-  const avancar = () => {
-    if (indice + 1 >= afirmativas.length) return aoContinuar();
-    setIndice(indice + 1);
-    setResposta(null);
-  };
-
-  return (
-    <section className="etapa">
-      <h4>
-        Julgue a Afirmação{" "}
-        <small>
-          {indice + 1} de {afirmativas.length}
-        </small>
-      </h4>
-      <p className="afirmativa">{texto.enunciado}</p>
-      {resposta === null ? (
-        <div className="julgar">
-          <button type="button" className="certo" onClick={() => responder("C")}>
-            ✓ Certo
-          </button>
-          <button type="button" className="errado" onClick={() => responder("E")}>
-            ✗ Errado
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className={`resultado ${acertou ? "certo" : "errado"}`}>
-            <strong>
-              {acertou ? `Acertou! +${PONTOS_POR_AFIRMATIVA} pts` : "Não foi dessa vez."} A
-              afirmativa está {afirmativa.gabarito === "C" ? "certa" : "errada"}.
-            </strong>
-            <span>{texto.explicacao}</span>
-          </div>
-          {afirmativa.regras.map((regra) => (
-            <RegraCitada key={regra} regra={regra} />
-          ))}
-          <button type="button" className="botao-principal" onClick={avancar}>
-            {indice + 1 >= afirmativas.length ? "Continuar" : "Próxima"}
-          </button>
-        </>
       )}
     </section>
   );

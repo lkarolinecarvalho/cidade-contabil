@@ -1047,3 +1047,119 @@ span.linha-valor {
   color: #fffaf0;
   font-weight: 800;
 }
+
+/* Estudo: progresso por conceito e configurações */
+.hud-topo {
+  display: flex;
+  gap: 4px;
+}
+
+.hud-topo .chip:first-child {
+  flex: 1;
+}
+
+.chip-botao {
+  padding: 2px 5px;
+}
+
+.conceitos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conceitos li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  background: var(--cartao-2);
+  border: 1.5px solid var(--borda);
+}
+
+.conceitos li.novo {
+  opacity: 0.6;
+}
+
+.conceitos li.fraco {
+  border-color: var(--vermelho);
+}
+
+.conceito-texto {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--texto-suave);
+}
+
+.conceito-texto strong {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--texto);
+}
+
+.caixas {
+  flex: none;
+  display: flex;
+  gap: 3px;
+}
+
+.caixas i {
+  width: 11px;
+  height: 16px;
+  border-radius: 3px;
+  background: #fff;
+  border: 1.5px solid var(--contorno);
+}
+
+.caixas i.cheia {
+  background: #6fae5a;
+}
+
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: var(--cartao-2);
+  border: 2px solid var(--contorno);
+  font-weight: 800;
+}
+
+.interruptor-trilho {
+  flex: none;
+  width: 46px;
+  height: 26px;
+  padding: 2px;
+  border-radius: 999px;
+  background: #b9ad92;
+  border: 2px solid var(--contorno);
+}
+
+.interruptor-trilho span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid var(--contorno);
+  transition: transform 120ms;
+}
+
+.interruptor[aria-checked="true"] .interruptor-trilho {
+  background: var(--verde);
+}
+
+.interruptor[aria-checked="true"] .interruptor-trilho span {
+  transform: translateX(20px);
+}

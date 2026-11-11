@@ -5,8 +5,16 @@ import { disponibilidadesDaEmpresa, nivelDoJogador } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
-import { IconeAperto, IconeBalanca, IconeBarras, IconeCalendario, IconeMapa } from "./icones";
 import {
+  IconeAperto,
+  IconeBalanca,
+  IconeBarras,
+  IconeCalendario,
+  IconeEngrenagem,
+  IconeMapa,
+} from "./icones";
+import {
+  PainelDeConfiguracoes,
   PainelDeMissoes,
   PainelDeProgresso,
   PainelDoCalendario,
@@ -18,10 +26,12 @@ import {
 const EMPRESA = "Mercado Vila Nova";
 
 type Atalho = "missoes" | "calendario" | "escritorio" | "progresso";
+/** Painéis abertos por um botão: os atalhos da base e as Configurações, no HUD. */
+type PainelFixo = Atalho | "configuracoes";
 
 /** Painel aberto: um dos atalhos da base ou o estabelecimento a que o avatar chegou. */
 type Painel =
-  | { readonly tipo: "atalho"; readonly atalho: Atalho }
+  | { readonly tipo: "atalho"; readonly atalho: PainelFixo }
   | { readonly tipo: "estabelecimento"; readonly estabelecimento: string };
 
 interface DefinicaoDoAtalho {
@@ -32,7 +42,7 @@ interface DefinicaoDoAtalho {
   readonly conteudo: () => ReactNode;
 }
 
-const ATALHOS: Readonly<Record<Atalho, DefinicaoDoAtalho>> = {
+const ATALHOS: Readonly<Record<PainelFixo, DefinicaoDoAtalho>> = {
   missoes: {
     rotulo: "Missões",
     titulo: "Missões",
@@ -50,6 +60,12 @@ const ATALHOS: Readonly<Record<Atalho, DefinicaoDoAtalho>> = {
     titulo: "Escritório Contábil",
     icone: () => <IconeBalanca />,
     conteudo: () => <PainelDoEscritorio />,
+  },
+  configuracoes: {
+    rotulo: "Configurações",
+    titulo: "Configurações",
+    icone: () => <IconeEngrenagem />,
+    conteudo: () => <PainelDeConfiguracoes />,
   },
   progresso: {
     rotulo: "Progresso",
@@ -74,6 +90,8 @@ function conteudoDo(painel: Painel): ReactNode {
   if (painel.tipo === "atalho") return ATALHOS[painel.atalho].conteudo();
   return <PainelDoEstabelecimento estabelecimento={painel.estabelecimento} />;
 }
+
+const NA_BASE: readonly Atalho[] = ["missoes", "calendario", "escritorio", "progresso"];
 
 /** Raiz da UI em React: HUD no topo, atalhos na base e os painéis em bottom sheet. */
 export function App() {
@@ -119,10 +137,11 @@ export function App() {
         disponibilidadesCentavos={disponibilidadesCentavos}
         pontos={pontos}
         data={data}
+        aoAbrirConfiguracoes={() => setPainel({ tipo: "atalho", atalho: "configuracoes" })}
       />
       {!mundoPronto && <p className="carregando">Carregando a cidade…</p>}
       <nav className="atalhos" aria-label="Atalhos">
-        {(Object.keys(ATALHOS) as Atalho[]).map((atalho) => (
+        {NA_BASE.map((atalho) => (
           <button key={atalho} type="button" onClick={() => setPainel({ tipo: "atalho", atalho })}>
             {ATALHOS[atalho].icone()}
             {ATALHOS[atalho].rotulo}

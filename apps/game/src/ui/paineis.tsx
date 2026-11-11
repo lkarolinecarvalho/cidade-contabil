@@ -17,10 +17,23 @@ import {
 } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
-import { PainelDoEscritorio } from "./Demonstracoes";
+import { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
+import { PainelDeRevisao } from "./Estudo";
 import { FluxoDaMissao } from "./FluxoDaMissao";
 
-export { PainelDoEscritorio } from "./Demonstracoes";
+export { PainelDeConfiguracoes, PainelDeProgresso } from "./Estudo";
+
+/** Escritório Contábil: a Revisão, o Balanço e a DRE. */
+export function PainelDoEscritorio() {
+  return (
+    <>
+      <PainelDeRevisao />
+      <div className="painel-secao">
+        <PainelDasDemonstracoes />
+      </div>
+    </>
+  );
+}
 
 const nomeDoEstabelecimento = (id: string): string =>
   conteudo.estabelecimentos.find((e) => e.id === id)?.nome ?? id;
@@ -295,24 +308,5 @@ export function PainelDoCalendario() {
         <p className="painel-nota">Pagamentos e recebimentos são feitos no Banco.</p>
       </div>
     </>
-  );
-}
-
-export function PainelDeProgresso() {
-  const pontos = useJogo((jogo) => jogo.pontos);
-  const concluidas = useJogo((jogo) => jogo.missoesConcluidas);
-  return (
-    <div className="cartao painel-progresso">
-      <p className="painel-texto">
-        <strong>{pontos}</strong> pontos
-      </p>
-      <p className="painel-texto">
-        <strong>
-          {concluidas.length} de {conteudo.missoes.length}
-        </strong>{" "}
-        missões concluídas
-      </p>
-      <p className="painel-nota">O progresso por conceito entra numa próxima versão.</p>
-    </div>
   );
 }

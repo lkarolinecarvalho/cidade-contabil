@@ -110,6 +110,17 @@ export const IconeAperto = () => (
   </Icone>
 );
 
+export const IconeEngrenagem = () => (
+  <Icone>
+    <path
+      d="M10.3 2.5h3.4l.5 2.4 1.7.7 2-1.3 2.4 2.4-1.3 2 .7 1.7 2.4.5v3.4l-2.4.5-.7 1.7 1.3 2-2.4 2.4-2-1.3-1.7.7-.5 2.4h-3.4l-.5-2.4-1.7-.7-2 1.3-2.4-2.4 1.3-2-.7-1.7-2.4-.5v-3.4l2.4-.5.7-1.7-1.3-2 2.4-2.4 2 1.3 1.7-.7z"
+      fill="#b9c2cc"
+      {...traco}
+    />
+    <circle cx="12" cy="12" r="3.4" fill="#fffaf0" {...traco} />
+  </Icone>
+);
+
 export const IconeCerto = () => (
   <Icone>
     <path
