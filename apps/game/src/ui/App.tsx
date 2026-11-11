@@ -4,26 +4,47 @@ import { disponibilidadesDaEmpresa, nivelDoJogador } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
-import { PainelDeMissoes, PainelDeProgresso, PainelDoEscritorio } from "./paineis";
+import {
+  PainelDeMissoes,
+  PainelDeProgresso,
+  PainelDoEscritorio,
+  PainelDoEstabelecimento,
+} from "./paineis";
 
-type Painel = "missoes" | "escritorio" | "progresso";
+type Atalho = "missoes" | "escritorio" | "progresso";
 
-interface DefinicaoDoPainel {
-  /** Texto curto do atalho na base da tela. */
-  readonly atalho: string;
+/** Painel aberto: um dos atalhos da base ou o estabelecimento a que o avatar chegou. */
+type Painel =
+  | { readonly tipo: "atalho"; readonly atalho: Atalho }
+  | { readonly tipo: "estabelecimento"; readonly estabelecimento: string };
+
+interface DefinicaoDoAtalho {
+  /** Texto curto do botão na base da tela. */
+  readonly rotulo: string;
   readonly titulo: string;
   readonly conteudo: () => ReactNode;
 }
 
-const PAINEIS: Readonly<Record<Painel, DefinicaoDoPainel>> = {
-  missoes: { atalho: "Missões", titulo: "Missões", conteudo: () => <PainelDeMissoes /> },
+const ATALHOS: Readonly<Record<Atalho, DefinicaoDoAtalho>> = {
+  missoes: { rotulo: "Missões", titulo: "Missões", conteudo: () => <PainelDeMissoes /> },
   escritorio: {
-    atalho: "Escritório",
+    rotulo: "Escritório",
     titulo: "Escritório Contábil",
     conteudo: () => <PainelDoEscritorio />,
   },
-  progresso: { atalho: "Progresso", titulo: "Progresso", conteudo: () => <PainelDeProgresso /> },
+  progresso: { rotulo: "Progresso", titulo: "Progresso", conteudo: () => <PainelDeProgresso /> },
 };
+
+function tituloDo(painel: Painel): string {
+  if (painel.tipo === "atalho") return ATALHOS[painel.atalho].titulo;
+  const estabelecimento = conteudo.estabelecimentos.find((e) => e.id === painel.estabelecimento);
+  return estabelecimento?.nome ?? painel.estabelecimento;
+}
+
+function conteudoDo(painel: Painel): ReactNode {
+  if (painel.tipo === "atalho") return ATALHOS[painel.atalho].conteudo();
+  return <PainelDoEstabelecimento estabelecimento={painel.estabelecimento} />;
+}
 
 /** Raiz da UI em React: HUD no topo, atalhos na base e os painéis em bottom sheet. */
 export function App() {
@@ -38,10 +59,17 @@ export function App() {
   const nivel = useJogo((jogo) => nivelDoJogador(jogo, conteudo.missoes));
 
   useEffect(() => {
-    const cancelar = bus.ouvir("mundo:pronto", () => setMundoPronto(true));
+    const cancelarPronto = bus.ouvir("mundo:pronto", () => setMundoPronto(true));
+    // Andar até um estabelecimento abre o painel dele.
+    const cancelarChegada = bus.ouvir("estabelecimento:alcancado", ({ estabelecimento }) =>
+      setPainel({ tipo: "estabelecimento", estabelecimento }),
+    );
     // Só agora o mundo pode ser criado: a UI já está ouvindo.
     bus.emitir("ui:pronta", undefined);
-    return cancelar;
+    return () => {
+      cancelarPronto();
+      cancelarChegada();
+    };
   }, []);
 
   useEffect(() => {
@@ -49,7 +77,6 @@ export function App() {
   }, [painel]);
 
   const fechar = useCallback(() => setPainel(null), []);
-  const aberto = painel ? PAINEIS[painel] : null;
 
   return (
     <>
@@ -62,14 +89,18 @@ export function App() {
       />
       {!mundoPronto && <p className="carregando">Carregando a cidade…</p>}
       <nav className="atalhos" aria-label="Atalhos">
-        {(Object.keys(PAINEIS) as Painel[]).map((id) => (
-          <button key={id} type="button" onClick={() => setPainel(id)}>
-            {PAINEIS[id].atalho}
+        {(Object.keys(ATALHOS) as Atalho[]).map((atalho) => (
+          <button key={atalho} type="button" onClick={() => setPainel({ tipo: "atalho", atalho })}>
+            {ATALHOS[atalho].rotulo}
           </button>
         ))}
       </nav>
-      <BottomSheet aberto={aberto !== null} titulo={aberto?.titulo ?? ""} aoFechar={fechar}>
-        {aberto?.conteudo()}
+      <BottomSheet
+        aberto={painel !== null}
+        titulo={painel ? tituloDo(painel) : ""}
+        aoFechar={fechar}
+      >
+        {painel && conteudoDo(painel)}
       </BottomSheet>
     </>
   );

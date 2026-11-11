@@ -1,21 +1,23 @@
+import type { Missao } from "@cidade/content";
 import { balanco } from "@cidade/ledger";
 import { useState } from "react";
 import { proximaMissao } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
 
-/** Missão atual. No M5 o botão dá lugar ao ciclo negociar → efeito → afirmativas → lançamento. */
-export function PainelDeMissoes() {
+const nomeDoEstabelecimento = (id: string): string =>
+  conteudo.estabelecimentos.find((e) => e.id === id)?.nome ?? id;
+
+function useProximaMissao(): Missao | undefined {
   const concluidas = useJogo((jogo) => jogo.missoesConcluidas);
+  return proximaMissao({ missoesConcluidas: concluidas }, conteudo.missoes);
+}
+
+/** A missão com as falas do NPC. No M5 o botão dá lugar ao ciclo negociar → efeito → afirmativas → lançamento. */
+function CartaoDaMissao({ missao }: { readonly missao: Missao }) {
   const concluirMissao = useJogo((jogo) => jogo.concluirMissao);
   const [erro, setErro] = useState<string | null>(null);
-
-  const missao = proximaMissao({ missoesConcluidas: concluidas }, conteudo.missoes);
-  if (!missao) {
-    return <p className="painel-texto">Você concluiu todas as missões da campanha.</p>;
-  }
   const npc = conteudo.npcs.find((n) => n.id === missao.npc);
-  const local = conteudo.estabelecimentos.find((e) => e.id === missao.estabelecimento);
 
   const concluir = () => {
     try {
@@ -28,9 +30,7 @@ export function PainelDeMissoes() {
 
   return (
     <article className="painel-missao">
-      <p className="painel-sobretitulo">
-        Capítulo {missao.capitulo} · {local?.nome}
-      </p>
+      <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
       <h3>{missao.titulo}</h3>
       {missao.dialogo.map((fala) => (
         <p key={fala.texto} className="painel-fala">
@@ -48,6 +48,53 @@ export function PainelDeMissoes() {
       <p className="painel-nota">
         Provisório: por enquanto a missão é concluída direto. As afirmativas e o lançamento entram
         numa próxima versão.
+      </p>
+    </article>
+  );
+}
+
+/** Painel que abre quando o avatar chega a um estabelecimento. */
+export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabelecimento: string }) {
+  const missao = useProximaMissao();
+  const aqui = missao?.estabelecimento === estabelecimento;
+
+  return (
+    <>
+      {missao && aqui ? (
+        // A chave reinicia o cartão (e a mensagem de erro) quando a missão muda.
+        <CartaoDaMissao key={missao.id} missao={missao} />
+      ) : (
+        <div>
+          <p className="painel-texto">Ninguém aqui tem uma proposta para você agora.</p>
+          {missao && (
+            <p className="painel-nota">
+              Próxima missão: “{missao.titulo}”, em {nomeDoEstabelecimento(missao.estabelecimento)}.
+            </p>
+          )}
+        </div>
+      )}
+      {estabelecimento === "escritorio-contabil" && (
+        <div className="painel-secao">
+          <PainelDoEscritorio />
+        </div>
+      )}
+    </>
+  );
+}
+
+/** Atalho de Missões: qual é a missão atual e aonde ir. */
+export function PainelDeMissoes() {
+  const missao = useProximaMissao();
+  if (!missao) {
+    return <p className="painel-texto">Você concluiu todas as missões da campanha.</p>;
+  }
+  return (
+    <article className="painel-missao">
+      <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
+      <h3>{missao.titulo}</h3>
+      <p className="painel-texto">
+        Vá até <strong>{nomeDoEstabelecimento(missao.estabelecimento)}</strong>: toque no prédio com
+        o sinal <span className="sinal-oferta">!</span> no mapa.
       </p>
     </article>
   );

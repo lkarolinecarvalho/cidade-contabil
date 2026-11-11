@@ -293,6 +293,24 @@ button {
   font-weight: 700;
 }
 
+.painel-secao {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--painel-borda);
+}
+
+.sinal-oferta {
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background: #ffd84a;
+  color: #1b222b;
+  font-weight: 700;
+  line-height: 1.4em;
+  text-align: center;
+}
+
 .painel-balanco table {
   width: 100%;
   border-collapse: collapse;
