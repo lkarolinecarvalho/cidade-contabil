@@ -7,9 +7,9 @@ os lançamentos.
 
 **Público:** concurseiros (principal) e estudantes de Ciências Contábeis.
 
-**Status:** marcos M0 a M3 concluídos: monorepo, motor contábil (`packages/ledger`),
-conteúdo (`packages/content`) e a casca do app com HUD e painéis. O próximo é o M4, o
-mapa da cidade.
+**Status:** marcos M0 a M4 concluídos: monorepo, motor contábil (`packages/ledger`),
+conteúdo (`packages/content`), a casca do app com HUD e painéis e o mapa da cidade com
+os 6 estabelecimentos. O próximo é o M5, o ciclo completo da missão.
 
 ## Documentos
 

@@ -8,6 +8,7 @@ nesta ordem: `docs/regras-contabeis.md`, `docs/adr/`, `docs/gdd.md`.
 | `conceito-original.md` | Conceito inicial do jogo (v1.0) | Já incorporado ao `gdd.md` |
 | `historia-campanha.md` | Campanha narrativa "O Primeiro Negócio" (capítulos 1–8) | Origem da campanha; versão oficial em `docs/campanha.md` |
 | `mockup-retrato.png`, `mockup-paisagem.png` | Mockups gerados como norte visual | Só referência de estilo e de tom |
+| `assets.md` | Registro de arte, som e fontes do jogo, com origem e licença | Atualizar a cada asset adicionado |
 | `anki/*.apkg` | Deck Anki de estudo de Contabilidade (adicionado manualmente) | Fonte de ideias para afirmativas (ver abaixo) |
 
 ## História da campanha
