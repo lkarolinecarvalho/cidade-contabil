@@ -205,3 +205,12 @@ capítulos 1–3 não têm operações com mercadorias.
    tributos deve ser parametrizado para receber depois um "modo pós-reforma" (ADR-0002).
 3. **Vidas úteis (R-DEP-01)** — confirmar os valores padrão; são estimativas, não
    taxas fiscais obrigatórias.
+
+## 14. Regras faltantes (a escrever)
+
+Casos que o jogo vai ter, mas que ainda não têm regra. Até a regra ser escrita aqui, o
+motor recusa a operação (`caso_nao_coberto`).
+
+1. **Compra ou venda com mais de um produto** — falta definir como ratear frete, IPI e
+   ICMS entre os produtos da nota (custo de aquisição por produto) e como arredondar
+   cada linha. Hoje `compra` e `venda` aceitam exatamente um produto.
