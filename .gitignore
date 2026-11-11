@@ -12,3 +12,6 @@ coverage/
 # Capacitor
 apps/game/android/app/build/
 apps/game/ios/App/Pods/
+
+# Deck Anki de referência: grande demais para o GitHub, fica só local
+*.apkg
