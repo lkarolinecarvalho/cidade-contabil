@@ -45,14 +45,14 @@
 - Estado do jogo serializável em JSON, com `versaoSchema` para migrações.
 - Persistência local (IndexedDB) na v1. Backend fica para depois.
 
-## API pública do ledger (proposta)
+## API pública do ledger
 
 ```ts
-criarEmpresa(parametros): EstadoContabil
-preverLancamentos(estado, operacao, data): { lancamentos, novoEstado }
+criarEmpresa(opcoes?): EstadoContabil
+preverLancamentos(estado, operacao, data): { lancamentos, novoEstado, valores }
 aplicar(estado, operacao, data): EstadoContabil
 compararLancamento(esperado, informado): ResultadoComparacao
-simularLancamentoInformado(estado, informado, data): { dre, balanco }  // prévia do erro, nunca grava
+simularLancamentoInformado(estado, informado, data, periodo?): PreviaDoErro  // nunca grava
 depreciarMes(estado, mes): Operacao
 saldos(estado, ate?): Saldo[]
 balancete(estado, ate?): Balancete
@@ -60,6 +60,14 @@ dre(estado, periodo): DRE
 balanco(estado, data): BalancoPatrimonial
 apurarIcms(estado, mes): Operacao
 ```
+
+- `data` é `{ ano, mes, dia }` do calendário do jogo; `periodo` é `{ de, ate }`, inclusivo.
+- `valores` traz os números calculados (total da nota, ICMS, custo, CMV...) para os
+  placeholders das afirmativas.
+- `PreviaDoErro` é `{ equilibrado: true, dre, balanco }` ou, se débitos ≠ créditos,
+  `{ equilibrado: false, ... }` sem demonstrações.
+- Operação bloqueada lança `ErroDeOperacao`, com `codigo` e a `regra` quando houver.
+- O encerramento (R-DEM-04) é a operação `{ tipo: "encerramento" }`.
 
 O orquestrador e a UI só falam com o ledger por essa API.
 
