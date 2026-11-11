@@ -39,7 +39,8 @@ export function saldoDevedor(movimentos: Movimentos, conta: CodigoConta): Centav
 
 /** Créditos − débitos da conta. Positivo = saldo credor. */
 export function saldoCredor(movimentos: Movimentos, conta: CodigoConta): Centavos {
-  return -saldoDevedor(movimentos, conta);
+  // `0 - x`, e não `-x`: evita o zero negativo quando o saldo é zero.
+  return 0 - saldoDevedor(movimentos, conta);
 }
 
 export function ateAData(ate: DataJogo | undefined): (lancamento: Lancamento) => boolean {
@@ -74,7 +75,7 @@ export function saldosDosLancamentos(
       natureza: c.natureza,
       debitosCentavos: movimento.debitosCentavos,
       creditosCentavos: movimento.creditosCentavos,
-      saldoCentavos: c.natureza === "devedora" ? devedor : -devedor,
+      saldoCentavos: c.natureza === "devedora" ? devedor : 0 - devedor,
     };
   });
 }

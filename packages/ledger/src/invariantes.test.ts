@@ -233,8 +233,9 @@ describe("arredondamento (propriedade)", () => {
   it("R-GER-02: multiplicarEDividir fica a no máximo meio centavo do valor exato, para cima no empate", () => {
     fc.assert(
       fc.property(
+        // Faixa em que o resultado cabe num inteiro seguro (até 1e15).
         fc.integer({ min: 0, max: 10_000_000_000 }),
-        fc.integer({ min: 0, max: 1_000_000 }),
+        fc.integer({ min: 0, max: 100_000 }),
         fc.integer({ min: 1, max: 1_000_000 }),
         (a, b, divisor) => {
           const resultado = BigInt(multiplicarEDividir(a, b, divisor));
