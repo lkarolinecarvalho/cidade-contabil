@@ -19,6 +19,9 @@
       "preset": "recommended",
       "suspicious": {
         "noExplicitAny": "error"
+      },
+      "style": {
+        "noDescendingSpecificity": "off"
       }
     }
   }

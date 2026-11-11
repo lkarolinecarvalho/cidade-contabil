@@ -1,10 +1,9 @@
 import type { Missao } from "@cidade/content";
-import { balanco } from "@cidade/ledger";
-import { useState } from "react";
+import { balanco, dre } from "@cidade/ledger";
 import { proximaMissao } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
-import { IconeCerto, IconeEstrela, Retrato } from "./icones";
+import { FluxoDaMissao } from "./FluxoDaMissao";
 
 const nomeDoEstabelecimento = (id: string): string =>
   conteudo.estabelecimentos.find((e) => e.id === id)?.nome ?? id;
@@ -13,63 +12,6 @@ function useProximaMissao(): Missao | undefined {
   const concluidas = useJogo((jogo) => jogo.missoesConcluidas);
   return proximaMissao({ missoesConcluidas: concluidas }, conteudo.missoes);
 }
-
-/** A missão com as falas do NPC. No M5 o botão dá lugar ao ciclo negociar → efeito → afirmativas → lançamento. */
-function CartaoDaMissao({ missao }: { readonly missao: Missao }) {
-  const concluirMissao = useJogo((jogo) => jogo.concluirMissao);
-  const [erro, setErro] = useState<string | null>(null);
-  const npc = conteudo.npcs.find((n) => n.id === missao.npc);
-
-  const concluir = () => {
-    try {
-      concluirMissao(missao);
-      setErro(null);
-    } catch (falha) {
-      setErro(falha instanceof Error ? falha.message : "Não foi possível concluir a missão.");
-    }
-  };
-
-  return (
-    <article className="painel-missao">
-      <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
-      <h3>{missao.titulo}</h3>
-      <div className="conversa">
-        <div className="conversa-quem">
-          <Retrato personagem={missao.npc} nome={npc?.nome ?? ""} />
-          <strong>{npc?.nome}</strong>
-          <span>{npc?.papel}</span>
-        </div>
-        <div className="conversa-falas">
-          {missao.dialogo.map((fala) => (
-            <p key={fala.texto} className="balao">
-              {fala.texto}
-            </p>
-          ))}
-        </div>
-      </div>
-      {erro && (
-        <p className="painel-erro" role="alert">
-          {erro}
-        </p>
-      )}
-      <div className="recompensa">
-        <IconeEstrela />
-        <span>
-          Recompensa: <strong>+{missao.recompensa.pontos} pts</strong>
-        </span>
-      </div>
-      <button type="button" className="botao-principal" onClick={concluir}>
-        <IconeCerto />
-        Concluir Missão
-      </button>
-      <p className="painel-nota">
-        Provisório: por enquanto a missão é concluída direto. As afirmativas e o lançamento entram
-        numa próxima versão.
-      </p>
-    </article>
-  );
-}
-
 /** Painel que abre quando o avatar chega a um estabelecimento. */
 export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabelecimento: string }) {
   const missao = useProximaMissao();
@@ -78,8 +20,8 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
   return (
     <>
       {missao && aqui ? (
-        // A chave reinicia o cartão (e a mensagem de erro) quando a missão muda.
-        <CartaoDaMissao key={missao.id} missao={missao} />
+        // A chave recomeça o ciclo quando a missão muda.
+        <FluxoDaMissao key={missao.id} missao={missao} />
       ) : (
         <div className="cartao">
           <p className="painel-texto">Ninguém aqui tem uma proposta para você agora.</p>
@@ -122,7 +64,7 @@ export function PainelDeMissoes() {
 }
 
 /** Resumo do Balanço, lido do razão. Diário, Razão, DRE e Revisão entram nos próximos marcos. */
-export function PainelDoEscritorio() {
+function PainelDoBalanco() {
   const contabil = useJogo((jogo) => jogo.contabil);
   const data = useJogo((jogo) => jogo.data);
   const bp = balanco(contabil, data);
@@ -185,5 +127,68 @@ export function PainelDeProgresso() {
       </p>
       <p className="painel-nota">O progresso por conceito entra numa próxima versão.</p>
     </div>
+  );
+}
+
+/** DRE do mês corrente, lida do razão (R-DEM-02). */
+function PainelDaDre() {
+  const contabil = useJogo((jogo) => jogo.contabil);
+  const data = useJogo((jogo) => jogo.data);
+  const d = dre(contabil, { de: { ...data, dia: 1 }, ate: { ...data, dia: 31 } });
+  const menos = (valor: number) => `(${formatarReais(valor)})`;
+  const comValor = (linhas: typeof d.deducoes) => linhas.filter((l) => l.valorCentavos !== 0);
+
+  return (
+    <div className="cartao painel-balanco">
+      <h3>DRE do mês</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td>Receita Bruta de Vendas</td>
+            <td>{formatarReais(d.totalReceitaBrutaCentavos)}</td>
+          </tr>
+          {comValor(d.deducoes).map((l) => (
+            <tr key={l.conta}>
+              <td>(−) {l.nome}</td>
+              <td>{menos(l.valorCentavos)}</td>
+            </tr>
+          ))}
+          <tr className="total">
+            <td>= Receita Líquida</td>
+            <td>{formatarReais(d.receitaLiquidaCentavos)}</td>
+          </tr>
+          <tr>
+            <td>(−) CMV</td>
+            <td>{menos(d.totalCustosCentavos)}</td>
+          </tr>
+          <tr className="total">
+            <td>= Lucro Bruto</td>
+            <td>{formatarReais(d.lucroBrutoCentavos)}</td>
+          </tr>
+          {comValor(d.despesasOperacionais).map((l) => (
+            <tr key={l.conta}>
+              <td>(−) {l.nome}</td>
+              <td>{menos(l.valorCentavos)}</td>
+            </tr>
+          ))}
+          <tr className="total">
+            <td>= Resultado do período{d.resultadoCentavos < 0 ? " (prejuízo)" : ""}</td>
+            <td>{formatarReais(d.resultadoCentavos)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** Escritório Contábil: Balanço e DRE. Diário, Razão e Revisão entram nos próximos marcos. */
+export function PainelDoEscritorio() {
+  return (
+    <>
+      <PainelDoBalanco />
+      <div className="painel-secao">
+        <PainelDaDre />
+      </div>
+    </>
   );
 }
