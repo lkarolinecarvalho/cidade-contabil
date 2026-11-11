@@ -1,14 +1,24 @@
 import { carregarConteudoDoJogo, type Missao } from "@cidade/content";
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
-import { concluirMissao, type EstadoDoJogo, novoJogo, type OpcoesDaOperacao } from "./jogo";
+import {
+  concluirMissao,
+  type EstadoDoJogo,
+  executarProximaOperacao,
+  novoJogo,
+  type OpcoesDaOperacao,
+  registrarResposta,
+} from "./jogo";
 
 /** Conteúdo validado na carga do app: dado inválido impede o jogo de abrir. */
 export const conteudo = carregarConteudoDoJogo();
 
+/** Erros do motor ou do jogo são propagados, e o estado não muda. */
 interface Acoes {
-  /** Conclui a missão. Erros do motor ou do jogo são propagados, e o estado não muda. */
-  concluirMissao(missao: Missao, opcoes?: OpcoesDaOperacao): void;
+  /** Grava no razão a próxima operação pendente da missão. */
+  executarProximaOperacao(missao: Missao, opcoes?: OpcoesDaOperacao): void;
+  concluirMissao(missao: Missao): void;
+  registrarResposta(afirmativa: string, acertou: boolean): void;
   reiniciar(): void;
 }
 
@@ -20,8 +30,14 @@ export type JogoStore = EstadoDoJogo & Acoes;
  */
 export const jogoStore = createStore<JogoStore>()((set, get) => ({
   ...novoJogo(),
-  concluirMissao(missao, opcoes) {
-    set(concluirMissao(get(), missao, opcoes));
+  executarProximaOperacao(missao, opcoes) {
+    set(executarProximaOperacao(get(), missao, opcoes));
+  },
+  concluirMissao(missao) {
+    set(concluirMissao(get(), missao));
+  },
+  registrarResposta(afirmativa, acertou) {
+    set(registrarResposta(get(), afirmativa, acertou));
   },
   reiniciar() {
     set(novoJogo());

@@ -33,7 +33,17 @@ export interface EstadoDoJogo {
   readonly pontos: number;
   readonly data: DataJogo;
   readonly missoesConcluidas: readonly string[];
+  /**
+   * Missão começada e ainda não concluída: quantas operações dela já foram gravadas.
+   * Evita gravar a mesma operação duas vezes se o jogador fechar o painel no meio.
+   */
+  readonly andamento: { readonly missao: string; readonly operacoesExecutadas: number } | null;
+  /** Quantas vezes cada afirmativa já foi mostrada, para variar a redação. */
+  readonly afirmativasVistas: Readonly<Record<string, number>>;
 }
+
+/** Pontos por afirmativa certa (parâmetro de balanceamento). */
+export const PONTOS_POR_AFIRMATIVA = 10;
 
 /** Carteira inicial do avatar (docs/cenario-campanha.md). */
 export const CARTEIRA_INICIAL: Centavos = 28_000_000;
@@ -47,6 +57,8 @@ export function novoJogo(): EstadoDoJogo {
     pontos: 0,
     data: { ano: 1, mes: 1, dia: 1 },
     missoesConcluidas: [],
+    andamento: null,
+    afirmativasVistas: {},
   };
 }
 
@@ -97,26 +109,81 @@ export function executarOperacao(
   return { ...estado, contabil, carteiraCentavos, participacoes };
 }
 
-/** Conclui a missão: executa as operações em ordem e soma os pontos. Tudo ou nada. */
-export function concluirMissao(
-  estado: EstadoDoJogo,
-  missao: Missao,
-  opcoes: OpcoesDaOperacao = {},
-): EstadoDoJogo {
+function exigirMissaoDisponivel(estado: EstadoDoJogo, missao: Missao): void {
   if (estado.missoesConcluidas.includes(missao.id)) {
     throw new ErroDeJogo("Essa missão já foi concluída.");
   }
   const pendente = missao.requisitos.find((r) => !estado.missoesConcluidas.includes(r));
   if (pendente) throw new ErroDeJogo("Conclua antes as missões anteriores.");
+}
 
-  const depois = missao.operacoes.reduce(
-    (atual, operacao) => executarOperacao(atual, operacao, opcoes),
-    estado,
-  );
+/** Quantas operações da missão já foram gravadas no razão. */
+export function operacoesExecutadas(
+  estado: Pick<EstadoDoJogo, "andamento">,
+  missao: Missao,
+): number {
+  return estado.andamento?.missao === missao.id ? estado.andamento.operacoesExecutadas : 0;
+}
+
+/**
+ * Grava a próxima operação pendente da missão. O razão recebe sempre os lançamentos
+ * do motor, qualquer que tenha sido o lançamento montado pelo jogador (ADR-0005).
+ */
+export function executarProximaOperacao(
+  estado: EstadoDoJogo,
+  missao: Missao,
+  opcoes: OpcoesDaOperacao = {},
+): EstadoDoJogo {
+  exigirMissaoDisponivel(estado, missao);
+  const feitas = operacoesExecutadas(estado, missao);
+  const operacao = missao.operacoes[feitas];
+  if (!operacao) throw new ErroDeJogo("Todas as operações dessa missão já foram feitas.");
   return {
-    ...depois,
-    pontos: depois.pontos + missao.recompensa.pontos,
-    missoesConcluidas: [...depois.missoesConcluidas, missao.id],
+    ...executarOperacao(estado, operacao, opcoes),
+    andamento: { missao: missao.id, operacoesExecutadas: feitas + 1 },
+  };
+}
+
+/** Conclui a missão, depois de todas as operações gravadas, e soma os pontos. */
+export function concluirMissao(estado: EstadoDoJogo, missao: Missao): EstadoDoJogo {
+  exigirMissaoDisponivel(estado, missao);
+  if (operacoesExecutadas(estado, missao) < missao.operacoes.length) {
+    throw new ErroDeJogo("Ainda há operações dessa missão por fazer.");
+  }
+  return {
+    ...estado,
+    pontos: estado.pontos + missao.recompensa.pontos,
+    missoesConcluidas: [...estado.missoesConcluidas, missao.id],
+    andamento: null,
+  };
+}
+
+/** Faz a missão inteira de uma vez: todas as operações pendentes e a conclusão. */
+export function jogarMissaoInteira(
+  estado: EstadoDoJogo,
+  missao: Missao,
+  opcoes: OpcoesDaOperacao = {},
+): EstadoDoJogo {
+  let atual = estado;
+  while (operacoesExecutadas(atual, missao) < missao.operacoes.length) {
+    atual = executarProximaOperacao(atual, missao, opcoes);
+  }
+  return concluirMissao(atual, missao);
+}
+
+/** Registra a resposta a uma afirmativa: conta a exibição e pontua o acerto. */
+export function registrarResposta(
+  estado: EstadoDoJogo,
+  afirmativa: string,
+  acertou: boolean,
+): EstadoDoJogo {
+  return {
+    ...estado,
+    pontos: estado.pontos + (acertou ? PONTOS_POR_AFIRMATIVA : 0),
+    afirmativasVistas: {
+      ...estado.afirmativasVistas,
+      [afirmativa]: (estado.afirmativasVistas[afirmativa] ?? 0) + 1,
+    },
   };
 }
 

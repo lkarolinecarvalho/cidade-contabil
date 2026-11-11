@@ -158,7 +158,7 @@ export const missaoSchema = z.strictObject({
   dialogo: z.array(z.strictObject({ fala: z.enum(["npc", "jogador"]), texto })).min(1),
   /** Em ordem. Pode ser vazio: há fatos que não geram lançamento (ex.: R-CAP-02). */
   operacoes: z.array(operacaoSchema),
-  ajudaLancamento: z.enum(["auto", "pronto", "contas_sugeridas", "livre"]),
+  ajudaLancamento: z.enum(["auto", "pronto", "contas_sugeridas", "contas_e_valores", "livre"]),
   conceitos: z.array(id).min(1),
   recompensa: z.strictObject({ pontos: z.number().int().min(0) }),
 });

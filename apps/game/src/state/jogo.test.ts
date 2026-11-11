@@ -8,9 +8,14 @@ import {
   ErroDeJogo,
   type EstadoDoJogo,
   executarOperacao,
+  executarProximaOperacao,
+  jogarMissaoInteira,
   nivelDoJogador,
   novoJogo,
+  operacoesExecutadas,
+  PONTOS_POR_AFIRMATIVA,
   proximaMissao,
+  registrarResposta,
 } from "./jogo";
 
 const { missoes } = carregarConteudoDoJogo();
@@ -25,7 +30,7 @@ const missao = (id: string) => {
 function jogarAte(id: string): EstadoDoJogo {
   let estado = novoJogo();
   for (const m of missoes) {
-    estado = concluirMissao(estado, m);
+    estado = jogarMissaoInteira(estado, m);
     if (m.id === id) return estado;
   }
   throw new Error(`Missão não encontrada: ${id}`);
@@ -75,7 +80,7 @@ describe("estado do jogo", () => {
 
     // O razão é o mesmo com qualquer carteira: nada do estado contábil depende dela.
     let rico = { ...novoJogo(), carteiraCentavos: 99_000_000 };
-    for (const m of missoes) rico = concluirMissao(rico, m);
+    for (const m of missoes) rico = jogarMissaoInteira(rico, m);
     expect(rico.contabil).toEqual(estado.contabil);
 
     // O que saiu da carteira é só a parte do avatar no capital integralizado.
@@ -86,7 +91,7 @@ describe("estado do jogo", () => {
 
   it("carteira insuficiente bloqueia a integralização, sem alterar nada", () => {
     const pobre = { ...jogarAte("m001-constituicao"), carteiraCentavos: 100 };
-    expect(() => concluirMissao(pobre, missao("m001-integralizacao"))).toThrow(ErroDeJogo);
+    expect(() => jogarMissaoInteira(pobre, missao("m001-integralizacao"))).toThrow(ErroDeJogo);
     expect(pobre.contabil.lancamentos).toHaveLength(1);
   });
 
@@ -102,18 +107,6 @@ describe("estado do jogo", () => {
     ).toThrow(ErroDeOperacao);
   });
 
-  it("concluir missão soma os pontos e respeita requisitos e repetição", () => {
-    const primeira = missao("m001-capital-autorizado");
-    const estado = concluirMissao(novoJogo(), primeira);
-    expect(estado.pontos).toBe(primeira.recompensa.pontos);
-    expect(estado.missoesConcluidas).toEqual([primeira.id]);
-    // Capital autorizado não gera lançamento (R-CAP-02).
-    expect(estado.contabil.lancamentos).toEqual([]);
-
-    expect(() => concluirMissao(estado, primeira)).toThrow(/já foi concluída/);
-    expect(() => concluirMissao(novoJogo(), missao("m002-compra-imovel"))).toThrow(/anteriores/);
-  });
-
   it("a próxima missão e o nível acompanham o progresso", () => {
     expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m001-capital-autorizado");
     const noCapitulo4 = jogarAte("m003-equipamentos");
@@ -122,5 +115,55 @@ describe("estado do jogo", () => {
     const fim = jogarAte("m007-apuracao-icms");
     expect(proximaMissao(fim, missoes)).toBeUndefined();
     expect(nivelDoJogador(fim, missoes)).toBe(4);
+  });
+});
+
+describe("andamento da missão", () => {
+  it("missão sem operação conclui direto e não gera lançamento (R-CAP-02)", () => {
+    const primeira = missao("m001-capital-autorizado");
+    const estado = concluirMissao(novoJogo(), primeira);
+    expect(estado.pontos).toBe(primeira.recompensa.pontos);
+    expect(estado.missoesConcluidas).toEqual([primeira.id]);
+    expect(estado.contabil.lancamentos).toEqual([]);
+  });
+
+  it("grava uma operação por vez e lembra onde parou", () => {
+    const salarios = missao("m006-salarios");
+    const antes = jogarAte("m006-pagamento-fornecedor");
+    expect(operacoesExecutadas(antes, salarios)).toBe(0);
+
+    // Primeira operação: os salários do mês.
+    const comProvisao = executarProximaOperacao(antes, salarios);
+    expect(operacoesExecutadas(comProvisao, salarios)).toBe(1);
+    expect(comProvisao.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 1);
+    // Ainda falta o pagamento: a missão não pode ser concluída.
+    expect(() => concluirMissao(comProvisao, salarios)).toThrow(/operações dessa missão/);
+
+    // Segunda operação: o pagamento. Não repete a primeira.
+    const comPagamento = executarProximaOperacao(comProvisao, salarios);
+    expect(comPagamento.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 2);
+    expect(() => executarProximaOperacao(comPagamento, salarios)).toThrow(/já foram feitas/);
+
+    const concluida = concluirMissao(comPagamento, salarios);
+    expect(concluida.andamento).toBeNull();
+    expect(concluida.missoesConcluidas).toContain(salarios.id);
+    expect(concluida.contabil).toEqual(jogarAte("m006-salarios").contabil);
+  });
+
+  it("respeita requisitos e não repete missão concluída", () => {
+    const primeira = missao("m001-capital-autorizado");
+    const estado = concluirMissao(novoJogo(), primeira);
+    expect(() => concluirMissao(estado, primeira)).toThrow(/já foi concluída/);
+    expect(() => executarProximaOperacao(novoJogo(), missao("m002-compra-imovel"))).toThrow(
+      /anteriores/,
+    );
+  });
+
+  it("resposta certa a uma afirmativa pontua; toda resposta conta como vista", () => {
+    let estado = registrarResposta(novoJogo(), "af-x", true);
+    estado = registrarResposta(estado, "af-x", false);
+    estado = registrarResposta(estado, "af-y", false);
+    expect(estado.pontos).toBe(PONTOS_POR_AFIRMATIVA);
+    expect(estado.afirmativasVistas).toEqual({ "af-x": 2, "af-y": 1 });
   });
 });

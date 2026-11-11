@@ -28,7 +28,7 @@ calculado pelo `ledger` a partir da operação (ADR-0005).
     "freteCentavos": 0,
     "condicao": { "tipo": "prazo", "dias": 30 } // ou { "tipo": "avista", "meio": "caixa" | "bancos" | "escolha_do_jogador" }
   }],
-  "ajudaLancamento": "auto",                 // auto (pelo nível) | pronto | contas_sugeridas | livre
+  "ajudaLancamento": "auto",                 // auto (pelo nível) | pronto | contas_sugeridas | contas_e_valores | livre
   "conceitos": ["icms-por-dentro", "compra-a-prazo-fornecedores", "custo-aquisicao"],
   "recompensa": { "pontos": 80 }
 }
