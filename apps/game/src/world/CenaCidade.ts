@@ -1,4 +1,7 @@
 import Phaser from "phaser";
+import { desenharCenario } from "../arte/cenario";
+import { DESENHO_DO_EDIFICIO, desenharEdificio } from "../arte/edificios";
+import { desenharPersonagem, PERSONAGEM } from "../arte/personagens";
 import { bus } from "../bus";
 import { proximaMissao } from "../state/jogo";
 import { conteudo, jogoStore } from "../state/store";
@@ -18,41 +21,80 @@ import {
 
 /** Velocidade do avatar, em unidades do mundo por segundo. */
 const VELOCIDADE = 230;
+const FONTE = '"Nunito Variable", "Segoe UI", system-ui, sans-serif';
+const CONTORNO = 0x4a3728;
 
-const CORES = {
-  grama: 0x2f5d50,
-  rua: 0x3a4654,
-  faixa: 0xd9c66b,
-  calcada: 0x566373,
-  telhado: 0x000000,
-  avatar: 0xf2b45a,
-  npc: 0xe8eef4,
-  oferta: 0xffd84a,
-} as const;
-
-const FONTE = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+/** NPC que fica na porta de cada estabelecimento: o primeiro que atende lá. */
+function npcDe(estabelecimento: string): string {
+  return conteudo.npcs.find((n) => n.estabelecimento === estabelecimento)?.id ?? "";
+}
 
 /**
- * Mapa da cidade com arte placeholder desenhada em código: os 6 estabelecimentos,
- * a rua central, os NPCs e o avatar, que anda até onde o jogador toca.
+ * Mapa da cidade: a vila com os 6 estabelecimentos, os NPCs nas portas e o avatar,
+ * que anda até onde o jogador toca. A arte é SVG do próprio projeto (`src/arte`).
  */
 export class CenaCidade extends Phaser.Scene {
-  private avatar!: Phaser.GameObjects.Container;
+  private avatar!: Phaser.GameObjects.Image;
   private posicao: Ponto = POSICAO_INICIAL;
   private rota: readonly Ponto[] = [];
   /** Estabelecimento para onde o avatar está indo, se o toque foi num edifício. */
   private aCaminhoDe: Edificio | null = null;
   private readonly ofertas = new Map<string, Phaser.GameObjects.Container>();
+  private readonly urls: string[] = [];
 
   constructor() {
     super("cidade");
   }
 
+  preload(): void {
+    // Os SVG viram texturas já na densidade da tela, para ficarem nítidos.
+    const escala = Math.max(1, Math.ceil(this.scale.gameSize.width / MUNDO.largura));
+    const carregar = (chave: string, desenho: string, largura: number, altura: number) => {
+      const url = URL.createObjectURL(new Blob([desenho], { type: "image/svg+xml" }));
+      this.urls.push(url);
+      this.load.svg(chave, url, { width: largura * escala, height: altura * escala });
+    };
+
+    carregar(
+      "cenario",
+      desenharCenario({
+        largura: MUNDO.largura,
+        altura: MUNDO.altura,
+        rua: RUA,
+        portas: EDIFICIOS.map((e) => e.porta),
+        edificios: EDIFICIOS.map((e) => ({
+          x: e.centro.x - EDIFICIO.largura / 2,
+          y: e.centro.y - EDIFICIO.altura / 2,
+          ...EDIFICIO,
+        })),
+      }),
+      MUNDO.largura,
+      MUNDO.altura,
+    );
+    for (const { id } of EDIFICIOS) {
+      carregar(
+        `edificio:${id}`,
+        desenharEdificio(id),
+        DESENHO_DO_EDIFICIO.largura,
+        DESENHO_DO_EDIFICIO.altura,
+      );
+      const npc = npcDe(id);
+      carregar(`npc:${id}`, desenharPersonagem(npc), PERSONAGEM.largura, PERSONAGEM.altura);
+    }
+    carregar("avatar", desenharPersonagem("avatar"), PERSONAGEM.largura, PERSONAGEM.altura);
+  }
+
   create(): void {
-    this.cameras.main.setBackgroundColor(CORES.grama);
-    this.desenharRuas();
+    for (const url of this.urls) URL.revokeObjectURL(url);
+    this.cameras.main.setBackgroundColor(0x8fc26c);
+    this.add.image(0, 0, "cenario").setOrigin(0).setDisplaySize(MUNDO.largura, MUNDO.altura);
     for (const edificio of EDIFICIOS) this.desenharEdificio(edificio);
-    this.avatar = this.criarAvatar();
+
+    this.avatar = this.add
+      .image(this.posicao.x, this.posicao.y, "avatar")
+      .setOrigin(0.5, 0.94)
+      .setDisplaySize(PERSONAGEM.largura, PERSONAGEM.altura);
+    this.avatar.setDepth(this.posicao.y);
 
     this.enquadrar();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.enquadrar, this);
@@ -81,10 +123,14 @@ export class CenaCidade extends Phaser.Scene {
 
   override update(_tempo: number, delta: number): void {
     if (this.rota.length === 0) return;
+    const anterior = this.posicao;
     const passo = avancar(this.posicao, this.rota, (VELOCIDADE * delta) / 1000);
     this.posicao = passo.posicao;
     this.rota = passo.rota;
-    this.avatar.setPosition(this.posicao.x, this.posicao.y);
+    this.avatar.setPosition(this.posicao.x, this.posicao.y).setDepth(this.posicao.y);
+    // Balanço leve do andar.
+    this.avatar.setAngle(Math.sin(this.time.now / 70) * 4);
+    if (this.posicao.x !== anterior.x) this.avatar.setFlipX(this.posicao.x < anterior.x);
     if (this.rota.length === 0) this.chegar();
   }
 
@@ -104,6 +150,7 @@ export class CenaCidade extends Phaser.Scene {
   }
 
   private chegar(): void {
+    this.avatar.setAngle(0);
     const edificio = this.aCaminhoDe;
     this.aCaminhoDe = null;
     if (edificio) bus.emitir("estabelecimento:alcancado", { estabelecimento: edificio.id });
@@ -114,76 +161,58 @@ export class CenaCidade extends Phaser.Scene {
     for (const [id, indicador] of this.ofertas) indicador.setVisible(id === comOferta);
   }
 
-  private desenharRuas(): void {
-    const g = this.add.graphics();
-    // Rua central.
-    g.fillStyle(CORES.rua);
-    g.fillRect(RUA.x - RUA.largura / 2, RUA.yMin - 40, RUA.largura, RUA.yMax - RUA.yMin + 80);
-    // Faixa tracejada.
-    g.fillStyle(CORES.faixa);
-    for (let y = RUA.yMin - 28; y < RUA.yMax + 30; y += 26) g.fillRect(RUA.x - 1.5, y, 3, 13);
-    // Calçada em frente a cada porta.
-    g.fillStyle(CORES.calcada);
-    for (const { porta } of EDIFICIOS) {
-      const esquerda = Math.min(porta.x, RUA.x) - 12;
-      const largura = Math.abs(porta.x - RUA.x) + 24 - RUA.largura / 2;
-      const x = porta.x < RUA.x ? esquerda : RUA.x + RUA.largura / 2;
-      g.fillRect(x, porta.y - 12, largura, 24);
-    }
-  }
-
   private desenharEdificio(edificio: Edificio): void {
-    const { centro, porta, cor, rotulo, id } = edificio;
-    const esquerda = centro.x - EDIFICIO.largura / 2;
-    const topo = centro.y - EDIFICIO.altura / 2;
-    const g = this.add.graphics();
-    // Sombra, paredes e faixa do telhado.
-    g.fillStyle(0x000000, 0.25);
-    g.fillRoundedRect(esquerda + 4, topo + 6, EDIFICIO.largura, EDIFICIO.altura, 10);
-    g.fillStyle(cor);
-    g.fillRoundedRect(esquerda, topo, EDIFICIO.largura, EDIFICIO.altura, 10);
-    g.fillStyle(CORES.telhado, 0.22);
-    g.fillRoundedRect(esquerda, topo, EDIFICIO.largura, 26, { tl: 10, tr: 10, bl: 0, br: 0 });
-    // Porta, na lateral voltada para a rua.
-    const ladoDaRua = porta.x > centro.x ? 1 : -1;
-    g.fillStyle(0x1b222b);
-    g.fillRect(
-      centro.x + ladoDaRua * (EDIFICIO.largura / 2) - (ladoDaRua > 0 ? 7 : 0),
-      centro.y - 13,
-      7,
-      26,
-    );
-
+    const { centro, porta, rotulo, id } = edificio;
+    const base = centro.y + EDIFICIO.altura / 2;
     this.add
-      .text(centro.x, centro.y + 8, rotulo, {
+      .image(centro.x, centro.y, `edificio:${id}`)
+      .setDisplaySize(DESENHO_DO_EDIFICIO.largura, DESENHO_DO_EDIFICIO.altura)
+      .setDepth(base);
+
+    // Placa com o nome, como nos mockups: etiqueta creme sobre a fachada.
+    const texto = this.add
+      .text(0, 0, rotulo, {
         fontFamily: FONTE,
-        fontSize: "15px",
+        fontSize: "13px",
         fontStyle: "bold",
-        color: "#ffffff",
-        align: "center",
+        color: "#3a2e1f",
       })
       .setOrigin(0.5)
       .setResolution(3);
+    const largura = texto.width + 18;
+    const placa = this.add.graphics();
+    placa.fillStyle(0x000000, 0.18).fillRoundedRect(-largura / 2 + 1, -10, largura, 23, 9);
+    placa.fillStyle(0xfff6df).fillRoundedRect(-largura / 2, -12, largura, 23, 9);
+    placa.lineStyle(1.6, CONTORNO).strokeRoundedRect(-largura / 2, -12, largura, 23, 9);
+    this.add.container(centro.x, centro.y - EDIFICIO.altura / 2 - 6, [placa, texto]).setDepth(900);
 
-    // NPC ao lado da porta, com o indicador de oferta.
-    // Fica acima da calçada, para o avatar não encobri-lo ao chegar.
-    const npc = { x: porta.x, y: porta.y - 44 };
-    this.add.circle(npc.x, npc.y + 9, 7, CORES.npc).setStrokeStyle(2, 0x1b222b);
-    this.add.circle(npc.x, npc.y - 2, 5, CORES.npc).setStrokeStyle(2, 0x1b222b);
+    // NPC ao lado da porta.
+    this.add
+      .image(porta.x + 32, porta.y - 6, `npc:${id}`)
+      .setOrigin(0.5, 0.94)
+      .setDisplaySize(PERSONAGEM.largura * 0.92, PERSONAGEM.altura * 0.92)
+      .setDepth(porta.y - 6);
 
-    const indicador = this.add.container(npc.x, npc.y - 26, [
-      this.add.circle(0, 0, 11, CORES.oferta).setStrokeStyle(2, 0x1b222b),
-      this.add
-        .text(0, 0, "!", {
-          fontFamily: FONTE,
-          fontSize: "16px",
-          fontStyle: "bold",
-          color: "#1b222b",
-        })
-        .setOrigin(0.5)
-        .setResolution(3),
-    ]);
-    indicador.setVisible(false);
+    // Indicador de oferta: balão com "!" acima do NPC.
+    const balao = this.add.graphics();
+    balao.fillStyle(0x000000, 0.18).fillCircle(1, 2, 13);
+    balao.fillStyle(0xffffff).fillCircle(0, 0, 13);
+    balao.fillTriangle(-5, 10, 5, 10, 0, 19);
+    balao.lineStyle(1.8, CONTORNO).strokeCircle(0, 0, 13);
+    const sinal = this.add
+      .text(0, -1, "!", {
+        fontFamily: FONTE,
+        fontSize: "19px",
+        fontStyle: "bold",
+        color: "#d6453c",
+      })
+      .setOrigin(0.5)
+      .setResolution(3);
+    const indicador = this.add
+      // No canto do telhado, sem cobrir a fachada nem a placa.
+      .container(centro.x + 64, centro.y - EDIFICIO.altura / 2 + 16, [balao, sinal])
+      .setDepth(950)
+      .setVisible(false);
     this.tweens.add({
       targets: indicador,
       y: indicador.y - 6,
@@ -193,15 +222,5 @@ export class CenaCidade extends Phaser.Scene {
       ease: "Sine.easeInOut",
     });
     this.ofertas.set(id, indicador);
-  }
-
-  private criarAvatar(): Phaser.GameObjects.Container {
-    const avatar = this.add.container(this.posicao.x, this.posicao.y, [
-      this.add.ellipse(0, 12, 22, 8, 0x000000, 0.3),
-      this.add.circle(0, 2, 9, CORES.avatar).setStrokeStyle(2, 0x1b222b),
-      this.add.circle(0, -11, 6, CORES.avatar).setStrokeStyle(2, 0x1b222b),
-    ]);
-    avatar.setDepth(10);
-    return avatar;
   }
 }

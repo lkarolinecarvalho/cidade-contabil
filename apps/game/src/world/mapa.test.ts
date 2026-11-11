@@ -38,7 +38,9 @@ describe("mapa da cidade", () => {
   it("toda porta fica fora do edifício, na calçada ligada à rua", () => {
     for (const e of EDIFICIOS) {
       expect(edificioNoPonto(e.porta), e.id).toBeUndefined();
-      expect(e.porta.y).toBe(e.centro.y);
+      // A porta fica na base da fachada, virada para o jogador.
+      expect(e.porta.x).toBe(e.centro.x);
+      expect(e.porta.y).toBeGreaterThan(e.centro.y + EDIFICIO.altura / 2);
       expect(e.porta.y).toBeGreaterThanOrEqual(RUA.yMin);
       expect(e.porta.y).toBeLessThanOrEqual(RUA.yMax);
     }
