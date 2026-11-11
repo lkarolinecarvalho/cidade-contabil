@@ -1,5 +1,6 @@
 import {
   ACIONISTA_AVATAR,
+  type Afirmativa,
   type Missao,
   type OperacaoDeMissao,
   paraOperacaoDoMotor,
@@ -25,6 +26,7 @@ import {
   somarDias,
   type Titulo,
 } from "./calendario";
+import { atualizarEstudo, type Estudo, type Resultado } from "./estudo";
 
 /**
  * Estado do jogo e as regras que não são contábeis. Funções puras: a store só guarda
@@ -59,6 +61,12 @@ export interface EstadoDoJogo {
   readonly andamento: { readonly missao: string; readonly operacoesExecutadas: number } | null;
   /** Quantas vezes cada afirmativa já foi mostrada, para variar a redação. */
   readonly afirmativasVistas: Readonly<Record<string, number>>;
+  /** Repetição espaçada: a caixa de Leitner de cada conceito já cobrado. */
+  readonly estudo: Estudo;
+  /** Modo banca (estilo CEBRASPE): acerto +1, erro −1, branco 0. Desligado por padrão. */
+  readonly modoBanca: boolean;
+  /** Placar líquido do modo banca nesta sessão. */
+  readonly placarBanca: number;
 }
 
 /** Pontos por afirmativa certa (parâmetro de balanceamento). */
@@ -82,6 +90,9 @@ export function novoJogo(): EstadoDoJogo {
     missoesConcluidas: [],
     andamento: null,
     afirmativasVistas: {},
+    estudo: {},
+    modoBanca: false,
+    placarBanca: 0,
   };
 }
 
@@ -316,20 +327,49 @@ export function jogarMissaoInteira(
   return concluirMissao(atual, missao);
 }
 
-/** Registra a resposta a uma afirmativa: conta a exibição e pontua o acerto. */
+/** Resposta do jogador a uma afirmativa: Certo, Errado ou em branco (só no modo banca). */
+export type Resposta = "C" | "E" | null;
+
+export function resultadoDaResposta(afirmativa: Afirmativa, resposta: Resposta): Resultado {
+  if (resposta === null) return "branco";
+  return resposta === afirmativa.gabarito ? "acerto" : "erro";
+}
+
+/**
+ * Registra a resposta a uma afirmativa: conta a exibição, move o conceito entre as
+ * caixas de Leitner e pontua. Fora do modo banca, só o acerto pontua; no modo banca,
+ * o placar líquido soma +1, −1 ou 0 e os pontos normais não mudam.
+ */
 export function registrarResposta(
   estado: EstadoDoJogo,
-  afirmativa: string,
-  acertou: boolean,
+  afirmativa: Afirmativa,
+  resposta: Resposta,
 ): EstadoDoJogo {
+  const resultado = resultadoDaResposta(afirmativa, resposta);
+  const naBanca = resultado === "acerto" ? 1 : resultado === "erro" ? -1 : 0;
   return {
     ...estado,
-    pontos: estado.pontos + (acertou ? PONTOS_POR_AFIRMATIVA : 0),
+    pontos:
+      estado.pontos + (!estado.modoBanca && resultado === "acerto" ? PONTOS_POR_AFIRMATIVA : 0),
+    placarBanca: estado.placarBanca + (estado.modoBanca ? naBanca : 0),
     afirmativasVistas: {
       ...estado.afirmativasVistas,
-      [afirmativa]: (estado.afirmativasVistas[afirmativa] ?? 0) + 1,
+      [afirmativa.id]: (estado.afirmativasVistas[afirmativa.id] ?? 0) + 1,
+    },
+    estudo: {
+      ...estado.estudo,
+      [afirmativa.conceitoId]: atualizarEstudo(
+        estado.estudo[afirmativa.conceitoId],
+        resultado,
+        estado.data,
+        estado.modoBanca,
+      ),
     },
   };
+}
+
+export function definirModoBanca(estado: EstadoDoJogo, ligado: boolean): EstadoDoJogo {
+  return { ...estado, modoBanca: ligado };
 }
 
 // ---------------------------------------------------------------------------

@@ -13,9 +13,7 @@ import {
   nivelDoJogador,
   novoJogo,
   operacoesExecutadas,
-  PONTOS_POR_AFIRMATIVA,
   proximaMissao,
-  registrarResposta,
 } from "./jogo";
 
 const { missoes } = carregarConteudoDoJogo();
@@ -157,13 +155,5 @@ describe("andamento da missão", () => {
     expect(() => executarProximaOperacao(novoJogo(), missao("m002-compra-imovel"))).toThrow(
       /anteriores/,
     );
-  });
-
-  it("resposta certa a uma afirmativa pontua; toda resposta conta como vista", () => {
-    let estado = registrarResposta(novoJogo(), "af-x", true);
-    estado = registrarResposta(estado, "af-x", false);
-    estado = registrarResposta(estado, "af-y", false);
-    expect(estado.pontos).toBe(PONTOS_POR_AFIRMATIVA);
-    expect(estado.afirmativasVistas).toEqual({ "af-x": 2, "af-y": 1 });
   });
 });

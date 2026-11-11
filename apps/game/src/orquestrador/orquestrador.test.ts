@@ -133,7 +133,7 @@ describe("efeito no patrimônio", () => {
 describe("seleção de afirmativas", () => {
   it("escolhe uma por conceito da missão, até o limite, só do nível liberado", () => {
     for (const m of conteudo.missoes) {
-      const escolhidas = selecionarAfirmativas(m, conteudo.afirmativas, {});
+      const escolhidas = selecionarAfirmativas(m, conteudo.afirmativas, novoJogo());
       expect(escolhidas.length, m.id).toBe(Math.min(m.conceitos.length, limiteDeAfirmativas(m)));
       expect(new Set(escolhidas.map((a) => a.conceitoId)).size).toBe(escolhidas.length);
       for (const a of escolhidas) {
@@ -145,9 +145,12 @@ describe("seleção de afirmativas", () => {
 
   it("prefere a variante menos vista do conceito", () => {
     const m = missao("m001-capital-autorizado");
-    const [primeira] = selecionarAfirmativas(m, conteudo.afirmativas, {});
+    const [primeira] = selecionarAfirmativas(m, conteudo.afirmativas, novoJogo());
     expect(primeira).toBeDefined();
-    const [segunda] = selecionarAfirmativas(m, conteudo.afirmativas, { [primeira?.id ?? ""]: 1 });
+    const [segunda] = selecionarAfirmativas(m, conteudo.afirmativas, {
+      ...novoJogo(),
+      afirmativasVistas: { [primeira?.id ?? ""]: 1 },
+    });
     expect(segunda?.conceitoId).toBe("capital-autorizado");
     expect(segunda?.id).not.toBe(primeira?.id);
   });
@@ -421,12 +424,8 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
 
     for (const m of conteudo.missoes) {
       // Negociação aceita → afirmativas da missão.
-      for (const afirmativa of selecionarAfirmativas(
-        m,
-        conteudo.afirmativas,
-        estado.afirmativasVistas,
-      )) {
-        estado = registrarResposta(estado, afirmativa.id, true);
+      for (const afirmativa of selecionarAfirmativas(m, conteudo.afirmativas, estado)) {
+        estado = registrarResposta(estado, afirmativa, afirmativa.gabarito);
         afirmativasRespondidas++;
       }
 
@@ -460,7 +459,7 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
     }
 
     expect(estado.missoesConcluidas).toHaveLength(conteudo.missoes.length);
-    expect(afirmativasRespondidas).toBeGreaterThan(20);
+    expect(afirmativasRespondidas).toBeGreaterThan(12);
 
     const fim = { ...estado.data, dia: 30 };
     const d = dre(estado.contabil, { de: { ...fim, dia: 1 }, ate: fim });

@@ -1,8 +1,9 @@
-import { carregarConteudoDoJogo, type Missao } from "@cidade/content";
+import { type Afirmativa, carregarConteudoDoJogo, type Missao } from "@cidade/content";
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
 import {
   concluirMissao,
+  definirModoBanca,
   type EstadoDoJogo,
   encerrarDia,
   executarProximaOperacao,
@@ -12,6 +13,7 @@ import {
   novoJogo,
   type OpcoesDaOperacao,
   pagarIcms,
+  type Resposta,
   registrarResposta,
 } from "./jogo";
 
@@ -23,7 +25,8 @@ interface Acoes {
   /** Grava no razão a próxima operação pendente da missão. */
   executarProximaOperacao(missao: Missao, opcoes?: OpcoesDaOperacao): void;
   concluirMissao(missao: Missao): void;
-  registrarResposta(afirmativa: string, acertou: boolean): void;
+  registrarResposta(afirmativa: Afirmativa, resposta: Resposta): void;
+  definirModoBanca(ligado: boolean): void;
   encerrarDia(): void;
   irParaOUltimoDia(): void;
   fecharMes(): void;
@@ -46,8 +49,11 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   concluirMissao(missao) {
     set(concluirMissao(get(), missao));
   },
-  registrarResposta(afirmativa, acertou) {
-    set(registrarResposta(get(), afirmativa, acertou));
+  registrarResposta(afirmativa, resposta) {
+    set(registrarResposta(get(), afirmativa, resposta));
+  },
+  definirModoBanca(ligado) {
+    set(definirModoBanca(get(), ligado));
   },
   encerrarDia() {
     set(encerrarDia(get()));
