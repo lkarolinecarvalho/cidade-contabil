@@ -37,7 +37,8 @@
     "gabarito": "E",
     "explicacao": "O ICMS recuperável não compõe o custo. O estoque entra por R$ {{custoEstoque}}, e R$ {{icms}} vão para ICMS a Recuperar.",
     "regras": ["R-ICMS-02", "R-ICMS-04", "R-COM-01"],
-    "momentos": ["pos_operacao", "revisao"]
+    "momentos": ["pos_operacao", "revisao"],
+    "exemplo": { "totalNota": 300000, "icms": 54000, "custoEstoque": 246000 }
   },
   {
     "id": "af-icms-por-dentro-02",

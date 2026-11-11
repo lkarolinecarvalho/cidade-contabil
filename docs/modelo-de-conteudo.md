@@ -68,6 +68,14 @@ calculados pelo motor: `{{totalNota}}`, `{{icms}}`, `{{custoEstoque}}`, `{{cmv}}
 O gabarito não pode depender de qual valor foi sorteado. Se depender, crie
 afirmativas separadas.
 
+Toda afirmativa com placeholder traz também `exemplo`, com um valor em centavos para
+cada placeholder usado. O jogo usa o exemplo quando não há operação por trás (na
+Revisão, por exemplo):
+
+```jsonc
+"exemplo": { "totalNota": 300000, "icms": 54000, "custoEstoque": 246000 }
+```
+
 ## Regras de validação
 
 - Toda `regras[]` existe em `regras-contabeis.md` (lista de IDs exportada em config).

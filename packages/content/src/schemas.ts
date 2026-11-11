@@ -186,6 +186,11 @@ export const afirmativaSchema = z.strictObject({
   momentos: z
     .array(z.enum(["pos_operacao", "pre_lancamento", "fechamento_mes", "fim_nivel", "revisao"]))
     .min(1),
+  /**
+   * Valores de exemplo dos placeholders, em centavos, para quando não há operação
+   * por trás (ex.: na Revisão). Obrigatório para cada placeholder usado no texto.
+   */
+  exemplo: z.partialRecord(z.enum(PLACEHOLDERS), z.number().int().min(0)).optional(),
 });
 
 export type Estabelecimento = z.infer<typeof estabelecimentoSchema>;

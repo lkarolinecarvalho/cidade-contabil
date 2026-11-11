@@ -9,6 +9,7 @@ export {
   ErroDeConteudo,
   MINIMO_DE_AFIRMATIVAS_POR_CONCEITO,
   ordenarMissoes,
+  placeholdersDe,
 } from "./carregar";
 export { dadosBrutos } from "./dados";
 export { type ContextoDaOperacao, paraOperacaoDoMotor, parteDoAcionista } from "./operacoes";

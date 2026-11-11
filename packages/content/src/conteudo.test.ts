@@ -180,6 +180,22 @@ describe("conteúdo inválido é recusado", () => {
     expect(problemas.join("\n")).toMatch(/placeholder desconhecido "\{\{lucroInventado\}\}"/);
   });
 
+  it("placeholder sem valor de exemplo, e valor de exemplo sem uso", () => {
+    const comExemplo = (exemplo: Record<string, number>) =>
+      problemasDe(
+        alterar((d) => {
+          const afirmativa = d.afirmativas.find((a) => a.id === "af-icms-por-dentro-01");
+          if (afirmativa) afirmativa.exemplo = exemplo;
+        }),
+      ).join("\n");
+    expect(comExemplo({ totalNota: 300000, icms: 54000 })).toMatch(
+      /af-icms-por-dentro-01: falta o valor de exemplo de "\{\{custoEstoque\}\}"/,
+    );
+    expect(comExemplo({ totalNota: 300000, icms: 54000, custoEstoque: 246000, cmv: 1 })).toMatch(
+      /af-icms-por-dentro-01: valor de exemplo sem uso "cmv"/,
+    );
+  });
+
   it("missão com estabelecimento, NPC, produto ou conceito inexistente", () => {
     const problemas = problemasDe(
       alterar((d) => {

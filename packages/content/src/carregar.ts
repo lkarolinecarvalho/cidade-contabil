@@ -71,6 +71,12 @@ function validarLista<T>(
   return [];
 }
 
+/** Nomes dos placeholders `{{nome}}` usados no enunciado e na explicação, sem repetição. */
+export function placeholdersDe(afirmativa: Pick<Afirmativa, "enunciado" | "explicacao">): string[] {
+  const texto = `${afirmativa.enunciado} ${afirmativa.explicacao}`;
+  return [...new Set([...texto.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1] ?? ""))];
+}
+
 function idsRepetidos(itens: readonly { id: string }[]): string[] {
   const vistos = new Set<string>();
   const repetidos = new Set<string>();
@@ -152,11 +158,19 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
         `afirmativa ${afirmativa.id}: conceito inexistente "${afirmativa.conceitoId}"`,
       );
     }
-    for (const [, nome = ""] of `${afirmativa.enunciado} ${afirmativa.explicacao}`.matchAll(
-      /\{\{\s*([^}]*?)\s*\}\}/g,
-    )) {
+    const usados = placeholdersDe(afirmativa);
+    const exemplo: Record<string, number> = afirmativa.exemplo ?? {};
+    for (const nome of usados) {
       if (!(PLACEHOLDERS as readonly string[]).includes(nome)) {
         problemas.push(`afirmativa ${afirmativa.id}: placeholder desconhecido "{{${nome}}}"`);
+      } else if (!(nome in exemplo)) {
+        // Sem operação por trás (ex.: na Revisão), o texto usa o valor de exemplo.
+        problemas.push(`afirmativa ${afirmativa.id}: falta o valor de exemplo de "{{${nome}}}"`);
+      }
+    }
+    for (const nome of Object.keys(exemplo)) {
+      if (!usados.includes(nome)) {
+        problemas.push(`afirmativa ${afirmativa.id}: valor de exemplo sem uso "${nome}"`);
       }
     }
   }
