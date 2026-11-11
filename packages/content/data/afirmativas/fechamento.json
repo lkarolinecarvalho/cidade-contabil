@@ -1,0 +1,122 @@
+[
+  {
+    "id": "af-depreciacao-01",
+    "conceitoId": "depreciacao",
+    "nivelMin": 4,
+    "enunciado": "A depreciação do mês é registrada com débito em Despesa de Depreciação e crédito em Depreciação Acumulada.",
+    "gabarito": "C",
+    "explicacao": "A despesa vai ao resultado e a conta redutora diminui o valor contábil do bem, sem saída de dinheiro.",
+    "regras": ["R-DEP-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-depreciacao-02",
+    "conceitoId": "depreciacao",
+    "nivelMin": 4,
+    "enunciado": "Depreciação Acumulada é conta do Passivo, de natureza credora.",
+    "gabarito": "E",
+    "explicacao": "Tem natureza credora, mas é conta redutora do Ativo Imobilizado, não do Passivo.",
+    "regras": ["R-DEP-04", "R-DEM-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-depreciacao-03",
+    "conceitoId": "depreciacao",
+    "nivelMin": 4,
+    "enunciado": "Pelo método linear, uma edificação de R$ 120.000,00, com vida útil de 25 anos e valor residual zero, deprecia R$ 400,00 por mês.",
+    "gabarito": "C",
+    "explicacao": "R$ 120.000,00 ÷ 25 anos ÷ 12 meses = R$ 400,00 por mês.",
+    "regras": ["R-DEP-01", "R-DEP-02", "R-DEP-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-apuracao-icms-01",
+    "conceitoId": "apuracao-icms",
+    "nivelMin": 4,
+    "enunciado": "Na apuração do ICMS, o saldo de ICMS a Recolher é compensado com o de ICMS a Recuperar, até o menor dos dois valores.",
+    "gabarito": "C",
+    "explicacao": "É a não cumulatividade: o imposto das vendas é abatido do imposto das compras.",
+    "regras": ["R-ICMS-06"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-apuracao-icms-02",
+    "conceitoId": "apuracao-icms",
+    "nivelMin": 4,
+    "enunciado": "Se o ICMS a Recuperar for maior que o ICMS a Recolher, a diferença é reconhecida como receita do período.",
+    "gabarito": "E",
+    "explicacao": "O saldo credor não é receita: ele permanece em ICMS a Recuperar, no Ativo, para os meses seguintes.",
+    "regras": ["R-ICMS-06"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-apuracao-icms-03",
+    "conceitoId": "apuracao-icms",
+    "nivelMin": 4,
+    "enunciado": "Com ICMS a Recolher de R$ 630,00 e ICMS a Recuperar de R$ 10.800,00, a empresa deve pagar R$ 630,00 ao Fisco no fim do mês.",
+    "gabarito": "E",
+    "explicacao": "Os R$ 630,00 são compensados com o crédito. Não há imposto a pagar, e sobra saldo credor de R$ 10.170,00.",
+    "regras": ["R-ICMS-06"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-dre-01",
+    "conceitoId": "dre",
+    "nivelMin": 4,
+    "enunciado": "A Receita Líquida é a Receita Bruta de Vendas menos as deduções de ICMS, PIS e COFINS sobre vendas.",
+    "gabarito": "C",
+    "explicacao": "É a primeira etapa da DRE: Receita Bruta − deduções = Receita Líquida.",
+    "regras": ["R-DEM-02"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-dre-02",
+    "conceitoId": "dre",
+    "nivelMin": 4,
+    "enunciado": "O Lucro Bruto é obtido subtraindo as despesas operacionais da Receita Líquida.",
+    "gabarito": "E",
+    "explicacao": "Lucro Bruto = Receita Líquida − CMV. As despesas operacionais vêm depois, até o resultado do período.",
+    "regras": ["R-DEM-02"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-dre-03",
+    "conceitoId": "dre",
+    "nivelMin": 4,
+    "enunciado": "Uma empresa pode apresentar Lucro Bruto positivo e, ainda assim, prejuízo no período.",
+    "gabarito": "C",
+    "explicacao": "Basta que as despesas operacionais superem o Lucro Bruto. Faturar não é o mesmo que lucrar.",
+    "regras": ["R-DEM-02"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-balanco-patrimonial-01",
+    "conceitoId": "balanco-patrimonial",
+    "nivelMin": 4,
+    "enunciado": "No Balanço Patrimonial, o total do Ativo é igual à soma do Passivo com o Patrimônio Líquido.",
+    "gabarito": "C",
+    "explicacao": "É a equação fundamental do patrimônio. O resultado do período compõe o Patrimônio Líquido.",
+    "regras": ["R-DEM-03"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-balanco-patrimonial-02",
+    "conceitoId": "balanco-patrimonial",
+    "nivelMin": 4,
+    "enunciado": "No Balanço Patrimonial, o Imobilizado é apresentado pelo custo de aquisição, sem deduzir a depreciação acumulada.",
+    "gabarito": "E",
+    "explicacao": "O Imobilizado aparece pelo valor líquido: custo menos depreciação acumulada.",
+    "regras": ["R-DEM-03"],
+    "momentos": ["fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-balanco-patrimonial-03",
+    "conceitoId": "balanco-patrimonial",
+    "nivelMin": 4,
+    "enunciado": "Um prejuízo apurado no período aumenta o Patrimônio Líquido.",
+    "gabarito": "E",
+    "explicacao": "O prejuízo reduz o Patrimônio Líquido. No Balanço durante o exercício, ele aparece como resultado do período negativo.",
+    "regras": ["R-DEM-03"],
+    "momentos": ["fechamento_mes", "revisao"]
+  }
+]

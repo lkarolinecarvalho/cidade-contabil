@@ -1,0 +1,122 @@
+[
+  {
+    "id": "af-capital-autorizado-01",
+    "conceitoId": "capital-autorizado",
+    "nivelMin": 1,
+    "enunciado": "A fixação do capital autorizado no estatuto de uma sociedade anônima deve ser registrada a crédito de Capital Social.",
+    "gabarito": "E",
+    "explicacao": "O capital autorizado é apenas o limite para aumentar o capital sem reforma do estatuto. A autorização, sozinha, não gera lançamento.",
+    "regras": ["R-CAP-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-capital-autorizado-02",
+    "conceitoId": "capital-autorizado",
+    "nivelMin": 1,
+    "enunciado": "O capital autorizado é o limite, previsto no estatuto, até o qual a companhia pode aumentar o capital social sem reforma estatutária.",
+    "gabarito": "C",
+    "explicacao": "É o que prevê o art. 168 da Lei 6.404/76. Não representa dinheiro recebido nem valor subscrito.",
+    "regras": ["R-CAP-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-capital-autorizado-03",
+    "conceitoId": "capital-autorizado",
+    "nivelMin": 1,
+    "enunciado": "Uma companhia com capital autorizado de R$ 500.000,00 e capital subscrito de R$ 300.000,00 apresenta Capital Social de R$ 500.000,00 no Balanço Patrimonial.",
+    "gabarito": "E",
+    "explicacao": "O Balanço apresenta o capital subscrito, deduzido da parcela a integralizar. O capital autorizado não é contabilizado.",
+    "regras": ["R-CAP-02", "R-CAP-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-capital-subscrito-01",
+    "conceitoId": "capital-subscrito",
+    "nivelMin": 1,
+    "enunciado": "Na subscrição do capital social, debita-se Capital a Integralizar e credita-se Capital Social Subscrito.",
+    "gabarito": "C",
+    "explicacao": "A subscrição registra o compromisso dos acionistas: o capital é creditado pelo total e a parcela ainda não recebida fica na conta redutora.",
+    "regras": ["R-CAP-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-capital-subscrito-02",
+    "conceitoId": "capital-subscrito",
+    "nivelMin": 1,
+    "enunciado": "A subscrição de ações aumenta imediatamente as disponibilidades da companhia.",
+    "gabarito": "E",
+    "explicacao": "Subscrever é assumir o compromisso de contribuir. O dinheiro só entra na integralização.",
+    "regras": ["R-CAP-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-capital-subscrito-03",
+    "conceitoId": "capital-subscrito",
+    "nivelMin": 1,
+    "enunciado": "Logo após a subscrição de R$ 300.000,00, ainda sem nenhuma integralização, o Patrimônio Líquido da companhia é de R$ 300.000,00.",
+    "gabarito": "E",
+    "explicacao": "O capital subscrito (R$ 300.000,00) é reduzido pelo capital a integralizar (R$ 300.000,00). O Patrimônio Líquido ainda é zero.",
+    "regras": ["R-CAP-03", "R-CAP-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-capital-a-integralizar-01",
+    "conceitoId": "capital-a-integralizar",
+    "nivelMin": 1,
+    "enunciado": "Capital a Integralizar é conta retificadora do Patrimônio Líquido, de natureza devedora.",
+    "gabarito": "C",
+    "explicacao": "Ela reduz o Capital Social Subscrito: no Balanço, o capital aparece pelo valor subscrito menos a parcela a integralizar.",
+    "regras": ["R-CAP-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-capital-a-integralizar-02",
+    "conceitoId": "capital-a-integralizar",
+    "nivelMin": 1,
+    "enunciado": "Capital a Integralizar é classificado no Ativo, por representar um direito da companhia contra os acionistas.",
+    "gabarito": "E",
+    "explicacao": "Apesar de ter saldo devedor, é conta redutora do Patrimônio Líquido, e não um ativo.",
+    "regras": ["R-CAP-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-capital-a-integralizar-03",
+    "conceitoId": "capital-a-integralizar",
+    "nivelMin": 1,
+    "enunciado": "Na integralização de capital em dinheiro depositado em conta bancária, debita-se Bancos Conta Movimento e credita-se Capital a Integralizar.",
+    "gabarito": "C",
+    "explicacao": "Entra o recurso no Ativo e diminui a parcela do capital que os acionistas ainda deviam.",
+    "regras": ["R-CAP-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-principio-entidade-01",
+    "conceitoId": "principio-entidade",
+    "nivelMin": 1,
+    "enunciado": "O dinheiro que o acionista mantém em sua conta pessoal integra as disponibilidades da companhia.",
+    "gabarito": "E",
+    "explicacao": "O patrimônio da companhia não se confunde com o dos acionistas. Só o que foi integralizado passa a ser da empresa.",
+    "regras": ["R-ENT-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-principio-entidade-02",
+    "conceitoId": "principio-entidade",
+    "nivelMin": 1,
+    "enunciado": "Quando o acionista integraliza capital em dinheiro, a companhia registra a entrada do recurso; a redução do patrimônio pessoal do acionista não é lançada na contabilidade da companhia.",
+    "gabarito": "C",
+    "explicacao": "A contabilidade da companhia registra só o patrimônio dela. A carteira do acionista fica fora do razão.",
+    "regras": ["R-ENT-01", "R-ENT-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-principio-entidade-03",
+    "conceitoId": "principio-entidade",
+    "nivelMin": 1,
+    "enunciado": "Despesas pessoais dos acionistas pagas com recursos da companhia são despesas operacionais da companhia.",
+    "gabarito": "E",
+    "explicacao": "Pelo princípio da entidade, gastos pessoais dos acionistas não são despesas da empresa.",
+    "regras": ["R-ENT-01", "R-ENT-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  }
+]

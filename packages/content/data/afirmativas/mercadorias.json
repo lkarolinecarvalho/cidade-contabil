@@ -1,0 +1,182 @@
+[
+  {
+    "id": "af-custo-aquisicao-01",
+    "conceitoId": "custo-aquisicao",
+    "nivelMin": 2,
+    "enunciado": "O custo de aquisição de mercadorias para revenda inclui o frete cobrado na nota e exclui os tributos recuperáveis.",
+    "gabarito": "C",
+    "explicacao": "Custo = valor dos produtos + IPI + frete na nota − ICMS recuperável.",
+    "regras": ["R-COM-01", "R-FRE-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-custo-aquisicao-02",
+    "conceitoId": "custo-aquisicao",
+    "nivelMin": 2,
+    "enunciado": "O ICMS recuperável destacado na compra integra o custo do estoque do comerciante.",
+    "gabarito": "E",
+    "explicacao": "O ICMS que a empresa vai recuperar não é custo: ele é registrado em ICMS a Recuperar.",
+    "regras": ["R-COM-01", "R-ICMS-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-custo-aquisicao-03",
+    "conceitoId": "custo-aquisicao",
+    "nivelMin": 2,
+    "enunciado": "A compra de mercadorias à vista reduz o resultado do período em que ocorre.",
+    "gabarito": "E",
+    "explicacao": "Comprar mercadoria não é despesa: troca-se dinheiro por estoque. O custo só vai ao resultado, como CMV, quando a mercadoria é vendida.",
+    "regras": ["R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-icms-a-recuperar-01",
+    "conceitoId": "icms-a-recuperar",
+    "nivelMin": 2,
+    "enunciado": "O ICMS destacado na compra de mercadorias para revenda, por comerciante em regime normal, é registrado a débito de ICMS a Recuperar.",
+    "gabarito": "C",
+    "explicacao": "O imposto pago na compra vira um direito, que será compensado com o ICMS devido nas vendas.",
+    "regras": ["R-ICMS-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-icms-a-recuperar-02",
+    "conceitoId": "icms-a-recuperar",
+    "nivelMin": 2,
+    "enunciado": "ICMS a Recuperar é conta do Passivo Circulante.",
+    "gabarito": "E",
+    "explicacao": "É um direito da empresa contra o Fisco: conta do Ativo Circulante, de natureza devedora.",
+    "regras": ["R-ICMS-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-icms-a-recuperar-03",
+    "conceitoId": "icms-a-recuperar",
+    "nivelMin": 2,
+    "enunciado": "Numa compra de mercadorias para revenda por R$ 40.000,00, com ICMS de 18%, o estoque é registrado por R$ 32.800,00 e o ICMS a Recuperar, por R$ 7.200,00.",
+    "gabarito": "C",
+    "explicacao": "O ICMS de R$ 7.200,00 está dentro dos R$ 40.000,00 e é recuperável; o custo do estoque é o restante.",
+    "regras": ["R-ICMS-02", "R-ICMS-04", "R-COM-01"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-receita-e-deducoes-01",
+    "conceitoId": "receita-e-deducoes",
+    "nivelMin": 2,
+    "enunciado": "ICMS, PIS e COFINS incidentes sobre as vendas são deduções da Receita Bruta de Vendas.",
+    "gabarito": "C",
+    "explicacao": "A Receita Líquida é a Receita Bruta menos essas deduções.",
+    "regras": ["R-DEM-02", "R-ICMS-05", "R-PC-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-receita-e-deducoes-02",
+    "conceitoId": "receita-e-deducoes",
+    "nivelMin": 2,
+    "enunciado": "O ICMS incidente sobre as vendas é classificado como despesa operacional.",
+    "gabarito": "E",
+    "explicacao": "O ICMS sobre vendas é dedução da receita bruta, apresentada antes da Receita Líquida, e não despesa operacional.",
+    "regras": ["R-ICMS-05", "R-DEM-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-receita-e-deducoes-03",
+    "conceitoId": "receita-e-deducoes",
+    "nivelMin": 2,
+    "enunciado": "No regime cumulativo, o PIS e a COFINS pagos pelo comerciante geram crédito nas compras de mercadorias.",
+    "gabarito": "E",
+    "explicacao": "No regime cumulativo, do Lucro Presumido, não há crédito nas compras: PIS de 0,65% e COFINS de 3% incidem sobre o faturamento.",
+    "regras": ["R-PC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-cmv-01",
+    "conceitoId": "cmv",
+    "nivelMin": 2,
+    "enunciado": "Na venda de mercadorias, o custo é reconhecido com débito em Custo das Mercadorias Vendidas e crédito em Estoque de Mercadorias.",
+    "gabarito": "C",
+    "explicacao": "Toda venda tem dois lados: a receita e a baixa do estoque pelo custo.",
+    "regras": ["R-VEN-02"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-cmv-02",
+    "conceitoId": "cmv",
+    "nivelMin": 2,
+    "enunciado": "O Custo das Mercadorias Vendidas é reconhecido no resultado no momento da compra das mercadorias.",
+    "gabarito": "E",
+    "explicacao": "Na compra, a mercadoria é ativo (Estoque). O custo só vai ao resultado quando ela é vendida.",
+    "regras": ["R-COM-04", "R-VEN-02"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-cmv-03",
+    "conceitoId": "cmv",
+    "nivelMin": 2,
+    "enunciado": "Na venda à vista por R$ 500,00 de mercadorias que custaram R$ 205,00, o Estoque de Mercadorias diminui R$ 500,00.",
+    "gabarito": "E",
+    "explicacao": "O estoque é baixado pelo custo (R$ 205,00), não pelo preço de venda. Os R$ 500,00 são a receita.",
+    "regras": ["R-VEN-02", "R-EST-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-custo-medio-01",
+    "conceitoId": "custo-medio",
+    "nivelMin": 2,
+    "enunciado": "No custo médio ponderado móvel, o custo médio unitário é recalculado a cada nova entrada de mercadorias.",
+    "gabarito": "C",
+    "explicacao": "Cada entrada soma quantidade e valor ao estoque; o custo médio é o valor total dividido pela quantidade total.",
+    "regras": ["R-EST-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-custo-medio-02",
+    "conceitoId": "custo-medio",
+    "nivelMin": 2,
+    "enunciado": "No inventário permanente, o estoque só é atualizado no fim do período, por contagem física.",
+    "gabarito": "E",
+    "explicacao": "Isso descreve o inventário periódico. No permanente, cada entrada e cada saída atualiza o estoque na hora.",
+    "regras": ["R-EST-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-custo-medio-03",
+    "conceitoId": "custo-medio",
+    "nivelMin": 2,
+    "enunciado": "Com 100 unidades em estoque por R$ 2.460,00 e a entrada de mais 50 unidades por R$ 1.421,00, o custo médio passa a ser R$ 3.881,00 dividido por 150 unidades.",
+    "gabarito": "C",
+    "explicacao": "Somam-se os valores e as quantidades: (2.460,00 + 1.421,00) ÷ (100 + 50), cerca de R$ 25,87 por unidade.",
+    "regras": ["R-EST-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-venda-a-prazo-clientes-01",
+    "conceitoId": "venda-a-prazo-clientes",
+    "nivelMin": 2,
+    "enunciado": "Na venda a prazo, a receita é reconhecida no momento da venda, com débito em Clientes.",
+    "gabarito": "C",
+    "explicacao": "Pelo regime de competência, a receita é da data da venda. O direito de receber fica em Clientes.",
+    "regras": ["R-VEN-01", "R-GER-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-venda-a-prazo-clientes-02",
+    "conceitoId": "venda-a-prazo-clientes",
+    "nivelMin": 2,
+    "enunciado": "A receita de uma venda a prazo só é reconhecida quando o cliente efetua o pagamento.",
+    "gabarito": "E",
+    "explicacao": "Isso seria regime de caixa. Pela competência, a receita é reconhecida na venda, recebida ou não.",
+    "regras": ["R-GER-03", "R-VEN-01"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-venda-a-prazo-clientes-03",
+    "conceitoId": "venda-a-prazo-clientes",
+    "nivelMin": 2,
+    "enunciado": "O recebimento do valor devido por um cliente aumenta o resultado do período.",
+    "gabarito": "E",
+    "explicacao": "O recebimento só troca um ativo por outro: entra dinheiro e sai Clientes. A receita já foi reconhecida na venda.",
+    "regras": ["R-VEN-03", "R-GER-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  }
+]

@@ -32,7 +32,7 @@
   {
     "id": "af-icms-por-dentro-01",
     "conceitoId": "icms-por-dentro",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "Na compra de mercadorias para revenda por R$ {{totalNota}} com ICMS de 18%, o estoque deve ser registrado por R$ {{totalNota}}.",
     "gabarito": "E",
     "explicacao": "O ICMS recuperável não compõe o custo. O estoque entra por R$ {{custoEstoque}}, e R$ {{icms}} vão para ICMS a Recuperar.",
@@ -42,7 +42,7 @@
   {
     "id": "af-icms-por-dentro-02",
     "conceitoId": "icms-por-dentro",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "O ICMS é calculado \"por dentro\", ou seja, o imposto integra a sua própria base de cálculo.",
     "gabarito": "C",
     "explicacao": "O ICMS está incluído no valor da operação. Por isso o destaque é feito sobre o preço, sem somar o imposto ao total da nota.",
@@ -52,7 +52,7 @@
   {
     "id": "af-icms-por-dentro-03",
     "conceitoId": "icms-por-dentro",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "Numa nota de R$ 3.000,00 com ICMS de 18%, o valor total a pagar ao fornecedor é de R$ 3.540,00.",
     "gabarito": "E",
     "explicacao": "O ICMS já está dentro dos R$ 3.000,00. O total da nota continua R$ 3.000,00; os R$ 540,00 são a parcela de ICMS contida nele.",

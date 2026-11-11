@@ -1,0 +1,92 @@
+[
+  {
+    "id": "af-classificacao-imoveis-01",
+    "conceitoId": "classificacao-imoveis",
+    "nivelMin": 1,
+    "enunciado": "Imóvel adquirido para ser usado pela própria empresa em suas atividades é classificado no Imobilizado.",
+    "gabarito": "C",
+    "explicacao": "É o destino do bem que define a classificação: uso próprio é Imobilizado (CPC 27).",
+    "regras": ["R-IMO-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-classificacao-imoveis-02",
+    "conceitoId": "classificacao-imoveis",
+    "nivelMin": 1,
+    "enunciado": "Imóvel adquirido para revenda no curso normal das atividades da empresa é classificado no Imobilizado.",
+    "gabarito": "E",
+    "explicacao": "Bem destinado à venda no curso normal dos negócios é Estoque (CPC 16), ainda que seja um imóvel.",
+    "regras": ["R-IMO-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-classificacao-imoveis-03",
+    "conceitoId": "classificacao-imoveis",
+    "nivelMin": 1,
+    "enunciado": "Imóvel mantido para obtenção de aluguel ou para valorização é classificado em Estoques.",
+    "gabarito": "E",
+    "explicacao": "Esse imóvel é Propriedade para Investimento (CPC 28). Estoque é o que se destina à venda no curso normal das atividades.",
+    "regras": ["R-IMO-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-terreno-e-edificacao-01",
+    "conceitoId": "terreno-e-edificacao",
+    "nivelMin": 1,
+    "enunciado": "Na aquisição de um imóvel de uso próprio, terreno e edificação são registrados em contas separadas.",
+    "gabarito": "C",
+    "explicacao": "São ativos tratados separadamente, mesmo quando comprados juntos: a edificação deprecia e o terreno, em regra, não.",
+    "regras": ["R-IMO-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-terreno-e-edificacao-02",
+    "conceitoId": "terreno-e-edificacao",
+    "nivelMin": 1,
+    "enunciado": "Terrenos são depreciados pelo mesmo prazo da edificação construída sobre eles.",
+    "gabarito": "E",
+    "explicacao": "O terreno, em regra, não é depreciado. Só a edificação sofre depreciação ao longo da vida útil.",
+    "regras": ["R-IMO-04", "R-DEP-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-terreno-e-edificacao-03",
+    "conceitoId": "terreno-e-edificacao",
+    "nivelMin": 1,
+    "enunciado": "A compra à vista de um imóvel de uso próprio por R$ 180.000,00 reduz o Patrimônio Líquido em R$ 180.000,00.",
+    "gabarito": "E",
+    "explicacao": "É um fato permutativo: sai dinheiro de Bancos e entra o imóvel no Imobilizado. O Patrimônio Líquido não muda.",
+    "regras": ["R-IMO-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-imobilizado-uso-proprio-01",
+    "conceitoId": "imobilizado-uso-proprio",
+    "nivelMin": 1,
+    "enunciado": "Balcões e prateleiras adquiridos para uso na loja são classificados no Imobilizado.",
+    "gabarito": "C",
+    "explicacao": "São bens de uso próprio, que servirão à empresa por vários períodos.",
+    "regras": ["R-IMO-05"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-imobilizado-uso-proprio-02",
+    "conceitoId": "imobilizado-uso-proprio",
+    "nivelMin": 1,
+    "enunciado": "Computadores comprados para uso da empresa são registrados em Estoque de Mercadorias.",
+    "gabarito": "E",
+    "explicacao": "Estoque é o que se destina à venda. Bens de uso próprio vão para o Imobilizado.",
+    "regras": ["R-IMO-05"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-imobilizado-uso-proprio-03",
+    "conceitoId": "imobilizado-uso-proprio",
+    "nivelMin": 1,
+    "enunciado": "A compra de móveis para uso próprio é despesa do mês em que ocorre.",
+    "gabarito": "E",
+    "explicacao": "A compra gera um ativo. O valor vai ao resultado aos poucos, pela depreciação, ao longo da vida útil.",
+    "regras": ["R-IMO-05", "R-DEP-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  }
+]

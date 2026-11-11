@@ -1,0 +1,92 @@
+[
+  {
+    "id": "af-pagamento-de-obrigacoes-01",
+    "conceitoId": "pagamento-de-obrigacoes",
+    "nivelMin": 3,
+    "enunciado": "O pagamento de uma dívida com fornecedor é despesa do período em que ocorre.",
+    "gabarito": "E",
+    "explicacao": "Pagar uma obrigação já registrada não afeta o resultado: reduz o Passivo e o Ativo.",
+    "regras": ["R-DES-05", "R-DES-01"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-pagamento-de-obrigacoes-02",
+    "conceitoId": "pagamento-de-obrigacoes",
+    "nivelMin": 3,
+    "enunciado": "O pagamento parcial a um fornecedor reduz o Ativo e o Passivo no mesmo valor, sem alterar o Patrimônio Líquido.",
+    "gabarito": "C",
+    "explicacao": "Sai dinheiro (Ativo) e diminui a dívida em Fornecedores (Passivo). O saldo restante continua no Passivo.",
+    "regras": ["R-DES-05"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-pagamento-de-obrigacoes-03",
+    "conceitoId": "pagamento-de-obrigacoes",
+    "nivelMin": 3,
+    "enunciado": "No pagamento de salários já reconhecidos no resultado, debita-se Despesas com Salários e credita-se Bancos Conta Movimento.",
+    "gabarito": "E",
+    "explicacao": "A despesa já foi reconhecida. No pagamento, debita-se Salários a Pagar, baixando a obrigação.",
+    "regras": ["R-DES-02", "R-DES-01"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-competencia-01",
+    "conceitoId": "competencia",
+    "nivelMin": 3,
+    "enunciado": "Pelo regime de competência, os salários de um mês são despesa desse mês, ainda que sejam pagos no mês seguinte.",
+    "gabarito": "C",
+    "explicacao": "A despesa é reconhecida quando ocorre, independentemente do pagamento.",
+    "regras": ["R-GER-03", "R-DES-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-competencia-02",
+    "conceitoId": "competencia",
+    "nivelMin": 3,
+    "enunciado": "A despesa com salários é reconhecida apenas no momento do pagamento aos funcionários.",
+    "gabarito": "E",
+    "explicacao": "Reconhecer a despesa e pagar a obrigação são eventos diferentes. A despesa é do mês trabalhado.",
+    "regras": ["R-DES-01", "R-GER-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-competencia-03",
+    "conceitoId": "competencia",
+    "nivelMin": 3,
+    "enunciado": "O reconhecimento dos salários do mês, ainda não pagos, é feito com débito em Despesas com Salários e crédito em Salários a Pagar.",
+    "gabarito": "C",
+    "explicacao": "Surge a despesa no resultado e a obrigação no Passivo Circulante.",
+    "regras": ["R-DES-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-despesas-operacionais-01",
+    "conceitoId": "despesas-operacionais",
+    "nivelMin": 3,
+    "enunciado": "A conta de energia elétrica paga no ato é registrada com débito em Despesa com Energia Elétrica e crédito em Bancos Conta Movimento ou em Caixa.",
+    "gabarito": "C",
+    "explicacao": "Quando a despesa é paga na hora, não é preciso passar por uma conta do Passivo.",
+    "regras": ["R-DES-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-despesas-operacionais-02",
+    "conceitoId": "despesas-operacionais",
+    "nivelMin": 3,
+    "enunciado": "Uma despesa paga à vista aumenta o Passivo da empresa.",
+    "gabarito": "E",
+    "explicacao": "Não surge obrigação: o Ativo diminui e a despesa reduz o resultado.",
+    "regras": ["R-DES-04"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  },
+  {
+    "id": "af-despesas-operacionais-03",
+    "conceitoId": "despesas-operacionais",
+    "nivelMin": 3,
+    "enunciado": "Uma despesa paga à vista reduz o Ativo e, pelo resultado do período, o Patrimônio Líquido.",
+    "gabarito": "C",
+    "explicacao": "É um fato modificativo diminutivo: sai dinheiro sem entrada de outro ativo.",
+    "regras": ["R-DES-04", "R-DEM-03"],
+    "momentos": ["pos_operacao", "pre_lancamento", "revisao"]
+  }
+]
