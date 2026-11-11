@@ -1,13 +1,15 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { bus } from "../bus";
+import { titulosEmAlerta } from "../state/calendario";
 import { disponibilidadesDaEmpresa, nivelDoJogador } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
-import { IconeAperto, IconeBalanca, IconeBarras, IconeMapa } from "./icones";
+import { IconeAperto, IconeBalanca, IconeBarras, IconeCalendario, IconeMapa } from "./icones";
 import {
   PainelDeMissoes,
   PainelDeProgresso,
+  PainelDoCalendario,
   PainelDoEscritorio,
   PainelDoEstabelecimento,
 } from "./paineis";
@@ -15,7 +17,7 @@ import {
 /** Nome da empresa do jogador na campanha (docs/campanha.md). */
 const EMPRESA = "Mercado Vila Nova";
 
-type Atalho = "missoes" | "escritorio" | "progresso";
+type Atalho = "missoes" | "calendario" | "escritorio" | "progresso";
 
 /** Painel aberto: um dos atalhos da base ou o estabelecimento a que o avatar chegou. */
 type Painel =
@@ -36,6 +38,12 @@ const ATALHOS: Readonly<Record<Atalho, DefinicaoDoAtalho>> = {
     titulo: "Missões",
     icone: () => <IconeMapa />,
     conteudo: () => <PainelDeMissoes />,
+  },
+  calendario: {
+    rotulo: "Calendário",
+    titulo: "Calendário",
+    icone: () => <IconeCalendario />,
+    conteudo: () => <PainelDoCalendario />,
   },
   escritorio: {
     rotulo: "Escritório",
@@ -79,6 +87,7 @@ export function App() {
   const data = useJogo((jogo) => jogo.data);
   const nivel = useJogo((jogo) => nivelDoJogador(jogo, conteudo.missoes));
   const concluidas = useJogo((jogo) => jogo.missoesConcluidas.length);
+  const alertas = useJogo((jogo) => titulosEmAlerta(jogo.titulos, jogo.data).length);
 
   useEffect(() => {
     const cancelarPronto = bus.ouvir("mundo:pronto", () => setMundoPronto(true));
@@ -117,6 +126,11 @@ export function App() {
           <button key={atalho} type="button" onClick={() => setPainel({ tipo: "atalho", atalho })}>
             {ATALHOS[atalho].icone()}
             {ATALHOS[atalho].rotulo}
+            {atalho === "calendario" && alertas > 0 && (
+              <span className="selo" role="status" aria-label={` título(s) vencendo`}>
+                {alertas}
+              </span>
+            )}
           </button>
         ))}
       </nav>

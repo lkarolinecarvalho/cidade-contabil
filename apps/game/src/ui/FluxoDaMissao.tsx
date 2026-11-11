@@ -15,10 +15,11 @@ import {
   conferirLancamento,
   linhasEsperadas,
 } from "../orquestrador/lancamento";
-import { operacoesExecutadas, PONTOS_POR_AFIRMATIVA } from "../state/jogo";
+import { acoesRestantes, operacoesExecutadas, PONTOS_POR_AFIRMATIVA } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { preencherAfirmativa } from "../texto/afirmativas";
 import { formatarReais } from "../texto/dinheiro";
+import { PainelDaDre } from "./Demonstracoes";
 import { EditorDeLancamento } from "./EditorDeLancamento";
 import { IconeCerto, IconeEstrela, Retrato } from "./icones";
 import { RegraCitada } from "./RegraCitada";
@@ -52,6 +53,7 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
   const feitas = useJogo((jogo) => operacoesExecutadas(jogo, missao));
   const contabil = useJogo((jogo) => jogo.contabil);
   const data = useJogo((jogo) => jogo.data);
+  const semAcoes = useJogo((jogo) => acoesRestantes(jogo) === 0);
   const npc = conteudo.npcs.find((n) => n.id === missao.npc);
 
   // Escolhidas uma vez, ao abrir a missão.
@@ -91,6 +93,20 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
   }
   const { operacao, lancamentos, valores } = previsao;
   const temEfeito = lancamentos.length > 0;
+
+  // Há operação por fazer e as ações do dia acabaram: só amanhã.
+  if (operacao && semAcoes) {
+    return (
+      <div className="cartao">
+        <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
+        <h3>{missao.titulo}</h3>
+        <p className="painel-texto">
+          Você já usou todas as ações de hoje. Abra o <strong>Calendário</strong> e encerre o dia
+          para continuar.
+        </p>
+      </div>
+    );
+  }
 
   /** Depois da negociação e depois de cada operação gravada. */
   const etapaDaOperacao = (restantes: boolean): Etapa => {
@@ -182,6 +198,12 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
             <strong>Missão cumprida!</strong>
             <span>Os lançamentos já estão no razão da empresa.</span>
           </div>
+          {/* Fechamento do mês: a DRE fecha a missão. */}
+          {missao.operacoes.some((o) => o.tipo === "apuracao_icms") && (
+            <div className="painel-secao">
+              <PainelDaDre />
+            </div>
+          )}
           <div className="recompensa">
             <IconeEstrela />
             <span>

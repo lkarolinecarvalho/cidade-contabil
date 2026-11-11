@@ -7,10 +7,9 @@ os lançamentos.
 
 **Público:** concurseiros (principal) e estudantes de Ciências Contábeis.
 
-**Status:** marcos M0 a M4 concluídos: monorepo, motor contábil (`packages/ledger`),
-conteúdo (`packages/content`), a casca do app com HUD e painéis, o mapa da cidade e o
-ciclo completo da missão (a campanha dos capítulos 1 a 7 é jogável de ponta a ponta). O
-próximo é o M6, calendário e fechamento.
+**Status:** marcos M0 a M6 concluídos: motor contábil, conteúdo, HUD e painéis, mapa da cidade,
+ciclo completo da missão e calendário com fechamento do mês. A campanha dos capítulos 1 a 7 é
+jogável de ponta a ponta. O próximo é o M7 (revisão, repetição espaçada e modo banca).
 
 ## Documentos
 

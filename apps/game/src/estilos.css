@@ -973,3 +973,77 @@ span.linha-valor {
 .painel-progresso strong {
   font-weight: 800;
 }
+
+/* Calendário e títulos */
+.atalhos button {
+  position: relative;
+}
+
+.selo {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--vermelho);
+  border: 2px solid var(--contorno);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 18px;
+}
+
+.titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.titulos li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--cartao-2);
+  border: 1.5px solid var(--borda);
+  font-size: 0.8125rem;
+}
+
+.titulos li.vence_hoje,
+.titulos li.vencido {
+  border-color: var(--vermelho);
+  background: #fde3df;
+}
+
+.titulo-texto {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.titulo-texto strong {
+  font-weight: 800;
+}
+
+.titulo-texto em {
+  font-style: normal;
+  font-weight: 800;
+}
+
+.botao-pequeno {
+  flex: none;
+  min-height: 36px;
+  padding: 2px 14px;
+  border-radius: 10px;
+  background: var(--verde);
+  border: 2px solid var(--verde-escuro);
+  color: #fffaf0;
+  font-weight: 800;
+}
