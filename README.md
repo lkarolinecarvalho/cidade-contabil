@@ -7,7 +7,8 @@ os lançamentos.
 
 **Público:** concurseiros (principal) e estudantes de Ciências Contábeis.
 
-**Status:** estrutura inicial. A implementação começa pelo marco M0 do roadmap.
+**Status:** marco M0 concluído (monorepo, ferramentas e app vazio em retrato). O
+próximo é o M1, o motor contábil.
 
 ## Documentos
 
@@ -38,6 +39,12 @@ cidade-contabil/
 
 ## Como começar
 
-1. Abra a pasta no VS Code com o Claude Code.
-2. Peça: "Leia o CLAUDE.md e o docs/roadmap.md e execute o marco M0."
-3. Avance um marco por vez, revisando os critérios de aceite de cada um.
+```
+corepack enable
+pnpm install
+pnpm dev          # abre o jogo em http://localhost:5173
+pnpm test && pnpm typecheck && pnpm lint
+```
+
+Para desenvolver com o Claude Code, avance um marco por vez (ex.: "Leia o CLAUDE.md e
+o docs/roadmap.md e execute o marco M1"), revisando os critérios de aceite de cada um.

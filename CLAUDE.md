@@ -62,8 +62,23 @@ docs/              GDD, regras, arquitetura, roadmap, ADRs, referências
 
 ## Comandos
 
-Definidos no marco M0 (ver `docs/roadmap.md`). Depois do M0, atualize esta seção com
-os comandos reais de dev, teste, typecheck, lint e build.
+Requer Node ≥ 22.12 (`.nvmrc`) e pnpm via Corepack (`corepack enable`). Rode na raiz:
+
+| Comando | O que faz |
+|---|---|
+| `pnpm install` | instala as dependências do monorepo |
+| `pnpm dev` | sobe o app (`apps/game`) no Vite, em http://localhost:5173 |
+| `pnpm test` | Vitest em todos os pacotes |
+| `pnpm typecheck` | `tsc --noEmit` em todos os pacotes |
+| `pnpm lint` | Biome: lint + verificação de formatação (ADR-0009) |
+| `pnpm format` | Biome: aplica formatação e correções seguras |
+| `pnpm build` | build de produção do app em `apps/game/dist` |
+
+Em um pacote só: `pnpm --filter @cidade/ledger test` (ou `@cidade/content`, `@cidade/game`).
+Modo watch: `pnpm --filter @cidade/ledger exec vitest`.
+
+As versões das dependências ficam no `catalog` de `pnpm-workspace.yaml`. O CI
+(`.github/workflows/ci.yml`) roda lint, typecheck, test e build.
 
 ## Quando estiver em dúvida
 
