@@ -11,7 +11,8 @@ src/
 ├── ui/          # React: HUD, bottom sheet, painéis
 ├── state/       # estado do jogo (regras puras em jogo.ts) e a store Zustand
 ├── bus/         # event bus tipado Phaser ↔ React
-└── texto/       # formatação de dinheiro e texto das afirmativas
+├── orquestrador/ # ciclo da missão: efeito, seleção de afirmativas, ajuda e conferência do lançamento
+└── texto/       # formatação de dinheiro, texto das afirmativas e das regras
 ```
 
 - **Phaser e React não se importam.** Toda a comunicação passa por `bus/`.
