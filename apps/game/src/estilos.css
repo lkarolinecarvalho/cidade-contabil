@@ -1,0 +1,63 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #0e151d;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+/*
+ * Palco sempre em retrato. No celular ocupa a tela toda; em telas largas vira uma
+ * coluna central com a proporção de referência (390×844). As variáveis vêm de palco.ts.
+ */
+#palco {
+  position: relative;
+  height: 100dvh;
+  width: min(100vw, calc(100dvh * var(--palco-largura) / var(--palco-altura)));
+  overflow: hidden;
+  background: #1d2b3a;
+}
+
+#mundo,
+#ui {
+  position: absolute;
+  inset: 0;
+}
+
+#mundo canvas {
+  display: block;
+}
+
+/* A UI fica por cima do canvas e só captura toque onde houver painel. */
+#ui {
+  pointer-events: none;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+#ui > * {
+  pointer-events: auto;
+}
+
+.titulo-provisorio {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #e8eef4;
+}
