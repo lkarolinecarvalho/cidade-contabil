@@ -13,7 +13,7 @@ import { type IdRegra, NOTAS_DIDATICAS, REGRAS } from "./index";
  */
 const FORA_DO_MOTOR: Partial<Record<IdRegra, string>> = {
   "R-CAP-01":
-    "Os dois acionistas existem na narrativa (ADR-0007); o motor registra o capital total (R-CAP-05).",
+    "Os dois sócios existem na narrativa (ADR-0007); o motor registra o capital total (R-CAP-05).",
   "R-ENT-03":
     "O bloqueio de despesa pessoal é da camada de jogo: o motor não tem operação de despesa pessoal.",
   "R-IMO-01":

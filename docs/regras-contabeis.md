@@ -27,18 +27,21 @@ não levar a simplificação para a prova.
   parte dele (fora do razão); a empresa registra a integralização (R-CAP-03).
 - **R-ENT-03** — Despesa pessoal paga com recursos da empresa é bloqueada na v1.
 
-## 3. Capital social (sociedade anônima)
+## 3. Capital social (sociedade limitada)
 
-- **R-CAP-01** — A empresa é uma S.A. Uma S.A. exige **pelo menos dois acionistas**
-  (Lei 6.404/76, art. 80, I). No MVP, o avatar é o acionista controlador e o único
-  jogável; um acionista NPC minoritário existe na narrativa (ADR-0007).
+- **R-CAP-01** — A empresa é uma **sociedade limitada** com dois sócios: o avatar (90%
+  das quotas), único jogável, e um sócio NPC investidor (10%), que só aparece na
+  narrativa (ADR-0007). O capital é dividido em quotas, e todos os sócios respondem
+  solidariamente pela integralização do capital (Código Civil, arts. 1.052 e 1.055).
 - **R-CAP-02** — **Capital autorizado** é o limite estatutário para aumentar o capital
-  sem reforma do estatuto (art. 168). **Não gera lançamento.**
+  sem reforma do estatuto (Lei 6.404/76, art. 168). **Não gera lançamento.** É figura
+  da sociedade anônima: a empresa do jogo não tem capital autorizado, e o conceito é
+  cobrado só na teoria, na comparação entre os tipos societários.
 - **R-CAP-03** — Subscrição: D (−) Capital a Integralizar / C Capital Social Subscrito.
   Integralização: D Bancos|Caixa / C (−) Capital a Integralizar.
 - **R-CAP-04** — No Balanço, o Capital Social é apresentado pelo valor subscrito menos o
   capital a integralizar (conta redutora do PL).
-- **R-CAP-05** — A parcela de cada acionista é proporcional à sua participação; o motor
+- **R-CAP-05** — A parcela de cada sócio é proporcional à sua participação; o motor
   registra a integralização total e a UI mostra a parte do avatar e a do NPC.
 
 ## 4. Plano de contas
@@ -356,13 +359,8 @@ A regra geral da revenda continua sendo a R-IPI-01 (o IPI integra o custo).
   Acabados`; a venda baixa `Produtos Acabados` contra CPV. Mão de obra e gastos gerais
   de fabricação não entram no custo.
 
-## 22. Mudanças ainda não aplicadas
+## 22. Regime tributário
 
-Decididas, mas ainda não refletidas nas seções acima nem no jogo:
-
-1. **Tipo societário.** A empresa passa a ser sociedade limitada (Código Civil, arts.
-   1.052 e 1.055), com o avatar (90% das quotas) e o Sr. Osvaldo (10%). O capital
-   autorizado e as demais figuras da S.A. saem das operações e ficam só na teoria. A
-   seção 3 será reescrita junto com a nova campanha.
-2. **Regime tributário.** O Lucro Presumido é mantido como simplificação didática; uma
-   hamburgueria desse porte estaria, na vida real, no Simples Nacional.
+O Lucro Presumido é mantido como simplificação didática, para o jogador treinar ICMS,
+PIS e COFINS destacados. Uma hamburgueria desse porte estaria, na vida real, no Simples
+Nacional.

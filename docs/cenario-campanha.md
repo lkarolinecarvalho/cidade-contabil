@@ -1,216 +1,340 @@
-# Cenário da campanha (teste dourado principal)
+# Cenário da campanha — "Chapa da Praça" (teste dourado)
 
-Capítulos 1–7 da campanha ([campanha.md](campanha.md)), com os valores esperados
-**centavo por centavo**. Deve virar um teste de integração em `packages/ledger`. O
-[cenário de tributos](cenario-referencia.md) continua valendo como teste isolado de
-tributos e custo médio.
+Campanha da hamburgueria, mês 1, do contrato social ao primeiro fechamento. É o teste
+dourado principal: `packages/ledger/src/cenario-campanha.test.ts` executa estas
+operações pelo motor e confere cada lançamento, centavo por centavo.
 
-Parâmetros: ICMS 18%, PIS 0,65%, COFINS 3,00%. Produto único ("Mercadorias diversas",
-nota a R$ 5,00/un). Vidas úteis: Edificações 25 anos, Móveis 10, Equipamentos 5.
-Acionistas: avatar 90%, NPC minoritário 10%. Carteira inicial do avatar: R$ 280.000,00.
+Os valores abaixo foram calculados **fora do motor**, à mão (por um script de
+conferência independente), seguindo `docs/regras-contabeis.md`.
 
-## Capítulo 1 — Nasce uma empresa
+## Premissas
 
-**C1.2 — Capital autorizado de R$ 500.000,00:** sem lançamento (R-CAP-02).
+- Sociedade limitada: o avatar tem 90% das quotas e o Sr. Osvaldo, 10% (R-CAP-01).
+- Carteira pessoal do avatar no início: R$ 100.000,00. Ela fica fora do razão
+  (R-ENT-01) e termina com R$ 10.000,00, depois de integralizar R$ 90.000,00.
+- ICMS de 18% por dentro; PIS de 0,65% e COFINS de 3% sobre a receita sem o ICMS.
+- Catálogo da hamburgueria (R-INS-01). Cada hambúrguer consome 1 pão, 1 carne, 1 queijo
+  e 1 alface (R-INS-03); cada hambúrguer congelado, 1 carne e 1 embalagem (R-PRD-01).
+- Vida útil: edificações 25 anos, móveis e utensílios 10, equipamentos 5 (R-DEP-01).
+- As operações 27 a 30 são do último dia do mês (dia 30).
 
-**C1.3 — Subscrição de R$ 300.000,00** (avatar 270.000; NPC 30.000)
+## Operações e lançamentos
 
-| Conta | D | C |
-|---|---:|---:|
-| (−) Capital a Integralizar | 300.000,00 | |
-| Capital Social Subscrito | | 300.000,00 |
+**1. Subscrição do capital — R$ 100.000,00**
 
-**C1.4 — Integralização de R$ 200.000,00 no banco** (avatar 180.000; NPC 20.000).
-Carteira do avatar: 280.000 → 100.000.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | (−) Capital a Integralizar | 100.000,00 |
+| C | Capital Social Subscrito | 100.000,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Bancos Conta Movimento | 200.000,00 | |
-| (−) Capital a Integralizar | | 200.000,00 |
+**2. Integralização de R$ 80.000,00 no banco**
 
-PL: 300.000 − 100.000 = **200.000,00**.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Bancos Conta Movimento | 80.000,00 |
+| C | (−) Capital a Integralizar | 80.000,00 |
 
-## Capítulo 2 — Comprando o terreno e a loja
+**3. Compra do ponto comercial: terreno R$ 20.000,00 e edificação R$ 40.000,00, pelo banco**
 
-**C2.7 — Imóvel de uso próprio, à vista** (R-IMO-02, R-IMO-04, R-IMO-06)
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Terrenos | 20.000,00 |
+| D | Edificações | 40.000,00 |
+| C | Bancos Conta Movimento | 60.000,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Terrenos | 60.000,00 | |
-| Edificações | 120.000,00 | |
-| Bancos Conta Movimento | | 180.000,00 |
+**4. Integralização final de R$ 20.000,00 no banco**
 
-Bancos: 20.000,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Bancos Conta Movimento | 20.000,00 |
+| C | (−) Capital a Integralizar | 20.000,00 |
 
-## Capítulo 3 — Integralizando o capital e equipando a loja
+**5. Mesas e balcão por R$ 6.000,00, pelo banco**
 
-**C3.8 — Integralização dos R$ 100.000,00 restantes** (avatar 90.000; NPC 10.000).
-Carteira do avatar: 100.000 → 10.000.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Móveis e Utensílios | 6.000,00 |
+| C | Bancos Conta Movimento | 6.000,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Bancos Conta Movimento | 100.000,00 | |
-| (−) Capital a Integralizar | | 100.000,00 |
+**6. Chapa e freezer por R$ 12.000,00, pelo banco**
 
-**C3.9 — Móveis e equipamentos, à vista** (R-IMO-05)
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Equipamentos | 12.000,00 |
+| C | Bancos Conta Movimento | 12.000,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Móveis e Utensílios | 15.000,00 | |
-| Bancos Conta Movimento | | 15.000,00 |
-| Equipamentos | 5.000,00 | |
-| Bancos Conta Movimento | | 5.000,00 |
+**7. Compra à vista (banco) de 500 refrigerantes a R$ 3,00, com IPI de 4%**
 
-Bancos: 100.000,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Estoque de Mercadorias | 1.290,00 |
+| D | ICMS a Recuperar | 270,00 |
+| C | Bancos Conta Movimento | 1.560,00 |
 
-## Capítulo 4 — Comprando as mercadorias (tributos entram aqui)
+**8. Compra a prazo (nota c1): 1.000 pães a R$ 1,00, 1.000 carnes a R$ 4,00, 1.000 queijos a R$ 1,00 e 1.000 alfaces a R$ 0,50**
 
-**C4.10 — Compra à vista via banco:** 8.000 un × R$ 5,00 = nota de R$ 40.000,00.
-ICMS 18% = 7.200,00 → custo 32.800,00 (R$ 4,10/un).
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Estoque de Insumos | 5.330,00 |
+| D | ICMS a Recuperar | 1.170,00 |
+| C | Fornecedores | 6.500,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Estoque de Mercadorias | 32.800,00 | |
-| ICMS a Recuperar | 7.200,00 | |
-| Bancos Conta Movimento | | 40.000,00 |
+**9. Inauguração: venda à vista de 300 hambúrgueres a R$ 20,00 e 200 refrigerantes a R$ 6,00**
 
-**C4.11 — Compra a prazo, 30 dias:** 4.000 un × R$ 5,00 = R$ 20.000,00.
-ICMS = 3.600,00 → custo 16.400,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Caixa | 7.200,00 |
+| C | Receita Bruta de Vendas | 7.200,00 |
+| D | ICMS sobre Vendas | 1.296,00 |
+| C | ICMS a Recolher | 1.296,00 |
+| D | PIS sobre Faturamento | 38,38 |
+| C | PIS a Recolher | 38,38 |
+| D | COFINS sobre Faturamento | 177,12 |
+| C | COFINS a Recolher | 177,12 |
+| D | Custo das Mercadorias Vendidas (CMV) | 516,00 |
+| C | Estoque de Mercadorias | 516,00 |
+| D | Custo dos Produtos Vendidos (CPV) | 1.599,00 |
+| C | Estoque de Insumos | 1.599,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Estoque de Mercadorias | 16.400,00 | |
-| ICMS a Recuperar | 3.600,00 | |
-| Fornecedores | | 20.000,00 |
+**10. Devolução de 100 carnes da nota c1**
 
-Estoque: 12.000 un, R$ 49.200,00 (médio R$ 4,10). Bancos: 60.000,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Fornecedores | 400,00 |
+| C | Estoque de Insumos | 328,00 |
+| C | ICMS a Recuperar | 72,00 |
 
-## Capítulo 5 — A grande inauguração
+**11. Abatimento de R$ 100,00 sobre o pão da nota c1**
 
-**C5.12 — Venda à vista:** 50 un × R$ 10,00 = 500,00. ICMS 90,00; base PIS/COFINS
-410,00 → PIS 2,665 → **2,67**; COFINS 12,30. CMV 50 × 4,10 = 205,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Fornecedores | 100,00 |
+| C | Estoque de Insumos | 100,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Caixa | 500,00 | |
-| Receita Bruta de Vendas | | 500,00 |
-| ICMS sobre Vendas | 90,00 | |
-| ICMS a Recolher | | 90,00 |
-| PIS sobre Faturamento | 2,67 | |
-| PIS a Recolher | | 2,67 |
-| COFINS sobre Faturamento | 12,30 | |
-| COFINS a Recolher | | 12,30 |
-| CMV | 205,00 | |
-| Estoque de Mercadorias | | 205,00 |
+**12. Compra a prazo (nota c2) de 500 carnes a R$ 4,00, com 10% de desconto na nota**
 
-**C5.13 — Venda a prazo ao restaurante:** 300 un × R$ 10,00 = 3.000,00. ICMS 540,00;
-base 2.460,00 → PIS 15,99; COFINS 73,80. CMV 1.230,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Estoque de Insumos | 1.476,00 |
+| D | ICMS a Recuperar | 324,00 |
+| C | Fornecedores | 1.800,00 |
 
-| Conta | D | C |
-|---|---:|---:|
-| Clientes | 3.000,00 | |
-| Receita Bruta de Vendas | | 3.000,00 |
-| ICMS sobre Vendas | 540,00 | |
-| ICMS a Recolher | | 540,00 |
-| PIS sobre Faturamento | 15,99 | |
-| PIS a Recolher | | 15,99 |
-| COFINS sobre Faturamento | 73,80 | |
-| COFINS a Recolher | | 73,80 |
-| CMV | 1.230,00 | |
-| Estoque de Mercadorias | | 1.230,00 |
+**13. Pagamento antecipado da nota c1 (R$ 6.000,00), pelo banco, com desconto de R$ 120,00**
 
-Estoque: 11.650 un, R$ 47.765,00.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Fornecedores | 6.000,00 |
+| C | Bancos Conta Movimento | 5.880,00 |
+| C | Descontos Financeiros Obtidos | 120,00 |
 
-## Capítulo 6 — Pagando as obrigações
+**14. Compra à vista (caixa) de 20 unidades de material de limpeza a R$ 25,00**
 
-| Op | Conta | D | C |
-|---|---|---:|---:|
-| C6.14 Pagamento parcial ao fornecedor | Fornecedores | 10.000,00 | |
-| | Bancos Conta Movimento | | 10.000,00 |
-| C6.15 Salários do mês | Despesas com Salários | 4.000,00 | |
-| | Salários a Pagar | | 4.000,00 |
-| C6.15 Pagamento dos salários | Salários a Pagar | 4.000,00 | |
-| | Bancos Conta Movimento | | 4.000,00 |
-| C6.16 Energia elétrica | Despesa com Energia Elétrica | 1.000,00 | |
-| | Bancos Conta Movimento | | 1.000,00 |
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Material de Consumo | 500,00 |
+| C | Caixa | 500,00 |
 
-Bancos: 45.000,00.
+**15. Encomenda a prazo (nota v1): 200 hambúrgueres a R$ 20,00 e 100 refrigerantes a R$ 6,00, com 10% de desconto na nota**
 
-## Capítulo 7 — O primeiro fechamento
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Clientes | 4.140,00 |
+| D | Descontos Incondicionais Concedidos | 460,00 |
+| C | Receita Bruta de Vendas | 4.600,00 |
+| D | ICMS sobre Vendas | 745,20 |
+| C | ICMS a Recolher | 745,20 |
+| D | PIS sobre Faturamento | 22,07 |
+| C | PIS a Recolher | 22,07 |
+| D | COFINS sobre Faturamento | 101,84 |
+| C | COFINS a Recolher | 101,84 |
+| D | Custo das Mercadorias Vendidas (CMV) | 258,00 |
+| C | Estoque de Mercadorias | 258,00 |
+| D | Custo dos Produtos Vendidos (CPV) | 1.007,61 |
+| C | Estoque de Insumos | 1.007,61 |
 
-**C7.a — Depreciação do mês** (R-DEP-01 a 04)
+**16. Devolução de 20 refrigerantes da nota v1**
 
-| Conta | D | C |
-|---|---:|---:|
-| Despesa de Depreciação | 400,00 | |
-| (−) Depreciação Acumulada — Edificações | | 400,00 |
-| Despesa de Depreciação | 125,00 | |
-| (−) Depreciação Acumulada — Móveis e Utensílios | | 125,00 |
-| Despesa de Depreciação | 83,33 | |
-| (−) Depreciação Acumulada — Equipamentos | | 83,33 |
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Devoluções de Vendas | 108,00 |
+| C | Clientes | 108,00 |
+| D | ICMS a Recolher | 19,44 |
+| C | ICMS sobre Vendas | 19,44 |
+| D | PIS a Recolher | 0,58 |
+| C | PIS sobre Faturamento | 0,58 |
+| D | COFINS a Recolher | 2,66 |
+| C | COFINS sobre Faturamento | 2,66 |
+| D | Estoque de Mercadorias | 51,60 |
+| C | Custo das Mercadorias Vendidas (CMV) | 51,60 |
 
-**C7.b — Apuração do ICMS no Posto Fiscal:** a recolher 630,00; a recuperar 10.800,00
-→ compensa 630,00. **Saldo credor de 10.170,00**, que fica para o mês seguinte.
-Não há ICMS a pagar.
+**17. Abatimento de R$ 100,00 sobre a encomenda**
 
-| Conta | D | C |
-|---|---:|---:|
-| ICMS a Recolher | 630,00 | |
-| ICMS a Recuperar | | 630,00 |
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Abatimentos sobre Vendas | 100,00 |
+| C | Clientes | 100,00 |
 
-## DRE do mês
+**18. Recebimento antecipado da nota v1 (R$ 3.932,00), pelo banco, com desconto de R$ 78,64**
 
-| | R$ |
-|---|---:|
-| Receita Bruta de Vendas | 3.500,00 |
-| (−) ICMS sobre Vendas | (630,00) |
-| (−) PIS sobre Faturamento | (18,66) |
-| (−) COFINS sobre Faturamento | (86,10) |
-| **= Receita Líquida** | **2.765,24** |
-| (−) CMV | (1.435,00) |
-| **= Lucro Bruto** | **1.330,24** |
-| (−) Despesas com Salários | (4.000,00) |
-| (−) Despesa com Energia Elétrica | (1.000,00) |
-| (−) Despesa de Depreciação | (608,33) |
-| **= Resultado do período** | **(4.278,09) — prejuízo** |
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Bancos Conta Movimento | 3.853,36 |
+| D | Descontos Financeiros Concedidos | 78,64 |
+| C | Clientes | 3.932,00 |
 
-## Balanço Patrimonial
+**19. Recebimento de 300 refrigerantes em consignação, a R$ 3,00 — sem lançamento**
 
-| Ativo | R$ |
-|---|---:|
-| Caixa | 500,00 |
-| Bancos Conta Movimento | 45.000,00 |
-| Clientes | 3.000,00 |
-| Estoque de Mercadorias | 47.765,00 |
-| ICMS a Recuperar | 10.170,00 |
-| **Ativo Circulante** | **106.435,00** |
-| Terrenos | 60.000,00 |
-| Edificações (120.000,00 − 400,00) | 119.600,00 |
-| Móveis e Utensílios (15.000,00 − 125,00) | 14.875,00 |
-| Equipamentos (5.000,00 − 83,33) | 4.916,67 |
-| **Ativo Não Circulante — Imobilizado** | **199.391,67** |
-| **Total do Ativo** | **305.826,67** |
+**20. Venda à vista de 150 refrigerantes consignados a R$ 6,00**
 
-| Passivo + PL | R$ |
-|---|---:|
-| Fornecedores | 10.000,00 |
-| PIS a Recolher | 18,66 |
-| COFINS a Recolher | 86,10 |
-| **Passivo Circulante** | **10.104,76** |
-| Capital Social Subscrito | 300.000,00 |
-| (−) Capital a Integralizar | 0,00 |
-| Resultado do período | (4.278,09) |
-| **Patrimônio Líquido** | **295.721,91** |
-| **Total Passivo + PL** | **305.826,67** |
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Estoque de Mercadorias | 369,00 |
+| D | ICMS a Recuperar | 81,00 |
+| C | Fornecedores | 450,00 |
+| D | Caixa | 900,00 |
+| C | Receita Bruta de Vendas | 900,00 |
+| D | ICMS sobre Vendas | 162,00 |
+| C | ICMS a Recolher | 162,00 |
+| D | PIS sobre Faturamento | 4,80 |
+| C | PIS a Recolher | 4,80 |
+| D | COFINS sobre Faturamento | 22,14 |
+| C | COFINS a Recolher | 22,14 |
+| D | Custo das Mercadorias Vendidas (CMV) | 379,70 |
+| C | Estoque de Mercadorias | 379,70 |
 
-Balancete: total devedor = total credor = **314.213,09**.
-Carteira pessoal do avatar (fora do razão): **10.000,00**.
+**21. Devolução ao consignante de 150 refrigerantes — sem lançamento**
 
-## Diferenças em relação à história original
+**22. Salários do mês: R$ 3.000,00, a pagar no mês seguinte**
 
-- Compras e vendas com tributos a partir do capítulo 4 (decisão do projeto).
-- Quantidades e preço unitário definidos para o custo médio funcionar.
-- Depreciação incluída no fechamento do capítulo 7, porque os bens já estão em uso no
-  mês e omiti-la deixaria o balanço tecnicamente errado. Na história, ela aparecia só
-  no capítulo 8.
-- Acionista NPC minoritário (10%), porque S.A. exige ao menos dois acionistas.
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Despesas com Salários | 3.000,00 |
+| C | Salários a Pagar | 3.000,00 |
+
+**23. Energia elétrica de R$ 600,00, paga pelo banco**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Despesa com Energia Elétrica | 600,00 |
+| C | Bancos Conta Movimento | 600,00 |
+
+**24. Compra a prazo (nota c3) de 400 embalagens a R$ 1,00, com IPI de 5% recuperável**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Estoque de Insumos | 328,00 |
+| D | ICMS a Recuperar | 72,00 |
+| D | IPI a Recuperar | 20,00 |
+| C | Fornecedores | 420,00 |
+
+**25. Produção de 300 hambúrgueres congelados**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Produtos Acabados | 1.185,27 |
+| C | Estoque de Insumos | 1.185,27 |
+
+**26. Venda a prazo (nota v2) de 250 hambúrgueres congelados a R$ 12,00, com IPI de 5%**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Clientes | 3.150,00 |
+| C | Receita Bruta de Vendas | 3.000,00 |
+| C | IPI a Recolher | 150,00 |
+| D | ICMS sobre Vendas | 540,00 |
+| C | ICMS a Recolher | 540,00 |
+| D | PIS sobre Faturamento | 15,99 |
+| C | PIS a Recolher | 15,99 |
+| D | COFINS sobre Faturamento | 73,80 |
+| C | COFINS a Recolher | 73,80 |
+| D | Custo dos Produtos Vendidos (CPV) | 987,73 |
+| C | Produtos Acabados | 987,73 |
+
+**27. Depreciação do mês**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Despesa de Depreciação | 133,33 |
+| C | (−) Depreciação Acumulada — Edificações | 133,33 |
+| D | Despesa de Depreciação | 50,00 |
+| C | (−) Depreciação Acumulada — Móveis e Utensílios | 50,00 |
+| D | Despesa de Depreciação | 200,00 |
+| C | (−) Depreciação Acumulada — Equipamentos | 200,00 |
+
+**28. Inventário do material de limpeza: restam 8 unidades**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | Despesa com Material de Consumo | 300,00 |
+| C | Material de Consumo | 300,00 |
+
+**29. Apuração do ICMS**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | ICMS a Recolher | 1.845,00 |
+| C | ICMS a Recuperar | 1.845,00 |
+
+**30. Apuração do IPI**
+
+| D/C | Conta | Valor |
+|---|---|---|
+| D | IPI a Recolher | 20,00 |
+| C | IPI a Recuperar | 20,00 |
+
+## Estoque no fim do mês
+
+| Item | Quantidade | Valor |
+|---|---|---|
+| Refrigerante | 220 | 556,90 |
+| Pão | 500 | 338,57 |
+| Carne | 600 | 1.878,55 |
+| Queijo | 500 | 410,00 |
+| Alface | 500 | 205,00 |
+| Material de limpeza | 8 | 200,00 |
+| Embalagem | 100 | 82,00 |
+| Hambúrguer congelado | 50 | 197,54 |
+
+## DRE do mês 1
+
+| Linha | Valor |
+|---|---|
+| Receita Bruta de Vendas | 15.700,00 |
+| (−) ICMS sobre Vendas | (2.723,76) |
+| (−) PIS sobre Faturamento | (80,66) |
+| (−) COFINS sobre Faturamento | (372,24) |
+| (−) Devoluções de Vendas | (108,00) |
+| (−) Abatimentos sobre Vendas | (100,00) |
+| (−) Descontos Incondicionais Concedidos | (460,00) |
+| **= Receita Líquida** | **11.855,34** |
+| (−) CMV | (1.102,10) |
+| (−) CPV | (3.594,34) |
+| **= Lucro Bruto** | **7.158,90** |
+| (−) Despesas com Salários | (3.000,00) |
+| (−) Despesa com Energia Elétrica | (600,00) |
+| (−) Despesa de Depreciação | (383,33) |
+| (−) Despesa com Material de Consumo | (300,00) |
+| (+) Descontos Financeiros Obtidos | 120,00 |
+| (−) Descontos Financeiros Concedidos | (78,64) |
+| **= Resultado do período (lucro)** | **2.916,93** |
+
+## Balanço Patrimonial no dia 30
+
+| Ativo | Valor | Passivo e PL | Valor |
+|---|---|---|---|
+| Caixa | 7.600,00 | Fornecedores | 2.670,00 |
+| Bancos Conta Movimento | 17.813,36 | ICMS a Recolher | 878,76 |
+| Clientes | 3.150,00 | PIS a Recolher | 80,66 |
+| Estoque de Mercadorias | 556,90 | COFINS a Recolher | 372,24 |
+| Estoque de Insumos | 2.914,12 | Salários a Pagar | 3.000,00 |
+| Produtos Acabados | 197,54 | IPI a Recolher | 130,00 |
+| Material de Consumo | 200,00 | **Passivo Circulante** | **7.131,66** |
+| **Ativo Circulante** | **32.431,92** | Capital Social | 100.000,00 |
+| Terrenos | 20.000,00 | Resultado do período | 2.916,93 |
+| Edificações (líquido) | 39.866,67 | **Patrimônio Líquido** | **102.916,93** |
+| Móveis e Utensílios (líquido) | 5.950,00 | | |
+| Equipamentos (líquido) | 11.800,00 | | |
+| **Ativo Não Circulante** | **77.616,67** | | |
+| **Total do Ativo** | **110.048,59** | **Total do Passivo + PL** | **110.048,59** |
+
+O balancete fecha em **123.334,99** de cada lado.
