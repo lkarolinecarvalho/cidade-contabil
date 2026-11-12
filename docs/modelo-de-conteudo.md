@@ -56,6 +56,13 @@ primeiro as falas de `dialogo`, depois os temas de `aulas` (obrigatório), e nen
 lançamento. Nela não há `proposta` e `conceitos` fica vazio. Nas missões com operação,
 `aulas` é opcional e os temas aparecem antes da conversa, na primeira vez.
 
+**Fase sem tributos.** Nas compras e vendas dos capítulos 2 e 3, a operação leva
+`"semTributos": true` (R-DID-01): a nota entra pelo valor total.
+
+**Comparação.** Uma missão de compra pode ter `comparacao`
+(`com`, `titulo`, `la`, `aqui`, `porque`): ao concluir, o jogo mostra a nota dela ao
+lado da nota da missão `com`, com os valores calculados pelo motor.
+
 Um tema de teoria pode ter um `quadro` de dois lados (`esquerda` e `direita`, com
 blocos de `titulo`, `legenda` e `itens`), mostrado junto do exemplo: é como o
 jogador vê, por exemplo, o Ativo de um lado e o Passivo e o PL do outro.

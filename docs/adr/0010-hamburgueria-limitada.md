@@ -1,5 +1,7 @@
 # ADR-0010 — A empresa é uma hamburgueria, sociedade limitada
 
+> **Alterado pelo [ADR-0011](0011-progressao-pedagogica.md):** a campanha passou a ter 8 capítulos, com uma fase inicial sem tributos.
+
 **Status:** aceito. Substitui o [ADR-0007](0007-sociedade-anonima.md) e a lista de
 capítulos do [ADR-0008](0008-escopo-mvp-campanha.md).
 

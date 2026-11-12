@@ -73,8 +73,9 @@ veículos e propriedade para investimento (capítulo 8 da campanha).
 
 ## 7A. Campanha
 
-O jogo é a campanha "Chapa da Praça", em 6 capítulos ([campanha.md](campanha.md),
-ADR-0010). O catálogo é fixo e pequeno (quatro insumos, o refrigerante e o material de
+O jogo é a campanha "Chapa da Praça", em 8 capítulos ([campanha.md](campanha.md),
+ADR-0010 e ADR-0011). Todo conceito novo é apresentado pela Marta antes da operação que o usa, e
+os impostos só aparecem a partir do capítulo 4. O catálogo é fixo e pequeno (quatro insumos, o refrigerante e o material de
 limpeza); o que muda é a condição de cada operação. Depois da campanha, o jogo segue
 em modo livre.
 
