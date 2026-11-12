@@ -1,6 +1,7 @@
 import { type Afirmativa, carregarConteudoDoJogo, type Missao } from "@cidade/content";
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
+import { definirVelocidade, type Velocidade } from "../som/narracao";
 import { definirSom } from "../som/sons";
 import {
   concluirMissao,
@@ -44,6 +45,8 @@ interface Acoes {
   /** O jogador dispensou a dica de primeira vez de uma etapa. */
   marcarDica(dica: string): void;
   definirSom(ligado: boolean): void;
+  definirVelocidadeDaVoz(velocidade: Velocidade): void;
+  definirNarracaoAutomatica(ligada: boolean): void;
 }
 
 /** O que a sessão lembra por fora do estado do jogo (não entra no salvamento da partida). */
@@ -52,6 +55,10 @@ interface Sessao {
   readonly dicasVistas: readonly string[];
   /** Efeitos sonoros ligados. */
   readonly somLigado: boolean;
+  /** Ritmo da leitura em voz alta. */
+  readonly velocidadeDaVoz: Velocidade;
+  /** Ler cada fala e cada explicação assim que ela aparece, sem tocar no alto-falante. */
+  readonly narracaoAutomatica: boolean;
 }
 
 export type JogoStore = EstadoDoJogo & Sessao & Acoes;
@@ -65,9 +72,18 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   aberturaVista: false,
   dicasVistas: [],
   somLigado: true,
+  velocidadeDaVoz: "animada",
+  narracaoAutomatica: false,
   definirSom(ligado) {
     definirSom(ligado);
     set({ somLigado: ligado });
+  },
+  definirVelocidadeDaVoz(velocidade) {
+    definirVelocidade(velocidade);
+    set({ velocidadeDaVoz: velocidade });
+  },
+  definirNarracaoAutomatica(ligada) {
+    set({ narracaoAutomatica: ligada });
   },
   concluirAbertura() {
     set({ aberturaVista: true });

@@ -1,24 +1,52 @@
 import type { Tema } from "@cidade/content";
-import { type ReactNode, useState } from "react";
-import { calar, falar, podeFalar, tocar } from "../som/sons";
+import { type ReactNode, useEffect, useState, useSyncExternalStore } from "react";
+import { assinarLeitura, calar, falar, podeFalar, textoEmLeitura } from "../som/narracao";
+import { tocar } from "../som/sons";
 import { PONTOS_POR_AFIRMATIVA } from "../state/jogo";
-import { jogoStore } from "../state/store";
+import { jogoStore, useJogo } from "../state/store";
 
-/** Botão que lê um texto em voz alta, quando o aparelho tem voz em português. */
+/**
+ * Botão que lê um texto em voz alta, quando o aparelho tem voz em português. Um toque
+ * começa a leitura; outro, durante a leitura, para; mais um, repete do começo. Com a
+ * narração automática ligada, a leitura começa sozinha quando o texto aparece.
+ */
 export function Ouvir({ texto }: { readonly texto: string }) {
+  const automatica = useJogo((jogo) => jogo.narracaoAutomatica);
+  const lendo = useSyncExternalStore(
+    assinarLeitura,
+    () => textoEmLeitura() === texto,
+    () => false,
+  );
+  useEffect(() => {
+    if (automatica) falar(texto);
+    // O texto saiu da tela (ou mudou): a leitura dele para.
+    return () => calar(texto);
+  }, [texto, automatica]);
   if (!podeFalar()) return null;
   return (
-    <button type="button" className="ouvir" aria-label="Ouvir" onClick={() => falar(texto)}>
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
-        <path
-          d="M15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </svg>
+    <button
+      type="button"
+      className={lendo ? "ouvir lendo" : "ouvir"}
+      aria-label={lendo ? "Parar a leitura" : "Ouvir"}
+      aria-pressed={lendo}
+      onClick={() => (lendo ? calar(texto) : falar(texto))}
+    >
+      {lendo ? (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+          <path
+            d="M15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      )}
     </button>
   );
 }

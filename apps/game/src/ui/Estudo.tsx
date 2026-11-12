@@ -1,6 +1,7 @@
 import type { Afirmativa } from "@cidade/content";
 import { useState } from "react";
 import { selecionarParaRevisao } from "../orquestrador/afirmativas";
+import { falar, VELOCIDADES } from "../som/narracao";
 import { CAIXA_MAXIMA, conceitoVencido, diasAteARevisao } from "../state/estudo";
 import { nivelDoJogador } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
@@ -152,6 +153,8 @@ export function PainelDeProgresso() {
 export function PainelDeConfiguracoes() {
   const modoBanca = useJogo((jogo) => jogo.modoBanca);
   const somLigado = useJogo((jogo) => jogo.somLigado);
+  const velocidade = useJogo((jogo) => jogo.velocidadeDaVoz);
+  const automatica = useJogo((jogo) => jogo.narracaoAutomatica);
   return (
     <>
       <div className="cartao">
@@ -168,9 +171,46 @@ export function PainelDeConfiguracoes() {
           </span>
           Efeitos sonoros {somLigado ? "ligados" : "desligados"}
         </button>
+      </div>
+      <div className="painel-secao cartao">
+        <h3>Narração</h3>
+        <p className="painel-texto">
+          Toque no alto-falante ao lado de um texto para ouvi-lo. Toque de novo para parar.
+        </p>
+        <button
+          type="button"
+          className="interruptor"
+          role="switch"
+          aria-checked={automatica}
+          onClick={() => jogoStore.getState().definirNarracaoAutomatica(!automatica)}
+        >
+          <span className="interruptor-trilho">
+            <span />
+          </span>
+          Narração automática {automatica ? "ligada" : "desligada"}
+        </button>
         <p className="painel-nota">
-          Para ouvir um texto em voz alta, toque no alto-falante ao lado dele. A voz é a do seu
-          aparelho.
+          Ligada, cada fala e cada explicação é lida assim que aparece na tela.
+        </p>
+        <div className="velocidades" role="radiogroup" aria-label="Ritmo da leitura">
+          {VELOCIDADES.map(([id, nome]) => (
+            // biome-ignore lint/a11y/useSemanticElements: botões em grupo, com o visual do jogo.
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={velocidade === id}
+              onClick={() => {
+                jogoStore.getState().definirVelocidadeDaVoz(id);
+                falar("Assim está bom? Vamos fechar as contas do mês!");
+              }}
+            >
+              {nome}
+            </button>
+          ))}
+        </div>
+        <p className="painel-nota">
+          A voz é a do seu aparelho; o jogo escolhe a mais natural que encontrar em português.
         </p>
       </div>
       <div className="painel-secao cartao">

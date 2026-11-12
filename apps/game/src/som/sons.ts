@@ -76,25 +76,4 @@ export function tocar(som: Som): void {
   }
 }
 
-/** Se o aparelho consegue ler textos em voz alta. */
-export function podeFalar(): boolean {
-  return typeof window !== "undefined" && "speechSynthesis" in window;
-}
-
-/** Lê o texto em voz alta, em português, com a voz do próprio aparelho. */
-export function falar(texto: string): void {
-  if (!podeFalar()) return;
-  const sintese = window.speechSynthesis;
-  sintese.cancel();
-  const fala = new SpeechSynthesisUtterance(texto);
-  fala.lang = "pt-BR";
-  const voz = sintese.getVoices().find((v) => v.lang.toLowerCase().startsWith("pt"));
-  if (voz) fala.voice = voz;
-  fala.rate = 1;
-  sintese.speak(fala);
-}
-
-/** Interrompe a leitura em voz alta. */
-export function calar(): void {
-  if (podeFalar()) window.speechSynthesis.cancel();
-}
+export { calar, falar, podeFalar } from "./narracao";
