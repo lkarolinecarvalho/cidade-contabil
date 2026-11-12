@@ -127,9 +127,15 @@ export function definirVelocidade(nova: Velocidade): void {
   velocidade = nova;
 }
 
-/** Se o aparelho consegue ler textos em voz alta. */
+/**
+ * A narração está desligada no jogo até os textos e as regras estarem definidos. O
+ * código fica pronto: basta ligar aqui para os botões de ouvir e as opções voltarem.
+ */
+export const NARRACAO_DISPONIVEL: boolean = false;
+
+/** Se o jogo oferece narração e o aparelho consegue ler textos em voz alta. */
 export function podeFalar(): boolean {
-  return typeof window !== "undefined" && "speechSynthesis" in window;
+  return NARRACAO_DISPONIVEL && typeof window !== "undefined" && "speechSynthesis" in window;
 }
 
 /** Texto em leitura, para os botões de ouvir saberem se são eles que estão tocando. */

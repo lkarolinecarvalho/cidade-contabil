@@ -3,6 +3,7 @@ import {
   entonacao,
   escolherVoz,
   frasesDe,
+  NARRACAO_DISPONIVEL,
   notaDaVoz,
   prepararParaFala,
   RITMO,
@@ -92,6 +93,11 @@ describe("narração: o texto preparado para a fala", () => {
     expect(notaDaVoz({ name: "Luciana", lang: "pt_BR" })).toBeGreaterThan(
       notaDaVoz({ name: "Joana", lang: "pt-PT" }),
     );
+  });
+
+  it("a narração está desligada no jogo: nenhum botão de ouvir aparece", () => {
+    expect(NARRACAO_DISPONIVEL).toBe(false);
+    expect(podeFalar()).toBe(false);
   });
 
   it("sem voz no ambiente, nada está em leitura e parar não dá erro", () => {
