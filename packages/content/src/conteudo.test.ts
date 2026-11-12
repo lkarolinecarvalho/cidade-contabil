@@ -100,6 +100,15 @@ describe("conteúdo do jogo", () => {
     }
   });
 
+  it("a teoria tem temas curtos, com exemplo e perguntas de gabaritos misturados", () => {
+    expect(conteudo.teoria.length).toBeGreaterThanOrEqual(9);
+    for (const tema of conteudo.teoria) {
+      for (const ponto of tema.pontos) expect(ponto.length, tema.id).toBeLessThanOrEqual(170);
+      expect(tema.exemplo.length, tema.id).toBeLessThanOrEqual(240);
+      expect(new Set(tema.perguntas.map((p) => p.gabarito)).size, tema.id).toBe(2);
+    }
+  });
+
   it("toda missão está num estabelecimento onde o NPC atende", () => {
     const npcs = new Map(conteudo.npcs.map((n) => [n.id, n]));
     for (const m of conteudo.missoes) {

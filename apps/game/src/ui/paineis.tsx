@@ -17,25 +17,12 @@ import {
 } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
-import { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
-import { PainelDeRevisao } from "./Estudo";
 import { FluxoDaMissao } from "./FluxoDaMissao";
 
 export { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
+export { PainelDoEscritorio } from "./Escritorio";
 export { PainelDeConfiguracoes, PainelDeProgresso } from "./Estudo";
 export { PainelDeMissoes } from "./Missoes";
-
-/** Atalho do Escritório: a Revisão, o Balanço e a DRE. */
-export function PainelDoEscritorio() {
-  return (
-    <>
-      <PainelDeRevisao />
-      <div className="painel-secao">
-        <PainelDasDemonstracoes />
-      </div>
-    </>
-  );
-}
 
 const nomeDoEstabelecimento = (id: string): string =>
   conteudo.estabelecimentos.find((e) => e.id === id)?.nome ?? id;
@@ -118,36 +105,68 @@ function ListaDeTitulos({ comAcoes }: { readonly comAcoes: boolean }) {
   );
 }
 
-/** Situação do ICMS no Posto Fiscal, com o pagamento do saldo devedor apurado (R-ICMS-06). */
-function PainelDoIcms() {
-  const aPagar = useJogo((jogo) => jogo.icmsAPagarCentavos);
-  const fechado = useJogo(mesFechado);
+/** Um imposto no Posto Fiscal: o saldo devedor apurado e o botão para pagar. */
+function Imposto({
+  nome,
+  aPagar,
+  fechado,
+  aoPagar,
+}: {
+  readonly nome: string;
+  readonly aPagar: number;
+  readonly fechado: boolean;
+  readonly aoPagar: () => void;
+}) {
   const [erro, executar] = useAcao();
   return (
     <div className="cartao">
-      <h3>ICMS</h3>
+      <h3>{nome}</h3>
       {aPagar > 0 ? (
         <>
           <p className="painel-texto">
-            ICMS apurado a pagar: <strong>{formatarReais(aPagar)}</strong>
+            {nome} apurado a pagar: <strong>{formatarReais(aPagar)}</strong>
           </p>
-          <button
-            type="button"
-            className="botao-principal"
-            onClick={() => executar(() => jogoStore.getState().pagarIcms())}
-          >
+          <button type="button" className="botao-principal" onClick={() => executar(aoPagar)}>
             Pagar pelo banco
           </button>
         </>
       ) : (
         <p className="painel-texto">
           {fechado
-            ? "O ICMS deste mês já foi apurado e não há imposto a pagar."
-            : `Não há ICMS apurado a pagar. A apuração é feita no último dia do mês (dia ${DIAS_NO_MES}).`}
+            ? `O ${nome} deste mês já foi apurado e não há imposto a pagar.`
+            : `Não há ${nome} apurado a pagar. A apuração é feita no último dia do mês (dia ${DIAS_NO_MES}).`}
         </p>
       )}
       {erro && <Aviso>{erro}</Aviso>}
     </div>
+  );
+}
+
+/** Posto Fiscal: o ICMS (R-ICMS-06) e o IPI (R-IPI-06) apurados com saldo devedor. */
+function PainelDosImpostos() {
+  const icms = useJogo((jogo) => jogo.icmsAPagarCentavos);
+  const ipi = useJogo((jogo) => jogo.ipiAPagarCentavos);
+  const fechado = useJogo(mesFechado);
+  return (
+    <>
+      <Imposto
+        nome="ICMS"
+        aPagar={icms}
+        fechado={fechado}
+        aoPagar={() => jogoStore.getState().pagarIcms()}
+      />
+      {/* O IPI só aparece depois que a casa vira indústria e apura o imposto. */}
+      {ipi > 0 && (
+        <div className="painel-secao">
+          <Imposto
+            nome="IPI"
+            aPagar={ipi}
+            fechado={fechado}
+            aoPagar={() => jogoStore.getState().pagarIpi()}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -211,7 +230,7 @@ export function PainelDoEstabelecimento({
       )}
       {estabelecimento === "posto-fiscal" && (
         <div className="painel-secao">
-          <PainelDoIcms />
+          <PainelDosImpostos />
         </div>
       )}
     </>

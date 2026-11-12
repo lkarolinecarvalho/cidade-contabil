@@ -64,7 +64,7 @@ Regra explícita do jogo (ADR-0004):
 | Hamburgueria | Vendas à vista e a prazo; devoluções e abatimentos de venda; equipar a casa; produção; salários e energia | Receita, deduções, CMV e CPV, Clientes, imobilizado, despesas |
 | Fornecedor (Distribuidora) | Compras de insumos, refrigerante e material de limpeza; devoluções, abatimentos e descontos; consignação | Custo de aquisição, ICMS e IPI, Fornecedores, consignação |
 | Banco | Integralizações, depósitos, pagamentos e recebimentos | Disponibilidades |
-| Escritório Contábil | Constituição da empresa; Diário, Razão, Balancete, DRE, Balanço; Revisão | Capital social, demonstrações, repetição espaçada |
+| Escritório Contábil | Contrato social e fechamento do mês (missões). Pelo atalho: Consulta, Teoria, Revisão e Desafios | Capital social, demonstrações, teoria, repetição espaçada |
 | Posto Fiscal (SEFAZ) | Apuração e pagamento do ICMS | Não cumulatividade, ICMS a Recolher |
 | Imobiliária | Compra do imóvel da loja | Imobilizado x Estoque x Propriedade para Investimento |
 
@@ -106,10 +106,21 @@ O MVP cobre os níveis 1 a 4.
 
 ## 10. HUD (retrato)
 
-- Topo: avatar e nível, Sua carteira, Caixa da empresa, pontos, dia/mês, configurações.
+- Topo: uma barra com o retrato, o nível, o dinheiro da empresa e a data; tocar nela abre
+  o resumo (carteira pessoal, Caixa e Bancos, pontos, botão do Balanço). A engrenagem
+  fica ao lado.
+- Abaixo da barra, o **aviso do próximo destino** ("Vá ao Banco"), que muda a cada missão.
 - Mapa ocupando a tela.
-- Atalhos inferiores: Missões, Escritório (Diário/Balanço/DRE/Revisão), Progresso.
-- Painéis em bottom sheet: negociação → efeito → afirmativas → lançamento.
+- Atalhos inferiores: Missões (a campanha por capítulo), Calendário, Escritório e Progresso
+  (tocar num conceito mostra a definição).
+- O painel do estabelecimento abre no meio da tela: negociação → efeito → afirmativas →
+  lançamento. Há sempre um "Voltar" até a operação ser gravada, e a missão concluída
+  fecha o painel.
+- **Escritório Contábil** (atalho): quatro portas.
+  - Consulta: Plano de Contas, Balanço, DRE, Diário e Razão da própria empresa.
+  - Teoria: temas em passos curtos, com um exemplo da hamburgueria e perguntas.
+  - Revisão: baterias de Certo/Errado dos conceitos vencidos.
+  - Desafios: "Onde fica a conta?", "Devedora ou credora?" e "Monte a DRE".
 
 ## 11. Fora do escopo da v1
 

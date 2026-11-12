@@ -4,6 +4,17 @@ Missões e afirmativas são JSON em `packages/content/data`, validados por schem
 em `packages/content/src`. A validação roda nos testes e no build: conteúdo inválido
 quebra o CI.
 
+## Arquivos
+
+| Arquivo | O que tem |
+|---|---|
+| `capitulos.json` | Número e título de cada capítulo da campanha |
+| `missoes/*.json` | Uma missão por arquivo |
+| `afirmativas/*.json` | Afirmativas de Certo/Errado, por conceito |
+| `conceitos.json` | Conceitos, com nível e uma **definição curta** (mostrada no Progresso) |
+| `teoria.json` | Temas de teoria do Escritório: pontos curtos, um exemplo e perguntas |
+| `produtos.json`, `npcs.json`, `estabelecimentos.json` | Cadastros |
+
 ## Missão
 
 A missão descreve **a operação**, nunca o lançamento. O lançamento esperado é

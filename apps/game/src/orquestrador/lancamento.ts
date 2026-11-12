@@ -6,6 +6,7 @@ import {
   type DataJogo,
   dre,
   type EstadoContabil,
+  type GrupoConta,
   type IdRegra,
   type Lado,
   type Lancamento,
@@ -15,6 +16,7 @@ import {
   type ResultadoComparacao,
   saldos,
   simularLancamentoInformado,
+  tipoDoItem,
 } from "@cidade/ledger";
 import { formatarReais, lerReais } from "../texto/dinheiro";
 
@@ -262,6 +264,9 @@ function comentarDoContador(
     const grupo = contas.find((c) => c.codigo === p.conta)?.grupo;
     return grupo === "custo" || grupo === "despesa_operacional";
   });
+  const usaGrupo = (grupo: GrupoConta) =>
+    informado.some((p) => contas.find((c) => c.codigo === p.conta)?.grupo === grupo);
+  const usaReceita = usaGrupo("receita") || usaGrupo("receita_financeira");
   const { comOSeuLancamento: seu, correto } = previa;
   const diferenca = (a: Centavos, b: Centavos) => formatarReais(Math.abs(a - b));
 
@@ -294,7 +299,35 @@ function comentarDoContador(
     };
   }
 
-  if (operacao.tipo === "compra" && !usa(papeis.icmsARecuperar)) {
+  // Material de uso e consumo: a nota não dá crédito de ICMS.
+  const soConsumo =
+    operacao.tipo === "compra" &&
+    operacao.itens.every((item) => tipoDoItem(contabil.catalogo, item.produto) === "consumo");
+  if (soConsumo && usa(papeis.icmsARecuperar)) {
+    return {
+      comentario:
+        "Esse material é para a casa usar, não para vender nem para virar lanche. Material de uso e consumo não dá crédito de ICMS: ele entra em Material de Consumo pelo valor total da nota.",
+      regras: ["R-MCO-01"],
+    };
+  }
+
+  if (operacao.tipo === "compra" && operacao.descontoComercial && usaReceita) {
+    return {
+      comentario:
+        "O desconto veio na própria nota: não é receita. A compra entra pelo valor já com o desconto, e pronto. Receita financeira é o desconto que você ganha depois, por pagar antes do vencimento.",
+      regras: ["R-DSC-01"],
+    };
+  }
+
+  if (operacao.tipo === "compra" && operacao.ipiRecuperavel && !usa(papeis.ipiARecuperar)) {
+    return {
+      comentario:
+        "Essa compra é para a fábrica. Como a casa industrializa o congelado, o IPI da nota é recuperável: ele sai do custo e vai para IPI a Recuperar, como acontece com o ICMS.",
+      regras: ["R-IPI-04"],
+    };
+  }
+
+  if (operacao.tipo === "compra" && !soConsumo && !usa(papeis.icmsARecuperar)) {
     return {
       comentario:
         "Você registrou o estoque pelo valor da nota. O ICMS já está dentro desse valor e é recuperável: ele sai do custo e vai para ICMS a Recuperar. Do seu jeito, o estoque fica superavaliado e o crédito do imposto se perde.",
@@ -302,9 +335,89 @@ function comentarDoContador(
     };
   }
 
-  if (operacao.tipo === "venda" && !usa(papeis.cmv)) {
+  if (operacao.tipo === "venda" && operacao.ipiAliquota && !usa(papeis.ipiARecolher)) {
     return {
-      comentario: `Faltou baixar o estoque. Sem o Custo das Mercadorias Vendidas, o lucro apareceria ${diferenca(seu.resultadoDoMesCentavos, correto.resultadoDoMesCentavos)} maior do que é, e o estoque continuaria com mercadoria que já saiu da loja.`,
+      comentario:
+        "O IPI é cobrado por fora e não é receita da casa: você cobra do cliente em nome do Fisco. Ele vai para IPI a Recolher, no Passivo. A Receita Bruta é só o valor dos produtos.",
+      regras: ["R-IPI-05"],
+    };
+  }
+
+  if (
+    operacao.tipo === "venda" &&
+    operacao.descontoIncondicional &&
+    !usa(papeis.descontosIncondicionais)
+  ) {
+    return {
+      comentario:
+        "O desconto dado na nota não some: a Receita Bruta é registrada cheia, e o desconto aparece em Descontos Incondicionais Concedidos, como dedução da receita.",
+      regras: ["R-DSC-03"],
+    };
+  }
+
+  if (operacao.tipo === "devolucao_compra" && usaReceita) {
+    return {
+      comentario:
+        "Devolver mercadoria não é receita. A dívida com o fornecedor diminui porque a mercadoria voltou para ele: é uma troca entre contas do patrimônio.",
+      regras: ["R-DVC-01"],
+    };
+  }
+
+  if (operacao.tipo === "devolucao_compra" && !usa(papeis.icmsARecuperar)) {
+    return {
+      comentario:
+        "Faltou estornar o ICMS. O crédito do imposto veio com a mercadoria; se ela voltou para o fornecedor, o crédito daquela parte deixa de existir.",
+      regras: ["R-DVC-01"],
+    };
+  }
+
+  if (operacao.tipo === "abatimento_compra" && usaReceita) {
+    return {
+      comentario:
+        "O abatimento não é receita: você ficou com a mercadoria e pagou menos por ela. Ele reduz o custo do estoque e a dívida com o fornecedor.",
+      regras: ["R-ABC-01"],
+    };
+  }
+
+  if (operacao.tipo === "devolucao_venda" && !usa(papeis.devolucoesDeVendas)) {
+    return {
+      comentario:
+        "A venda não é apagada da Receita Bruta. A devolução entra em Devoluções de Vendas, que aparece na DRE como dedução da receita.",
+      regras: ["R-DVV-01"],
+    };
+  }
+
+  if (operacao.tipo === "abatimento_venda" && !usa(papeis.abatimentosSobreVendas)) {
+    return {
+      comentario:
+        "O abatimento dado ao cliente não é despesa nem reduz a Receita Bruta direto: ele vai para Abatimentos sobre Vendas, uma dedução da receita.",
+      regras: ["R-ABV-01"],
+    };
+  }
+
+  if (operacao.tipo === "producao" && (usaContaDeResultado || usaReceita)) {
+    return {
+      comentario:
+        "Produzir não mexe no resultado: os insumos viraram produto pronto, e um ativo foi trocado por outro. O custo só vai ao resultado quando o congelado for vendido.",
+      regras: ["R-PRD-01"],
+    };
+  }
+
+  if (
+    operacao.tipo === "recebimento" &&
+    operacao.descontoFinanceiroCentavos &&
+    !usa(papeis.descontosFinanceirosConcedidos)
+  ) {
+    return {
+      comentario:
+        "O desconto que você deu para receber antes é despesa financeira. Ele não reduz a Receita Bruta: a venda já tinha sido registrada pelo valor da nota.",
+      regras: ["R-DSC-04"],
+    };
+  }
+
+  if (operacao.tipo === "venda" && !usa(papeis.cmv) && !usa(papeis.cpv)) {
+    return {
+      comentario: `Faltou baixar o estoque. Sem o custo do que foi vendido, o lucro apareceria ${diferenca(seu.resultadoDoMesCentavos, correto.resultadoDoMesCentavos)} maior do que é, e o estoque continuaria com o que já saiu da casa.`,
       regras: ["R-VEN-02"],
     };
   }
@@ -314,6 +427,19 @@ function comentarDoContador(
       comentario:
         "Aqui ainda não saiu dinheiro: você está reconhecendo a despesa do mês. A contrapartida é Salários a Pagar. O pagamento é outro lançamento, que vem depois.",
       regras: ["R-DES-01", "R-DES-02"],
+    };
+  }
+
+  if (
+    operacao.tipo === "pagamento" &&
+    operacao.descontoFinanceiroCentavos &&
+    !usaContaDeResultado &&
+    !usa(papeis.descontosFinanceirosObtidos)
+  ) {
+    return {
+      comentario:
+        "O desconto que você ganhou por pagar antes é receita financeira. Ele não volta para o estoque: a mercadoria continua valendo o que custou.",
+      regras: ["R-DSC-02"],
     };
   }
 

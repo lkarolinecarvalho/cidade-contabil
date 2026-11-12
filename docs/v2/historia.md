@@ -2,7 +2,8 @@
 
 > A hamburgueria, as regras novas, o cenário dourado e a campanha em 6 capítulos **já
 > estão aplicados** (ver [campanha.md](../campanha.md) e o ADR-0010). O que este
-> documento ainda guarda como plano é o **Escritório Contábil com quatro portas**.
+> Escritório Contábil com quatro portas também está feito; os textos de teoria estão em
+> `packages/content/data/teoria.json`.
 
 ## Decisões já tomadas
 
@@ -89,4 +90,5 @@ Ao entrar, o jogador escolhe uma de quatro portas. Cada uma abre uma tela curta.
 2. ~~Reescrever os cenários dourados e a campanha.~~ Feito. Na campanha aplicada, a
    fábrica é o capítulo 5 e o fechamento do mês é o capítulo 6, para tudo caber no mês 1.
 3. ~~Trocar o conteúdo (produtos, missões, diálogos) e adaptar o app.~~ Feito.
-4. Construir o Escritório com as quatro portas: Consulta, Teoria, Revisão e Desafios.
+4. ~~Construir o Escritório com as quatro portas.~~ Feito.
+5. Modo livre depois da campanha (ofertas novas): ainda não existe.

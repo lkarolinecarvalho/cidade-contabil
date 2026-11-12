@@ -13,8 +13,10 @@ import {
   novoJogo,
   type OpcoesDaOperacao,
   pagarIcms,
+  pagarIpi,
   type Resposta,
   registrarResposta,
+  registrarTema,
 } from "./jogo";
 
 /** Conteúdo validado na carga do app: dado inválido impede o jogo de abrir. */
@@ -26,12 +28,15 @@ interface Acoes {
   executarProximaOperacao(missao: Missao, opcoes?: OpcoesDaOperacao): void;
   concluirMissao(missao: Missao): void;
   registrarResposta(afirmativa: Afirmativa, resposta: Resposta): void;
+  /** Marca um tema de teoria como estudado, com os acertos nas perguntas. */
+  registrarTema(tema: string, acertos: number): void;
   definirModoBanca(ligado: boolean): void;
   encerrarDia(): void;
   irParaOUltimoDia(): void;
   fecharMes(): void;
   liquidarTitulo(id: number): void;
   pagarIcms(): void;
+  pagarIpi(): void;
   reiniciar(): void;
 }
 
@@ -52,6 +57,9 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   registrarResposta(afirmativa, resposta) {
     set(registrarResposta(get(), afirmativa, resposta));
   },
+  registrarTema(tema, acertos) {
+    set(registrarTema(get(), tema, acertos));
+  },
   definirModoBanca(ligado) {
     set(definirModoBanca(get(), ligado));
   },
@@ -69,6 +77,9 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   },
   pagarIcms() {
     set(pagarIcms(get()));
+  },
+  pagarIpi() {
+    set(pagarIpi(get()));
   },
   reiniciar() {
     set(novoJogo());

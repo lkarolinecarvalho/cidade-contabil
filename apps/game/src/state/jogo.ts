@@ -54,6 +54,8 @@ export interface EstadoDoJogo {
   readonly mesesFechados: readonly string[];
   /** ICMS apurado com saldo devedor, a pagar no Posto Fiscal (R-ICMS-06). */
   readonly icmsAPagarCentavos: Centavos;
+  /** IPI apurado com saldo devedor, ainda por pagar no Posto Fiscal (R-IPI-06). */
+  readonly ipiAPagarCentavos: Centavos;
   readonly missoesConcluidas: readonly string[];
   /**
    * Missão começada e ainda não concluída: quantas operações dela já foram gravadas.
@@ -64,6 +66,8 @@ export interface EstadoDoJogo {
   readonly afirmativasVistas: Readonly<Record<string, number>>;
   /** Repetição espaçada: a caixa de Leitner de cada conceito já cobrado. */
   readonly estudo: Estudo;
+  /** Teoria do Escritório: acertos em cada tema já estudado. */
+  readonly teoria: Readonly<Record<string, number>>;
   /** Modo banca (estilo CEBRASPE): acerto +1, erro −1, branco 0. Desligado por padrão. */
   readonly modoBanca: boolean;
   /** Placar líquido do modo banca nesta sessão. */
@@ -88,10 +92,12 @@ export function novoJogo(): EstadoDoJogo {
     titulos: [],
     mesesFechados: [],
     icmsAPagarCentavos: 0,
+    ipiAPagarCentavos: 0,
     missoesConcluidas: [],
     andamento: null,
     afirmativasVistas: {},
     estudo: {},
+    teoria: {},
     modoBanca: false,
     placarBanca: 0,
   };
@@ -182,7 +188,7 @@ function aplicarNoMotor(estado: EstadoDoJogo, operacao: Operacao): EstadoDoJogo 
   }
 
   const { novoEstado: contabil, valores } = preverLancamentos(estado.contabil, operacao, data);
-  let { titulos, mesesFechados, icmsAPagarCentavos } = estado;
+  let { titulos, mesesFechados, icmsAPagarCentavos, ipiAPagarCentavos } = estado;
   const novoTitulo = (
     tipo: Titulo["tipo"],
     descricao: string,
@@ -241,12 +247,19 @@ function aplicarNoMotor(estado: EstadoDoJogo, operacao: Operacao): EstadoDoJogo 
   if (operacao.tipo === "pagamento" && operacao.obrigacao === "icms") {
     icmsAPagarCentavos = Math.max(icmsAPagarCentavos - operacao.valorCentavos, 0);
   }
+  if (operacao.tipo === "pagamento" && operacao.obrigacao === "ipi") {
+    ipiAPagarCentavos = Math.max(ipiAPagarCentavos - operacao.valorCentavos, 0);
+  }
+  if (operacao.tipo === "apuracao_ipi") {
+    // R-IPI-06: o saldo devedor que sobra depois da compensação é pago no Posto Fiscal.
+    ipiAPagarCentavos = saldoDaConta(contabil, contabil.planoDeContas.papeis.ipiARecolher);
+  }
   if (operacao.tipo === "apuracao_icms") {
     mesesFechados = [...mesesFechados, chaveDoMes(data)];
     // R-ICMS-06: o saldo devedor que sobra depois da compensação é pago no Posto Fiscal.
     icmsAPagarCentavos = saldoDaConta(contabil, contabil.planoDeContas.papeis.icmsARecolher);
   }
-  return { ...estado, contabil, titulos, mesesFechados, icmsAPagarCentavos };
+  return { ...estado, contabil, titulos, mesesFechados, icmsAPagarCentavos, ipiAPagarCentavos };
 }
 
 function saldoDaConta(contabil: EstadoContabil, conta: string): Centavos {
@@ -399,6 +412,20 @@ export function registrarResposta(
   };
 }
 
+/**
+ * Registra um tema de teoria estudado e os acertos nas perguntas dele. Os pontos valem
+ * só pelo que superar o melhor resultado anterior: repetir o tema não pontua de novo.
+ */
+export function registrarTema(estado: EstadoDoJogo, tema: string, acertos: number): EstadoDoJogo {
+  const anterior = estado.teoria[tema] ?? 0;
+  const melhor = Math.max(anterior, acertos);
+  return {
+    ...estado,
+    pontos: estado.pontos + (melhor - anterior) * PONTOS_POR_AFIRMATIVA,
+    teoria: { ...estado.teoria, [tema]: melhor },
+  };
+}
+
 export function definirModoBanca(estado: EstadoDoJogo, ligado: boolean): EstadoDoJogo {
   return { ...estado, modoBanca: ligado };
 }
@@ -438,6 +465,17 @@ export function pagarIcms(estado: EstadoDoJogo): EstadoDoJogo {
     tipo: "pagamento",
     obrigacao: "icms",
     valorCentavos: estado.icmsAPagarCentavos,
+    meio: "bancos",
+  });
+}
+
+/** Paga no Posto Fiscal, pelo banco, o IPI apurado com saldo devedor (R-IPI-06). */
+export function pagarIpi(estado: EstadoDoJogo): EstadoDoJogo {
+  if (estado.ipiAPagarCentavos === 0) throw new ErroDeJogo("Não há IPI apurado a pagar.");
+  return aplicarNoMotor(consumirAcao(estado), {
+    tipo: "pagamento",
+    obrigacao: "ipi",
+    valorCentavos: estado.ipiAPagarCentavos,
     meio: "bancos",
   });
 }

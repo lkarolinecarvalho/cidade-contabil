@@ -44,6 +44,18 @@ export const conceitoSchema = z.strictObject({
   definicao: texto,
 });
 
+/** Tema de teoria do Escritório: pontos curtos, um exemplo da empresa e perguntas. */
+export const temaSchema = z.strictObject({
+  id,
+  titulo: texto,
+  resumo: texto,
+  pontos: z.array(texto).min(2).max(4),
+  exemplo: texto,
+  perguntas: z
+    .array(z.strictObject({ enunciado: texto, gabarito: z.enum(["C", "E"]), explicacao: texto }))
+    .min(1),
+});
+
 export const capituloSchema = z.strictObject({
   numero: z.number().int().min(1),
   titulo: texto,
@@ -290,6 +302,7 @@ export type Npc = z.infer<typeof npcSchema>;
 export type Produto = z.infer<typeof produtoSchema>;
 export type Conceito = z.infer<typeof conceitoSchema>;
 export type Capitulo = z.infer<typeof capituloSchema>;
+export type Tema = z.infer<typeof temaSchema>;
 export type OperacaoDeMissao = z.infer<typeof operacaoSchema>;
 export type Missao = z.infer<typeof missaoSchema>;
 export type Afirmativa = z.infer<typeof afirmativaSchema>;

@@ -1,0 +1,214 @@
+[
+  {
+    "id": "objeto-e-objetivo",
+    "titulo": "Objeto, objetivo e campo de aplicação",
+    "resumo": "O que a Contabilidade estuda, para que serve e onde se aplica.",
+    "pontos": [
+      "O objeto da Contabilidade é o patrimônio: o conjunto de bens, direitos e obrigações de uma entidade.",
+      "O objetivo é fornecer informação útil para quem toma decisões sobre a entidade.",
+      "O campo de aplicação são as entidades: pessoas físicas ou jurídicas, com ou sem fins lucrativos."
+    ],
+    "exemplo": "Na Chapa da Praça, o patrimônio é a chapa, o estoque, o dinheiro no banco e as dívidas com o fornecedor. A Contabilidade acompanha tudo isso para você decidir, por exemplo, se dá para comprar outro freezer.",
+    "perguntas": [
+      {
+        "enunciado": "O objeto da Contabilidade é o lucro das empresas.",
+        "gabarito": "E",
+        "explicacao": "O objeto é o patrimônio. O lucro é só uma das variações que o patrimônio sofre."
+      },
+      {
+        "enunciado": "A Contabilidade também se aplica a entidades sem fins lucrativos, como associações.",
+        "gabarito": "C",
+        "explicacao": "Toda entidade que tem patrimônio pode ser objeto da Contabilidade, tenha ou não finalidade de lucro."
+      }
+    ]
+  },
+  {
+    "id": "ciencia-social-aplicada",
+    "titulo": "Contabilidade como ciência social aplicada",
+    "resumo": "Por que a Contabilidade é ciência social, e não ciência exata.",
+    "pontos": [
+      "É ciência social porque estuda fenômenos criados pela ação humana: o patrimônio muda por decisões das pessoas.",
+      "É aplicada porque existe para resolver problemas práticos de gestão e de controle.",
+      "Não é ciência exata: usa a matemática como ferramenta, mas depende de julgamento."
+    ],
+    "exemplo": "A vida útil da chapa é uma estimativa. Outra pessoa poderia estimar diferente, e a depreciação mudaria. Isso é julgamento, não cálculo exato.",
+    "perguntas": [
+      {
+        "enunciado": "A Contabilidade é uma ciência exata, pois se baseia em cálculos matemáticos.",
+        "gabarito": "E",
+        "explicacao": "A matemática é ferramenta. A Contabilidade é ciência social aplicada: estuda o patrimônio, que muda pela ação humana."
+      },
+      {
+        "enunciado": "A Contabilidade é classificada como ciência social aplicada.",
+        "gabarito": "C",
+        "explicacao": "Social, porque o patrimônio é afetado por decisões humanas; aplicada, porque serve a fins práticos."
+      }
+    ]
+  },
+  {
+    "id": "usuarios-da-informacao",
+    "titulo": "Usuários da informação contábil",
+    "resumo": "Quem usa a informação contábil, de dentro e de fora da entidade.",
+    "pontos": [
+      "Usuários internos: quem administra a entidade, como gerentes e administradores.",
+      "Usuários externos: quem está de fora e depende dos relatórios, como investidores, bancos, fornecedores e governo.",
+      "Pela Estrutura Conceitual (CPC 00), os relatórios de propósito geral são dirigidos principalmente a investidores e credores, existentes e potenciais."
+    ],
+    "exemplo": "Você, que administra a casa, é usuário interno. A Helena, do banco, quando analisa um pedido de crédito, e o Sr. Osvaldo, que investiu sem administrar, são usuários externos.",
+    "perguntas": [
+      {
+        "enunciado": "O banco que analisa as demonstrações de uma empresa para conceder crédito é um usuário externo da informação contábil.",
+        "gabarito": "C",
+        "explicacao": "O banco não participa da gestão: depende dos relatórios divulgados pela entidade."
+      },
+      {
+        "enunciado": "Os relatórios financeiros de propósito geral são elaborados principalmente para atender à administração da entidade.",
+        "gabarito": "E",
+        "explicacao": "Pelo CPC 00, eles se dirigem principalmente a investidores e credores. A administração consegue internamente as informações de que precisa."
+      }
+    ]
+  },
+  {
+    "id": "tecnicas-contabeis",
+    "titulo": "Técnicas contábeis",
+    "resumo": "As quatro técnicas com que a Contabilidade trabalha.",
+    "pontos": [
+      "Escrituração: registro dos fatos nos livros, como o Diário e o Razão.",
+      "Demonstrações contábeis: relatórios que resumem os registros, como o Balanço e a DRE.",
+      "Auditoria: exame dos registros e das demonstrações, para confirmar se são confiáveis.",
+      "Análise das demonstrações: interpretação dos números, com índices e comparações."
+    ],
+    "exemplo": "Lançar a compra do pão é escrituração. O Balanço do fim do mês é demonstração. Calcular quanto das vendas virou lucro é análise.",
+    "perguntas": [
+      {
+        "enunciado": "A escrituração, as demonstrações contábeis, a auditoria e a análise das demonstrações são técnicas contábeis.",
+        "gabarito": "C",
+        "explicacao": "São as quatro técnicas clássicas: registrar, demonstrar, conferir e interpretar."
+      },
+      {
+        "enunciado": "A auditoria é a técnica que consiste em registrar os fatos contábeis nos livros da entidade.",
+        "gabarito": "E",
+        "explicacao": "Registrar os fatos é escrituração. A auditoria examina se os registros e as demonstrações são confiáveis."
+      }
+    ]
+  },
+  {
+    "id": "caracteristicas-qualitativas",
+    "titulo": "Características qualitativas da informação",
+    "resumo": "O que torna a informação contábil útil, segundo o CPC 00.",
+    "pontos": [
+      "Fundamentais: relevância e representação fidedigna.",
+      "De melhoria: comparabilidade, capacidade de verificação, tempestividade e compreensibilidade.",
+      "Relevante é a informação capaz de fazer diferença nas decisões.",
+      "Representação fidedigna é ser completa, neutra e isenta de erros."
+    ],
+    "exemplo": "Se o estoque de carne aparecesse pelo valor da nota, com o ICMS recuperável dentro, o Balanço não representaria fielmente o que a casa tem.",
+    "perguntas": [
+      {
+        "enunciado": "A tempestividade é uma característica qualitativa fundamental da informação contábil.",
+        "gabarito": "E",
+        "explicacao": "As fundamentais são a relevância e a representação fidedigna. A tempestividade é característica de melhoria."
+      },
+      {
+        "enunciado": "Para ser representação fidedigna, a informação deve ser completa, neutra e isenta de erros.",
+        "gabarito": "C",
+        "explicacao": "São os três atributos da representação fidedigna na Estrutura Conceitual."
+      }
+    ]
+  },
+  {
+    "id": "regimes-contabeis",
+    "titulo": "Regimes de competência e de caixa",
+    "resumo": "Quando uma receita ou uma despesa entra no resultado.",
+    "pontos": [
+      "Competência: receitas e despesas entram no resultado quando ocorrem, mesmo sem dinheiro entrando ou saindo.",
+      "Caixa: só entram quando o dinheiro é recebido ou pago.",
+      "A contabilidade das empresas segue o regime de competência."
+    ],
+    "exemplo": "Os salários de janeiro, pagos em fevereiro, são despesa de janeiro. A encomenda vendida a prazo é receita no dia da venda, e não no dia em que o cliente paga.",
+    "perguntas": [
+      {
+        "enunciado": "Pelo regime de competência, a despesa de salários é reconhecida no mês em que os salários são pagos.",
+        "gabarito": "E",
+        "explicacao": "Ela é reconhecida no mês em que o trabalho foi prestado, ainda que o pagamento seja depois."
+      },
+      {
+        "enunciado": "No regime de caixa, uma venda a prazo só é reconhecida como receita quando o cliente paga.",
+        "gabarito": "C",
+        "explicacao": "No regime de caixa, o que conta é a entrada do dinheiro. Na competência, a receita é da data da venda."
+      }
+    ]
+  },
+  {
+    "id": "plano-de-contas",
+    "titulo": "Plano de contas",
+    "resumo": "Como as contas são organizadas e para que lado cada uma aumenta.",
+    "pontos": [
+      "É a lista organizada das contas que a entidade usa, com código e nome.",
+      "Contas patrimoniais: Ativo, Passivo e Patrimônio Líquido. Contas de resultado: receitas, custos e despesas.",
+      "Contas do Ativo e de despesa têm natureza devedora; as do Passivo, do Patrimônio Líquido e de receita, natureza credora.",
+      "Conta redutora tem natureza contrária à do grupo em que fica: a Depreciação Acumulada reduz o Imobilizado."
+    ],
+    "exemplo": "Na casa, Caixa aumenta a débito e Fornecedores aumenta a crédito. Capital a Integralizar fica no Patrimônio Líquido, mas é devedora: é conta redutora.",
+    "perguntas": [
+      {
+        "enunciado": "As contas de despesa têm natureza devedora: aumentam a débito.",
+        "gabarito": "C",
+        "explicacao": "Despesas e custos reduzem o resultado e, como as contas do Ativo, aumentam a débito."
+      },
+      {
+        "enunciado": "Depreciação Acumulada é uma conta de despesa.",
+        "gabarito": "E",
+        "explicacao": "Ela é conta redutora do Ativo Imobilizado, de natureza credora. A despesa fica em Despesa de Depreciação."
+      }
+    ]
+  },
+  {
+    "id": "balanco-e-dre",
+    "titulo": "Balanço Patrimonial e DRE",
+    "resumo": "A foto do patrimônio numa data e o filme do resultado num período.",
+    "pontos": [
+      "O Balanço Patrimonial mostra a posição numa data: Ativo = Passivo + Patrimônio Líquido.",
+      "A DRE mostra o desempenho num período: receitas menos custos e despesas.",
+      "No Balanço, as contas do Ativo aparecem em ordem decrescente de liquidez.",
+      "A DRE começa na Receita Bruta, passa pela Receita Líquida e pelo Lucro Bruto e termina no resultado do período."
+    ],
+    "exemplo": "No dia 30, o Balanço diz o que a casa tem e o que deve. A DRE de janeiro diz se o mês deu lucro ou prejuízo.",
+    "perguntas": [
+      {
+        "enunciado": "O Balanço Patrimonial apresenta as receitas e as despesas de um período.",
+        "gabarito": "E",
+        "explicacao": "Quem apresenta receitas e despesas do período é a DRE. O Balanço mostra Ativo, Passivo e Patrimônio Líquido numa data."
+      },
+      {
+        "enunciado": "A Receita Líquida é a Receita Bruta menos as deduções, como tributos sobre vendas, devoluções e abatimentos.",
+        "gabarito": "C",
+        "explicacao": "É a primeira passagem da DRE: da Receita Bruta saem as deduções para se chegar à Receita Líquida."
+      }
+    ]
+  },
+  {
+    "id": "tipos-societarios",
+    "titulo": "Limitada e sociedade anônima",
+    "resumo": "As diferenças que mais caem em prova entre os dois tipos de sociedade.",
+    "pontos": [
+      "Limitada: o capital é dividido em quotas, e todos os sócios respondem pela integralização do capital.",
+      "Sociedade anônima: o capital é dividido em ações, e o acionista responde pelo preço das ações que subscreveu.",
+      "Só a sociedade anônima pode ter capital autorizado: um limite no estatuto para aumentar o capital sem reformá-lo.",
+      "Capital autorizado não é contabilizado. O Balanço mostra o capital subscrito, menos a parte a integralizar."
+    ],
+    "exemplo": "A Chapa da Praça é uma limitada: você tem 90% das quotas e o Sr. Osvaldo, 10%. Se ela fosse uma sociedade anônima, vocês teriam ações.",
+    "perguntas": [
+      {
+        "enunciado": "Na sociedade limitada, o capital social é dividido em ações.",
+        "gabarito": "E",
+        "explicacao": "Na limitada, o capital é dividido em quotas. Ações são da sociedade anônima."
+      },
+      {
+        "enunciado": "A fixação do capital autorizado no estatuto de uma sociedade anônima não gera lançamento contábil.",
+        "gabarito": "C",
+        "explicacao": "É só um limite para aumentos futuros. Nenhum dinheiro entrou e ninguém se comprometeu com nada."
+      }
+    ]
+  }
+]

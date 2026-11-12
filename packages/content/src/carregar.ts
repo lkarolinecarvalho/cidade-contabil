@@ -16,6 +16,8 @@ import {
   PLACEHOLDERS,
   type Produto,
   produtoSchema,
+  type Tema,
+  temaSchema,
 } from "./schemas";
 
 /** Dados como vêm dos arquivos JSON, ainda sem validação. */
@@ -25,6 +27,7 @@ export interface ConteudoBruto {
   readonly produtos: unknown;
   readonly conceitos: unknown;
   readonly capitulos: unknown;
+  readonly teoria: unknown;
   readonly missoes: unknown;
   readonly afirmativas: unknown;
 }
@@ -36,6 +39,8 @@ export interface Conteudo {
   readonly conceitos: readonly Conceito[];
   /** Capítulos da campanha, em ordem. */
   readonly capitulos: readonly Capitulo[];
+  /** Temas de teoria do Escritório Contábil. */
+  readonly teoria: readonly Tema[];
   /** Em ordem de jogo: toda missão vem depois dos seus requisitos. */
   readonly missoes: readonly Missao[];
   readonly afirmativas: readonly Afirmativa[];
@@ -128,6 +133,7 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
   const produtos = validarLista("produto", produtoSchema, bruto.produtos, problemas);
   const conceitos = validarLista("conceito", conceitoSchema, bruto.conceitos, problemas);
   const capitulos = validarLista("capítulo", capituloSchema, bruto.capitulos, problemas);
+  const teoria = validarLista("tema", temaSchema, bruto.teoria, problemas);
   const missoes = validarLista("missão", missaoSchema, bruto.missoes, problemas);
   const afirmativas = validarLista("afirmativa", afirmativaSchema, bruto.afirmativas, problemas);
   // As regras cruzadas só fazem sentido com o formato certo.
@@ -138,6 +144,7 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
     ["npc", npcs],
     ["produto", produtos],
     ["conceito", conceitos],
+    ["tema", teoria],
     ["missão", missoes],
     ["afirmativa", afirmativas],
   ] as const) {
@@ -271,6 +278,7 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
     produtos,
     conceitos,
     capitulos,
+    teoria,
     missoes: ordenadas,
     afirmativas,
   };

@@ -33,7 +33,9 @@ export {
   type Produto,
   type Proposta,
   produtoSchema,
+  type Tema,
   TOTAL_EM_PONTOS_BASE,
+  temaSchema,
 } from "./schemas";
 
 /** Carrega e valida o conteúdo embutido no jogo. Lança `ErroDeConteudo` se algo estiver errado. */

@@ -42,8 +42,11 @@ com o correto, e o contador comenta.
 | 4 | Lançar a mercadoria recebida em consignação | Ativo e Passivo maiores do que são |
 | 4 | Salário lançado como pagamento | A despesa é do mês; o pagamento é outro fato |
 
-Os erros próprios das operações novas (devolução, abatimento, descontos, IPI) ainda
-caem no comentário genérico, que descreve o que a prévia mostra.
+As operações novas também têm comentário próprio do contador: devolução de compra como
+receita ou sem estornar o ICMS, abatimento como receita, desconto financeiro no estoque,
+crédito de ICMS em material de consumo, devolução de venda direto na receita, abatimento
+de venda como despesa, IPI recuperável no custo, IPI da venda como receita e produção
+como custo do período. Os demais erros caem no comentário genérico.
 
 ## Depois da campanha
 

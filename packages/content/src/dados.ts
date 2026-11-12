@@ -3,6 +3,7 @@ import conceitos from "../data/conceitos.json";
 import estabelecimentos from "../data/estabelecimentos.json";
 import npcs from "../data/npcs.json";
 import produtos from "../data/produtos.json";
+import teoria from "../data/teoria.json";
 import type { ConteudoBruto } from "./carregar";
 
 // O Vite embute os JSON no pacote: o conteúdo funciona offline, sem I/O em tempo de jogo.
@@ -27,6 +28,7 @@ export const dadosBrutos: ConteudoBruto = {
   produtos,
   conceitos,
   capitulos,
+  teoria,
   // Um arquivo por missão.
   missoes: emOrdem(arquivosDeMissao),
   // Cada arquivo de afirmativas é uma lista.
