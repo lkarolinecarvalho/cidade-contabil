@@ -2,181 +2,217 @@
   {
     "id": "capital-autorizado",
     "nome": "Capital autorizado",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Limite, previsto no estatuto de uma sociedade anônima, até o qual o capital pode ser aumentado sem reforma estatutária. Não é contabilizado."
   },
   {
     "id": "capital-subscrito",
     "nome": "Capital subscrito",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Valor que os sócios se comprometeram a colocar na empresa. É o Capital Social registrado no Patrimônio Líquido."
   },
   {
     "id": "capital-a-integralizar",
     "nome": "Capital a integralizar",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Parte do capital subscrito que os sócios ainda não entregaram. É conta redutora do Patrimônio Líquido."
   },
   {
     "id": "principio-entidade",
     "nome": "Princípio da entidade",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "O patrimônio da empresa não se confunde com o dos sócios. A contabilidade registra só o que é da empresa."
   },
   {
     "id": "classificacao-imoveis",
     "nome": "Imobilizado x Estoque x Propriedade para Investimento",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Um imóvel é Imobilizado quando a empresa o usa, Estoque quando é para revenda e Propriedade para Investimento quando é para aluguel ou valorização."
   },
   {
     "id": "terreno-e-edificacao",
     "nome": "Terreno e edificação",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Terreno e construção são registrados em contas separadas. Em regra, o terreno não sofre depreciação."
   },
   {
     "id": "imobilizado-uso-proprio",
     "nome": "Bens de uso próprio no Imobilizado",
-    "nivel": 1
+    "nivel": 1,
+    "definicao": "Bens que a empresa usa nas suas atividades por mais de um ano, como móveis e equipamentos, ficam no Ativo Imobilizado."
   },
   {
     "id": "custo-aquisicao",
     "nome": "Custo de aquisição das mercadorias",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "O que a mercadoria custou para chegar ao estoque: o preço, mais o frete e os tributos não recuperáveis, menos os tributos recuperáveis."
   },
   {
     "id": "icms-por-dentro",
     "nome": "ICMS por dentro",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "O ICMS faz parte do próprio preço: o valor da nota já inclui o imposto."
   },
   {
     "id": "icms-a-recuperar",
     "nome": "ICMS a Recuperar",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Crédito de ICMS das compras, que a empresa compensa com o ICMS devido nas vendas. É um ativo."
   },
   {
     "id": "compra-a-prazo-fornecedores",
     "nome": "Compra a prazo e Fornecedores",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Compra para pagar depois: o estoque entra no Ativo e nasce a obrigação com Fornecedores, no Passivo."
   },
   {
     "id": "ipi-no-custo-comercio",
     "nome": "IPI no custo do comerciante",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Quem só revende não recupera o IPI. O imposto pago na compra entra no custo da mercadoria."
   },
   {
     "id": "receita-e-deducoes",
     "nome": "Receita bruta e deduções",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Receita Bruta é o total das vendas. Dela saem as deduções (tributos, devoluções, abatimentos e descontos) para chegar à Receita Líquida."
   },
   {
     "id": "cmv",
     "nome": "Custo das Mercadorias Vendidas",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Custo das Mercadorias Vendidas: o custo do que saiu do estoque de mercadorias em cada venda."
   },
   {
     "id": "custo-medio",
     "nome": "Custo médio ponderado móvel",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Método que recalcula o custo unitário do estoque a cada entrada, dividindo o valor total pela quantidade total."
   },
   {
     "id": "venda-a-prazo-clientes",
     "nome": "Venda a prazo e Clientes",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Venda para receber depois: a receita é reconhecida na venda, e o valor a receber fica em Clientes, no Ativo."
   },
   {
     "id": "pagamento-de-obrigacoes",
     "nome": "Pagamento de obrigações",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Pagar uma dívida já registrada diminui o dinheiro e o Passivo. Não é despesa nova."
   },
   {
     "id": "competencia",
     "nome": "Regime de competência",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Receitas e despesas pertencem ao período em que acontecem, e não ao período em que o dinheiro entra ou sai."
   },
   {
     "id": "despesas-operacionais",
     "nome": "Despesas pagas no ato",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Gastos para manter a empresa funcionando, como salários e energia. Reduzem o resultado do período."
   },
   {
     "id": "depreciacao",
     "nome": "Depreciação",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Reconhecimento, mês a mês, do desgaste dos bens do Imobilizado como despesa."
   },
   {
     "id": "apuracao-icms",
     "nome": "Apuração do ICMS",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "No fim do mês, o ICMS devido nas vendas é compensado com o crédito das compras. Só o saldo devedor é pago."
   },
   {
     "id": "dre",
     "nome": "Demonstração do Resultado",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Demonstração do Resultado: mostra as receitas, os custos e as despesas do período e o lucro ou prejuízo."
   },
   {
     "id": "balanco-patrimonial",
     "nome": "Balanço Patrimonial",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Mostra, numa data, os bens e direitos (Ativo), as obrigações (Passivo) e o Patrimônio Líquido. Ativo = Passivo + PL."
   },
   {
     "id": "insumos-e-mercadorias",
     "nome": "Insumos x mercadorias para revenda",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Insumo é o que a empresa transforma no produto que vende. Mercadoria é o que ela compra pronto para revender."
   },
   {
     "id": "receita-do-lanche",
     "nome": "Custo dos produtos vendidos",
-    "nivel": 2
+    "nivel": 2,
+    "definicao": "Custo dos insumos consumidos nos produtos vendidos. Vai ao resultado junto com a receita da venda."
   },
   {
     "id": "devolucao-de-compra",
     "nome": "Devolução de compra",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "A mercadoria volta ao fornecedor: sai do estoque pelo custo com que entrou, e a dívida e o crédito de ICMS diminuem."
   },
   {
     "id": "abatimento-sobre-compras",
     "nome": "Abatimento sobre compras",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Redução de preço obtida depois da compra, sem devolver nada. Diminui o custo do estoque."
   },
   {
     "id": "desconto-comercial",
     "nome": "Desconto comercial (incondicional)",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Desconto dado na própria nota, sem condição. Na compra, a mercadoria entra pelo valor líquido; na venda, é dedução da Receita Bruta."
   },
   {
     "id": "desconto-financeiro",
     "nome": "Desconto financeiro (condicional)",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Desconto por pagar ou receber antes do vencimento. É receita financeira para quem paga e despesa financeira para quem recebe."
   },
   {
     "id": "material-de-consumo",
     "nome": "Material de consumo",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Material que a empresa usa e não vende, como o de limpeza. Fica no Ativo até ser usado e não dá crédito de ICMS."
   },
   {
     "id": "devolucao-de-venda",
     "nome": "Devolução de venda",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "O cliente devolve a mercadoria: registra-se a dedução da receita, estornam-se os tributos e o custo, e a mercadoria volta ao estoque."
   },
   {
     "id": "abatimento-sobre-vendas",
     "nome": "Abatimento sobre vendas",
-    "nivel": 3
+    "nivel": 3,
+    "definicao": "Redução de preço dada ao cliente depois da venda, sem devolução. É dedução da Receita Bruta."
   },
   {
     "id": "consignacao",
     "nome": "Consignação",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Mercadoria de terceiros deixada para venda. Não é ativo de quem a recebe; a compra só é registrada quando ela é vendida."
   },
   {
     "id": "ipi-recuperavel",
     "nome": "IPI recuperável na indústria",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Na indústria, o IPI das compras de insumos vira crédito, compensado com o IPI das vendas."
   },
   {
     "id": "ipi-na-venda",
     "nome": "IPI na venda e apuração",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "O IPI é cobrado por fora, somado ao preço. Não é receita do vendedor: é obrigação com o Fisco."
   },
   {
     "id": "producao",
     "nome": "Produção e produtos acabados",
-    "nivel": 4
+    "nivel": 4,
+    "definicao": "Quando a produção termina, o custo dos insumos consumidos passa para Produtos Acabados. O resultado só é afetado na venda."
   }
 ]

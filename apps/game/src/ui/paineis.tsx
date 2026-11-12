@@ -23,6 +23,7 @@ import { FluxoDaMissao } from "./FluxoDaMissao";
 
 export { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
 export { PainelDeConfiguracoes, PainelDeProgresso } from "./Estudo";
+export { PainelDeMissoes } from "./Missoes";
 
 /** Atalho do Escritório: a Revisão, o Balanço e a DRE. */
 export function PainelDoEscritorio() {
@@ -151,7 +152,14 @@ function PainelDoIcms() {
 }
 
 /** Painel que abre quando o avatar chega a um estabelecimento. */
-export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabelecimento: string }) {
+export function PainelDoEstabelecimento({
+  estabelecimento,
+  aoFechar,
+}: {
+  readonly estabelecimento: string;
+  /** Fecha o painel e volta ao mapa. */
+  readonly aoFechar?: () => void;
+}) {
   const missao = useProximaMissao();
   const data = useJogo((jogo) => jogo.data);
   const aqui = missao?.estabelecimento === estabelecimento;
@@ -171,7 +179,14 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
   } else if (missao && aqui) {
     // A chave recomeça o ciclo quando a missão muda.
     // Durante a missão, só ela aparece: os outros serviços voltam quando ela termina.
-    return <FluxoDaMissao key={missao.id} missao={missao} />;
+    return (
+      <FluxoDaMissao
+        key={missao.id}
+        missao={missao}
+        // Missão concluída: volta ao mapa, onde aparece o próximo destino.
+        {...(aoFechar ? { aoConcluir: aoFechar } : {})}
+      />
+    );
   } else {
     principal = (
       <div className="cartao">
@@ -200,34 +215,6 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
         </div>
       )}
     </>
-  );
-}
-
-/** Atalho de Missões: qual é a missão atual e aonde ir. */
-export function PainelDeMissoes() {
-  const missao = useProximaMissao();
-  const data = useJogo((jogo) => jogo.data);
-  if (!missao) {
-    return (
-      <div className="cartao">
-        <p className="painel-texto">Você concluiu todas as missões da campanha.</p>
-      </div>
-    );
-  }
-  return (
-    <article className="cartao">
-      <p className="painel-sobretitulo">Capítulo {missao.capitulo}</p>
-      <h3>{missao.titulo}</h3>
-      <p className="painel-texto">
-        Vá até <strong>{nomeDoEstabelecimento(missao.estabelecimento)}</strong>: toque no prédio com
-        o balão <span className="sinal-oferta">!</span> no mapa.
-      </p>
-      {!missaoDisponivelHoje(missao, data) && (
-        <p className="painel-nota">
-          Essa missão é do fechamento: só pode ser feita no último dia do mês (dia {DIAS_NO_MES}).
-        </p>
-      )}
-    </article>
   );
 }
 

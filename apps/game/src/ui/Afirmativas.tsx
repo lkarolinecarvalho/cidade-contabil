@@ -11,13 +11,15 @@ interface Props {
   /** Valores da operação que o jogador acabou de fazer; sem eles, vale o exemplo da afirmativa. */
   readonly valores?: ValoresCalculados | undefined;
   readonly aoContinuar: () => void;
+  /** Avisado a cada resposta, para quem quiser guardar e mostrar de novo depois. */
+  readonly aoResponder?: (afirmativa: Afirmativa, resposta: Resposta) => void;
 }
 
 /**
  * "Julgue a Afirmação": Certo ou Errado, com a explicação e a regra. No modo banca
  * aparece também "Deixar em branco", e o placar soma +1, −1 ou 0.
  */
-export function JulgarAfirmativas({ afirmativas, valores, aoContinuar }: Props) {
+export function JulgarAfirmativas({ afirmativas, valores, aoContinuar, aoResponder }: Props) {
   const modoBanca = useJogo((jogo) => jogo.modoBanca);
   const [indice, setIndice] = useState(0);
   // `undefined`: ainda não respondeu. `null`: deixou em branco.
@@ -29,6 +31,7 @@ export function JulgarAfirmativas({ afirmativas, valores, aoContinuar }: Props) 
   const responder = (escolha: Resposta) => {
     setResposta(escolha);
     jogoStore.getState().registrarResposta(afirmativa, escolha);
+    aoResponder?.(afirmativa, escolha);
   };
   const avancar = () => {
     if (indice + 1 >= afirmativas.length) return aoContinuar();
@@ -87,6 +90,57 @@ export function JulgarAfirmativas({ afirmativas, valores, aoContinuar }: Props) 
           </button>
         </>
       )}
+    </section>
+  );
+}
+
+const NOME_DA_RESPOSTA = { C: "Certo", E: "Errado" } as const;
+
+/**
+ * Afirmativas já julgadas, só para rever: o enunciado, a resposta dada, o gabarito e a
+ * explicação. Não pontua de novo nem mexe na repetição espaçada.
+ */
+export function AfirmativasJulgadas({
+  afirmativas,
+  respostas,
+  valores,
+  aoContinuar,
+}: {
+  readonly afirmativas: readonly Afirmativa[];
+  /** Resposta dada a cada afirmativa, pelo id. `null` é em branco. */
+  readonly respostas: Readonly<Record<string, Resposta>>;
+  readonly valores?: ValoresCalculados | undefined;
+  readonly aoContinuar: () => void;
+}) {
+  return (
+    <section className="etapa">
+      <h4>
+        Afirmativas <small>já respondidas</small>
+      </h4>
+      <ul className="julgadas">
+        {afirmativas.map((afirmativa) => {
+          const texto = preencherAfirmativa(afirmativa, valores);
+          const dada = respostas[afirmativa.id];
+          const resultado = dada === undefined ? null : resultadoDaResposta(afirmativa, dada);
+          return (
+            <li key={afirmativa.id} className={resultado ?? ""}>
+              <p className="afirmativa">{texto.enunciado}</p>
+              <p className="julgada-resposta">
+                {dada === undefined
+                  ? ""
+                  : dada === null
+                    ? "Você deixou em branco. "
+                    : `Você marcou ${NOME_DA_RESPOSTA[dada]}. `}
+                <strong>Gabarito: {NOME_DA_RESPOSTA[afirmativa.gabarito]}.</strong>
+              </p>
+              <p className="julgada-explicacao">{texto.explicacao}</p>
+            </li>
+          );
+        })}
+      </ul>
+      <button type="button" className="botao-principal" onClick={aoContinuar}>
+        Continuar
+      </button>
     </section>
   );
 }

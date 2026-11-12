@@ -854,6 +854,254 @@ button {
   font-weight: 800;
 }
 
+/* Painel de Missões: a campanha por capítulo. */
+.missao-atual {
+  border-color: var(--verde);
+  background: #f1f8ea;
+}
+
+.capitulo-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.folha-conteudo .capitulo h3 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.capitulo h3 small {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.capitulo-conta {
+  flex: none;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--cartao-2);
+  border: 1.5px solid var(--borda);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.capitulo-conta.completo {
+  background: var(--verde-claro);
+  border-color: #9cc48c;
+  color: var(--verde-escuro);
+}
+
+.lista-de-missoes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-de-missoes li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
+  border-radius: 11px;
+  background: var(--cartao-2);
+  border: 1.5px solid var(--borda);
+}
+
+.missao-marca {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--borda);
+  font-size: 0.8125rem;
+  font-weight: 900;
+}
+
+.missao-marca .icone {
+  width: 13px;
+  height: 13px;
+}
+
+.missao-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  color: var(--texto-suave);
+}
+
+.missao-texto strong {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--texto);
+}
+
+.missao-situacao {
+  flex: none;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--texto-suave);
+}
+
+.lista-de-missoes li.concluida .missao-marca {
+  border: 0;
+  background: var(--verde);
+  color: #fffaf0;
+}
+
+.lista-de-missoes li.atual {
+  background: #fff8e1;
+  border-color: var(--contorno);
+}
+
+.lista-de-missoes li.atual .missao-marca {
+  border: 0;
+  background: var(--vermelho);
+  color: #fff;
+}
+
+.lista-de-missoes li.atual .missao-situacao {
+  color: var(--vermelho);
+}
+
+.lista-de-missoes li.em_breve {
+  opacity: 0.62;
+}
+
+/* Aviso do próximo destino, logo abaixo do HUD. */
+.destino {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 66px);
+  left: 50%;
+  max-width: calc(100% - 24px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 6px;
+  border-radius: 999px;
+  background: var(--verde);
+  border: 2px solid var(--verde-escuro);
+  box-shadow: 0 3px 0 var(--verde-escuro);
+  color: #fffaf0;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: left;
+  transform: translateX(-50%);
+  animation: destino-chega 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.destino-sinal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fffaf0;
+  color: var(--vermelho);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.destino-texto {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.destino-texto small {
+  overflow: hidden;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  opacity: 0.85;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes destino-chega {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .destino {
+    animation: none;
+  }
+}
+
+/* Voltar à etapa anterior da missão. */
+.etapa-voltar {
+  display: block;
+  margin: -4px 0 6px;
+  padding: 2px 6px 2px 0;
+  border: 0;
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--texto-suave);
+}
+
+/* Afirmativas já julgadas, para rever. */
+.julgadas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.julgadas li {
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: var(--cartao);
+  border: 1.5px solid var(--borda);
+  border-left: 5px solid var(--borda);
+}
+
+.julgadas li.acerto {
+  border-left-color: #5fa84f;
+}
+
+.julgadas li.erro {
+  border-left-color: var(--vermelho);
+}
+
+.julgadas .afirmativa {
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+}
+
+.julgada-resposta,
+.julgada-explicacao {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.julgada-explicacao {
+  margin-top: 2px;
+  color: var(--texto-suave);
+}
+
 /* Ciclo da missão: passos numerados, como nos mockups. */
 .passos {
   display: flex;
@@ -1380,17 +1628,36 @@ span.linha-valor {
 }
 
 .conceitos li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 7px 10px;
+  overflow: hidden;
   border-radius: 12px;
   background: var(--cartao-2);
   border: 1.5px solid var(--borda);
 }
 
-.conceitos li.novo {
+/* A linha inteira é o botão que abre a definição. */
+.conceito-linha {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+.conceito-definicao {
+  margin: 0;
+  padding: 8px 10px 9px;
+  border-top: 1.5px dashed var(--borda);
+  background: var(--cartao);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  animation: decisao-entra 0.2s ease-out;
+}
+
+.conceitos li.novo .conceito-linha {
   opacity: 0.6;
 }
 
@@ -1470,4 +1737,12 @@ span.linha-valor {
 
 .interruptor[aria-checked="true"] .interruptor-trilho span {
   transform: translateX(20px);
+}
+
+.efeito-conta em {
+  display: block;
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--texto-suave);
 }

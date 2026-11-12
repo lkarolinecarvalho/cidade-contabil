@@ -8,17 +8,17 @@ import {
 } from "@cidade/ledger";
 import { useMemo, useState } from "react";
 import { selecionarAfirmativas } from "../orquestrador/afirmativas";
-import { type Direcao, efeitoDosLancamentos, rotuloDoGrupo } from "../orquestrador/efeito";
+import { type Direcao, efeitoDosLancamentos } from "../orquestrador/efeito";
 import {
   ajudaDaMissao,
   type Conferencia,
   conferirLancamento,
   linhasEsperadas,
 } from "../orquestrador/lancamento";
-import { acoesRestantes, operacoesExecutadas } from "../state/jogo";
+import { acoesRestantes, operacoesExecutadas, type Resposta } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
-import { JulgarAfirmativas } from "./Afirmativas";
+import { AfirmativasJulgadas, JulgarAfirmativas } from "./Afirmativas";
 import { Conversa } from "./Conversa";
 import { PainelDaDre } from "./Demonstracoes";
 import { EditorDeLancamento } from "./EditorDeLancamento";
@@ -49,8 +49,16 @@ function Passos({ etapa, temEfeito }: { readonly etapa: Etapa; readonly temEfeit
 /**
  * Ciclo da missão: negociação → efeito → afirmativas → lançamento → conclusão.
  * O razão só recebe os lançamentos do motor, gravados quando cada operação termina.
+ * Até a operação ser gravada, o jogador pode voltar às etapas anteriores para rever.
  */
-export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
+export function FluxoDaMissao({
+  missao,
+  aoConcluir,
+}: {
+  readonly missao: Missao;
+  /** Chamado depois de concluir a missão (ex.: para fechar o painel e voltar ao mapa). */
+  readonly aoConcluir?: () => void;
+}) {
   const feitas = useJogo((jogo) => operacoesExecutadas(jogo, missao));
   const contabil = useJogo((jogo) => jogo.contabil);
   const data = useJogo((jogo) => jogo.data);
@@ -66,6 +74,20 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
     if (feitas === 0) return "negociacao";
     return feitas < missao.operacoes.length ? "efeito" : "conclusao";
   });
+  // Etapas por onde o jogador passou nesta operação, para o botão "Voltar".
+  const [anteriores, setAnteriores] = useState<readonly Etapa[]>([]);
+  const [respostas, setRespostas] = useState<Readonly<Record<string, Resposta>>>({});
+  const [jaNegociou, setJaNegociou] = useState(false);
+  const irPara = (proxima: Etapa) => {
+    setAnteriores((atuais) => [...atuais, etapa]);
+    setEtapa(proxima);
+  };
+  const voltar = () => {
+    const anterior = anteriores.at(-1);
+    if (!anterior) return;
+    setAnteriores(anteriores.slice(0, -1));
+    setEtapa(anterior);
+  };
 
   // Operação atual e o que o motor espera dela. Nada é gravado aqui.
   const previsao = useMemo(() => {
@@ -116,21 +138,24 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
   };
 
   const aposNegociacao = () => {
+    setJaNegociou(true);
     // Fato sem lançamento: primeiro a decisão, depois as afirmativas (que dariam a resposta).
-    if (!temEfeito) return setEtapa("lancamento");
-    setEtapa("efeito");
+    irPara(temEfeito ? "efeito" : "lancamento");
   };
-  const aposEfeito = () =>
-    setEtapa(afirmativasFeitas || afirmativas.length === 0 ? "lancamento" : "afirmativas");
+  // Afirmativas já julgadas voltam só para rever, quando há alguma.
+  const aposEfeito = () => irPara(afirmativas.length === 0 ? "lancamento" : "afirmativas");
   const aposAfirmativas = () => {
     setAfirmativasFeitas(true);
-    setEtapa(temEfeito ? "lancamento" : "conclusao");
+    irPara(temEfeito ? "lancamento" : "conclusao");
   };
   const aposLancamento = () => {
     if (operacao) jogoStore.getState().executarProximaOperacao(missao);
     const proximas = feitas + (operacao ? 1 : 0) < missao.operacoes.length;
+    // A operação foi gravada no razão: daqui não se volta.
+    setAnteriores([]);
     setEtapa(etapaDaOperacao(proximas));
   };
+  const podeVoltar = anteriores.length > 0 && etapa !== "conclusao";
 
   return (
     <article className="painel-missao">
@@ -144,9 +169,16 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
         · {missao.titulo}
       </h3>
       <Passos etapa={etapa} temEfeito={temEfeito} />
+      {podeVoltar && (
+        <button type="button" className="etapa-voltar" onClick={voltar}>
+          ‹ Voltar
+        </button>
+      )}
 
       {etapa === "negociacao" && (
         <Conversa
+          // Ao voltar, a conversa reabre na última fala, com o cartão da proposta.
+          inicio={jaNegociou ? missao.dialogo.length - 1 : 0}
           falas={missao.dialogo}
           npc={{ id: missao.npc, nome: npc?.nome ?? "", papel: npc?.papel ?? "" }}
           acaoFinal={
@@ -169,13 +201,24 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
         />
       )}
 
-      {etapa === "afirmativas" && (
-        <JulgarAfirmativas
-          afirmativas={afirmativas}
-          valores={valores}
-          aoContinuar={aposAfirmativas}
-        />
-      )}
+      {etapa === "afirmativas" &&
+        (afirmativasFeitas ? (
+          <AfirmativasJulgadas
+            afirmativas={afirmativas}
+            respostas={respostas}
+            valores={valores}
+            aoContinuar={aposAfirmativas}
+          />
+        ) : (
+          <JulgarAfirmativas
+            afirmativas={afirmativas}
+            valores={valores}
+            aoContinuar={aposAfirmativas}
+            aoResponder={(afirmativa, resposta) =>
+              setRespostas((atuais) => ({ ...atuais, [afirmativa.id]: resposta }))
+            }
+          />
+        ))}
 
       {etapa === "lancamento" && (
         <EtapaDoLancamento
@@ -208,7 +251,10 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
           <button
             type="button"
             className="botao-principal"
-            onClick={() => jogoStore.getState().concluirMissao(missao)}
+            onClick={() => {
+              jogoStore.getState().concluirMissao(missao);
+              aoConcluir?.();
+            }}
           >
             <IconeCerto />
             Concluir Missão
@@ -245,7 +291,7 @@ function EtapaDoEfeito({
           return (
             <li key={e.conta} className={estado}>
               <span className="efeito-conta">
-                {e.nome} <em>({rotuloDoGrupo(e.grupo)})</em>
+                {e.nome} <em>{e.classificacao}</em>
                 {conferido && (
                   <small>
                     {e.direcao === "aumenta" ? "Aumenta" : "Diminui"}{" "}

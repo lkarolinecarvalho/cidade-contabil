@@ -13,6 +13,7 @@ import {
   IconeEngrenagem,
   IconeMapa,
 } from "./icones";
+import { ProximoDestino } from "./ProximoDestino";
 import {
   PainelDasDemonstracoes,
   PainelDeConfiguracoes,
@@ -93,9 +94,9 @@ function iconeDo(painel: Painel): ReactNode {
   return painel.estabelecimento === "escritorio-contabil" ? <IconeBalanca /> : <IconeAperto />;
 }
 
-function conteudoDo(painel: Painel): ReactNode {
+function conteudoDo(painel: Painel, fechar: () => void): ReactNode {
   if (painel.tipo === "atalho") return ATALHOS[painel.atalho].conteudo();
-  return <PainelDoEstabelecimento estabelecimento={painel.estabelecimento} />;
+  return <PainelDoEstabelecimento estabelecimento={painel.estabelecimento} aoFechar={fechar} />;
 }
 
 const NA_BASE: readonly Atalho[] = ["missoes", "calendario", "escritorio", "progresso"];
@@ -149,6 +150,9 @@ export function App() {
         aoVerBalanco={() => setPainel({ tipo: "atalho", atalho: "balanco" })}
         aoAbrirConfiguracoes={() => setPainel({ tipo: "atalho", atalho: "configuracoes" })}
       />
+      {mundoPronto && painel === null && (
+        <ProximoDestino aoAbrirMissoes={() => setPainel({ tipo: "atalho", atalho: "missoes" })} />
+      )}
       {!mundoPronto && <p className="carregando">Carregando a cidade…</p>}
       <nav className="atalhos" aria-label="Atalhos">
         {NA_BASE.map((atalho) => (
@@ -171,7 +175,7 @@ export function App() {
         centralizado={painel?.tipo === "estabelecimento"}
         aoFechar={fechar}
       >
-        {painel && conteudoDo(painel)}
+        {painel && conteudoDo(painel, fechar)}
       </BottomSheet>
     </>
   );

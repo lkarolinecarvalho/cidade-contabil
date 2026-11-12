@@ -40,6 +40,13 @@ export const conceitoSchema = z.strictObject({
   nome: texto,
   /** Nível em que o conceito é apresentado na campanha. */
   nivel,
+  /** Definição curta, mostrada quando o jogador toca no conceito. */
+  definicao: texto,
+});
+
+export const capituloSchema = z.strictObject({
+  numero: z.number().int().min(1),
+  titulo: texto,
 });
 
 const meio = z.enum(["caixa", "bancos"]);
@@ -282,6 +289,7 @@ export type Estabelecimento = z.infer<typeof estabelecimentoSchema>;
 export type Npc = z.infer<typeof npcSchema>;
 export type Produto = z.infer<typeof produtoSchema>;
 export type Conceito = z.infer<typeof conceitoSchema>;
+export type Capitulo = z.infer<typeof capituloSchema>;
 export type OperacaoDeMissao = z.infer<typeof operacaoSchema>;
 export type Missao = z.infer<typeof missaoSchema>;
 export type Afirmativa = z.infer<typeof afirmativaSchema>;

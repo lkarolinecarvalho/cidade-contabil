@@ -3,7 +3,9 @@ import {
   ACIONISTA_AVATAR,
   type Afirmativa,
   afirmativaSchema,
+  type Capitulo,
   type Conceito,
+  capituloSchema,
   conceitoSchema,
   type Estabelecimento,
   estabelecimentoSchema,
@@ -22,6 +24,7 @@ export interface ConteudoBruto {
   readonly npcs: unknown;
   readonly produtos: unknown;
   readonly conceitos: unknown;
+  readonly capitulos: unknown;
   readonly missoes: unknown;
   readonly afirmativas: unknown;
 }
@@ -31,6 +34,8 @@ export interface Conteudo {
   readonly npcs: readonly Npc[];
   readonly produtos: readonly Produto[];
   readonly conceitos: readonly Conceito[];
+  /** Capítulos da campanha, em ordem. */
+  readonly capitulos: readonly Capitulo[];
   /** Em ordem de jogo: toda missão vem depois dos seus requisitos. */
   readonly missoes: readonly Missao[];
   readonly afirmativas: readonly Afirmativa[];
@@ -122,6 +127,7 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
   const npcs = validarLista("npc", npcSchema, bruto.npcs, problemas);
   const produtos = validarLista("produto", produtoSchema, bruto.produtos, problemas);
   const conceitos = validarLista("conceito", conceitoSchema, bruto.conceitos, problemas);
+  const capitulos = validarLista("capítulo", capituloSchema, bruto.capitulos, problemas);
   const missoes = validarLista("missão", missaoSchema, bruto.missoes, problemas);
   const afirmativas = validarLista("afirmativa", afirmativaSchema, bruto.afirmativas, problemas);
   // As regras cruzadas só fazem sentido com o formato certo.
@@ -190,8 +196,18 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
     }
   }
 
+  // Capítulos: numerados de 1 em diante, sem pular nem repetir.
+  capitulos.forEach((capitulo, indice) => {
+    if (capitulo.numero !== indice + 1) {
+      problemas.push(`capítulo "${capitulo.titulo}": deveria ser o número ${indice + 1}`);
+    }
+  });
+
   // Missões: referências existentes.
   for (const missao of missoes) {
+    if (missao.capitulo !== undefined && !capitulos.some((c) => c.numero === missao.capitulo)) {
+      problemas.push(`missão ${missao.id}: capítulo inexistente ${missao.capitulo}`);
+    }
     if (!idsDeEstabelecimentos.has(missao.estabelecimento)) {
       problemas.push(
         `missão ${missao.id}: estabelecimento inexistente "${missao.estabelecimento}"`,
@@ -249,5 +265,13 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
   if (!ordenadas) problemas.push("missões: os requisitos formam um ciclo");
 
   if (problemas.length > 0 || !ordenadas) throw new ErroDeConteudo(problemas);
-  return { estabelecimentos, npcs, produtos, conceitos, missoes: ordenadas, afirmativas };
+  return {
+    estabelecimentos,
+    npcs,
+    produtos,
+    conceitos,
+    capitulos,
+    missoes: ordenadas,
+    afirmativas,
+  };
 }

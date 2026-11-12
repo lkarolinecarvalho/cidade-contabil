@@ -86,6 +86,20 @@ describe("conteúdo do jogo", () => {
     }
   });
 
+  it("todo capítulo tem título e missões; todo conceito tem uma definição curta", () => {
+    expect(conteudo.capitulos.map((c) => c.numero)).toEqual([1, 2, 3, 4, 5, 6]);
+    for (const capitulo of conteudo.capitulos) {
+      expect(
+        conteudo.missoes.some((m) => m.capitulo === capitulo.numero),
+        capitulo.titulo,
+      ).toBe(true);
+    }
+    for (const conceito of conteudo.conceitos) {
+      expect(conceito.definicao.length, conceito.id).toBeGreaterThan(30);
+      expect(conceito.definicao.length, conceito.id).toBeLessThanOrEqual(170);
+    }
+  });
+
   it("toda missão está num estabelecimento onde o NPC atende", () => {
     const npcs = new Map(conteudo.npcs.map((n) => [n.id, n]));
     for (const m of conteudo.missoes) {
@@ -250,6 +264,16 @@ describe("conteúdo inválido é recusado", () => {
     expect(problemas).toContain(
       'missão m001-constituicao: o conceito "capital-subscrito" não tem afirmativa para o nível 1',
     );
+  });
+
+  it("capítulo fora de ordem e missão de capítulo inexistente", () => {
+    const problemas = problemasDe(
+      alterar((d) => {
+        d.capitulos.splice(1, 1);
+      }),
+    ).join("\n");
+    expect(problemas).toMatch(/deveria ser o número 2/);
+    expect(problemas).toMatch(/capítulo inexistente 2/);
   });
 
   it("requisito inexistente e requisitos em ciclo", () => {

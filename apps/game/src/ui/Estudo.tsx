@@ -73,6 +73,8 @@ export function PainelDeProgresso() {
   const modoBanca = useJogo((jogo) => jogo.modoBanca);
   const placarBanca = useJogo((jogo) => jogo.placarBanca);
   const sinal = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : "0");
+  // Conceito aberto, com a definição à mostra. Um por vez.
+  const [aberto, setAberto] = useState<string | null>(null);
 
   return (
     <>
@@ -103,33 +105,43 @@ export function PainelDeProgresso() {
                 : `revisa em ${plural(diasAteARevisao(e, hoje), "dia", "dias")}`;
             return (
               <li key={conceito.id} className={e ? (e.caixa === 1 ? "fraco" : "") : "novo"}>
-                <span className="conceito-texto">
-                  <strong>{conceito.nome}</strong>
-                  <span>
-                    {e
-                      ? `${plural(e.acertos, "acerto", "acertos")} · ${plural(e.erros, "erro", "erros")}${e.brancos > 0 ? ` · ${plural(e.brancos, "em branco", "em branco")}` : ""} · ${situacao}`
-                      : situacao}
-                    {e && (modoBanca || e.saldoBanca !== 0)
-                      ? ` · banca ${sinal(e.saldoBanca)}`
-                      : ""}
-                  </span>
-                </span>
-                <span
-                  className="caixas"
-                  role="img"
-                  aria-label={e ? `Caixa ${e.caixa} de ${CAIXA_MAXIMA}` : "Sem caixa"}
+                <button
+                  type="button"
+                  className="conceito-linha"
+                  aria-expanded={aberto === conceito.id}
+                  onClick={() => setAberto(aberto === conceito.id ? null : conceito.id)}
                 >
-                  {Array.from({ length: CAIXA_MAXIMA }, (_, i) => (
-                    <i key={i} className={e && i < e.caixa ? "cheia" : ""} />
-                  ))}
-                </span>
+                  <span className="conceito-texto">
+                    <strong>{conceito.nome}</strong>
+                    <span>
+                      {e
+                        ? `${plural(e.acertos, "acerto", "acertos")} · ${plural(e.erros, "erro", "erros")}${e.brancos > 0 ? ` · ${plural(e.brancos, "em branco", "em branco")}` : ""} · ${situacao}`
+                        : situacao}
+                      {e && (modoBanca || e.saldoBanca !== 0)
+                        ? ` · banca ${sinal(e.saldoBanca)}`
+                        : ""}
+                    </span>
+                  </span>
+                  <span
+                    className="caixas"
+                    role="img"
+                    aria-label={e ? `Caixa ${e.caixa} de ${CAIXA_MAXIMA}` : "Sem caixa"}
+                  >
+                    {Array.from({ length: CAIXA_MAXIMA }, (_, i) => (
+                      <i key={i} className={e && i < e.caixa ? "cheia" : ""} />
+                    ))}
+                  </span>
+                </button>
+                {aberto === conceito.id && (
+                  <p className="conceito-definicao">{conceito.definicao}</p>
+                )}
               </li>
             );
           })}
         </ul>
         <p className="painel-nota">
-          Cada acerto sobe o conceito uma caixa e espaça a próxima cobrança (1, 3, 7 e 15 dias). Um
-          erro o devolve para a primeira caixa.
+          Toque num conceito para ver a definição. Cada acerto sobe o conceito uma caixa e espaça a
+          próxima cobrança (1, 3, 7 e 15 dias). Um erro o devolve para a primeira caixa.
         </p>
       </div>
     </>

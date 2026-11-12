@@ -1,4 +1,11 @@
-import type { Centavos, CodigoConta, GrupoConta, Lancamento, PlanoDeContas } from "@cidade/ledger";
+import type {
+  Centavos,
+  CodigoConta,
+  Conta,
+  GrupoConta,
+  Lancamento,
+  PlanoDeContas,
+} from "@cidade/ledger";
 
 export type Direcao = "aumenta" | "diminui";
 
@@ -7,25 +14,42 @@ export interface EfeitoNaConta {
   readonly conta: CodigoConta;
   readonly nome: string;
   readonly grupo: GrupoConta;
+  /** Grupo e subgrupo da conta, como no Balanço e na DRE (ex.: "Ativo Não Circulante — Imobilizado"). */
+  readonly classificacao: string;
   readonly direcao: Direcao;
   readonly valorCentavos: Centavos;
 }
 
-const ROTULO_DO_GRUPO: Readonly<Record<GrupoConta, string>> = {
-  ativo_circulante: "Ativo",
-  imobilizado: "Ativo",
-  passivo_circulante: "Passivo",
+/** Grupo e subgrupo de cada conta, na estrutura do Balanço Patrimonial e da DRE. */
+const CLASSIFICACAO_DO_GRUPO: Readonly<Record<GrupoConta, string>> = {
+  ativo_circulante: "Ativo Circulante",
+  imobilizado: "Ativo Não Circulante — Imobilizado",
+  passivo_circulante: "Passivo Circulante",
   patrimonio_liquido: "Patrimônio Líquido",
-  receita: "Receita",
-  deducao_receita: "Dedução da receita",
-  custo: "Custo",
-  despesa_operacional: "Despesa",
-  receita_financeira: "Receita financeira",
-  despesa_financeira: "Despesa financeira",
+  receita: "Resultado — Receita bruta",
+  deducao_receita: "Resultado — Dedução da receita bruta",
+  custo: "Resultado — Custo",
+  despesa_operacional: "Resultado — Despesa operacional",
+  receita_financeira: "Resultado — Receita financeira",
+  despesa_financeira: "Resultado — Despesa financeira",
 };
 
-export function rotuloDoGrupo(grupo: GrupoConta): string {
-  return ROTULO_DO_GRUPO[grupo];
+export function classificacaoDoGrupo(grupo: GrupoConta): string {
+  return CLASSIFICACAO_DO_GRUPO[grupo];
+}
+
+/** Conta redutora: tem natureza contrária à do grupo em que aparece. */
+export function ehContaRedutora(conta: Pick<Conta, "grupo" | "natureza" | "redutoraDe">): boolean {
+  if (conta.redutoraDe !== null) return true;
+  return conta.grupo === "patrimonio_liquido" && conta.natureza === "devedora";
+}
+
+/** Classificação completa da conta: grupo, subgrupo e, se for o caso, "conta redutora". */
+export function classificacaoDaConta(
+  conta: Pick<Conta, "grupo" | "natureza" | "redutoraDe">,
+): string {
+  const base = CLASSIFICACAO_DO_GRUPO[conta.grupo];
+  return ehContaRedutora(conta) ? `${base} (conta redutora)` : base;
 }
 
 /**
@@ -56,6 +80,7 @@ export function efeitoDosLancamentos(
         conta: codigo,
         nome: conta.nome,
         grupo: conta.grupo,
+        classificacao: classificacaoDaConta(conta),
         direcao: valor > 0 ? ("aumenta" as const) : ("diminui" as const),
         valorCentavos: Math.abs(valor),
       };

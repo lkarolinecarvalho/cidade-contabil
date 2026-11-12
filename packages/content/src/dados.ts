@@ -1,3 +1,4 @@
+import capitulos from "../data/capitulos.json";
 import conceitos from "../data/conceitos.json";
 import estabelecimentos from "../data/estabelecimentos.json";
 import npcs from "../data/npcs.json";
@@ -25,6 +26,7 @@ export const dadosBrutos: ConteudoBruto = {
   npcs,
   produtos,
   conceitos,
+  capitulos,
   // Um arquivo por missão.
   missoes: emOrdem(arquivosDeMissao),
   // Cada arquivo de afirmativas é uma lista.
