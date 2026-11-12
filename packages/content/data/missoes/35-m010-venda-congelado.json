@@ -1,11 +1,12 @@
 {
   "id": "m010-venda-congelado",
   "titulo": "Na prateleira do mercado",
-  "capitulo": 5,
+  "capitulo": 7,
   "nivel": 4,
   "estabelecimento": "minha-loja",
   "npc": "celia-mercado",
   "requisitos": ["m010-producao"],
+  "aulas": ["ipi-na-venda"],
   "dialogo": [
     {
       "fala": "npc",
@@ -17,17 +18,22 @@
     }
   ],
   "proposta": {
-    "titulo": "Nota v2 para o mercado",
+    "titulo": "Nota fiscal v2",
     "linhas": [
+      "Emitente: Chapa da Praça Ltda. (fabricante)",
+      "Destinatário: Mercado da Célia, contribuinte do ICMS",
+      "Finalidade: revenda",
       "250 congelados a R$ 12,00: R$ 3.000,00",
       "IPI de 5%, por fora: R$ 150,00",
       "Total da nota: R$ 3.150,00",
+      "Base do ICMS: R$ 3.000,00 (sem o IPI)",
       "A prazo: 30 dias"
     ]
   },
   "operacoes": [
     {
       "tipo": "venda",
+      "nota": "v2",
       "itens": [
         {
           "produto": "hamburguer-congelado",
@@ -39,7 +45,6 @@
         "tipo": "prazo",
         "dias": 30
       },
-      "nota": "v2",
       "ipiAliquota": 500
     }
   ],

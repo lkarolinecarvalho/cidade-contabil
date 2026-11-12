@@ -1,11 +1,12 @@
 {
   "id": "m009-consignacao",
   "titulo": "A geladeira da marca",
-  "capitulo": 4,
+  "capitulo": 6,
   "nivel": 4,
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
   "requisitos": ["m009-receber-antes"],
+  "aulas": ["consignacao"],
   "dialogo": [
     {
       "fala": "npc",

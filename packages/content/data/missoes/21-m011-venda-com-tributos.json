@@ -1,29 +1,30 @@
 {
-  "id": "m005-venda-prazo",
-  "titulo": "A encomenda do evento",
+  "id": "m011-venda-com-tributos",
+  "titulo": "Fim de semana cheio",
   "capitulo": 4,
   "nivel": 3,
   "estabelecimento": "minha-loja",
-  "npc": "antonio-restaurante",
+  "npc": "lurdes-cliente",
   "requisitos": ["m008-material-de-limpeza"],
+  "aulas": ["tributos-sobre-vendas"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Vou fazer um evento na empresa e quero os seus lanches."
+      "texto": "Fim de semana de casa cheia! Trouxe a família toda de novo."
     },
     {
       "fala": "npc",
-      "texto": "É bastante coisa. Consegue um desconto na nota e 30 dias para pagar?"
+      "texto": "Todo mundo pagou na hora."
     }
   ],
   "proposta": {
-    "titulo": "Nota v1 para o Antônio",
+    "titulo": "Vendas do fim de semana",
     "linhas": [
       "200 hambúrgueres a R$ 20,00: R$ 4.000,00",
       "100 refrigerantes a R$ 6,00: R$ 600,00",
-      "Desconto de 10% na nota: R$ 460,00",
-      "Total da nota: R$ 4.140,00",
-      "A prazo: 30 dias"
+      "Total: R$ 4.600,00, à vista",
+      "ICMS de 18%, dentro do preço: R$ 828,00",
+      "PIS de 0,65% e COFINS de 3%, sobre a receita sem o ICMS"
     ]
   },
   "operacoes": [
@@ -42,15 +43,12 @@
         }
       ],
       "condicao": {
-        "tipo": "prazo",
-        "dias": 30
-      },
-      "nota": "v1",
-      "descontoIncondicional": 1000
+        "tipo": "avista"
+      }
     }
   ],
   "ajudaLancamento": "auto",
-  "conceitos": ["venda-a-prazo-clientes", "desconto-comercial"],
+  "conceitos": ["receita-e-deducoes", "tributo-recuperavel"],
   "recompensa": {
     "pontos": 100
   }

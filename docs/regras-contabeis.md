@@ -128,15 +128,17 @@ O plano de contas é dado (config), não código fixo, para poder crescer.
 
 ## 8. Tributos (Lucro Presumido)
 
-Na campanha, os tributos sobre mercadorias entram a partir do **capítulo 4**. Os
-capítulos 1–3 não têm operações com mercadorias.
+Na campanha, os tributos entram a partir do **capítulo 4**. Nos capítulos 2 e 3, as
+compras e vendas são feitas pelo valor total, sem tributos destacados (R-DID-01).
 
 ### ICMS
 - **R-ICMS-01** — Alíquota interna única configurável. Padrão: **18%**.
 - **R-ICMS-02** — Cálculo **por dentro**: o ICMS está incluído no valor da operação.
 - **R-ICMS-03** — Base do ICMS na compra = valor dos produtos + frete cobrado pelo
-  remetente na nota. O IPI não integra a base quando a operação é entre contribuintes,
-  com produto destinado à comercialização (CF, art. 155, §2º, XI). ⚠️ VALIDAR
+  remetente na nota. O IPI **não** integra a base quando, ao mesmo tempo: a operação é
+  entre contribuintes, o produto se destina à industrialização ou à comercialização e
+  a operação é fato gerador dos dois impostos (CF, art. 155, §2º, XI; LC 87/96,
+  art. 13, §2º). Faltando uma dessas condições, vale a R-ICMS-07. ⚠️ VALIDAR
 - **R-ICMS-04** — Comerciante em regime normal **recupera** o ICMS das compras de
   mercadorias para revenda: D ICMS a Recuperar.
 - **R-ICMS-05** — Na venda: D ICMS sobre Vendas / C ICMS a Recolher.
@@ -146,7 +148,9 @@ capítulos 1–3 não têm operações com mercadorias.
 
 ### IPI
 - **R-IPI-01** — Comerciante não recupera o IPI. O IPI integra o custo de aquisição.
-- **R-IPI-02** — Alíquota de IPI vem na oferta do fornecedor (dado da missão).
+- **R-IPI-02** — Alíquota de IPI vem na oferta do fornecedor (dado da missão). Só há
+  IPI destacado quando quem emite a nota é estabelecimento industrial ou equiparado: a
+  missão identifica o emitente (RIPI, arts. 8º, 9º e 24).
 
 ### Frete
 - **R-FRE-01** — Frete na compra cobrado na nota integra o custo de aquisição e a base
@@ -214,6 +218,8 @@ capítulos 1–3 não têm operações com mercadorias.
 ## 13. Pendências de validação técnica
 
 1. **R-ICMS-03 e R-PC-02** — confirmar redação e vigência com a legislação atual.
+   **Seção 23 inteira** (R-DID-01, R-ICMS-07, R-ICMS-08 e R-ICMS-09) — redigida a
+   partir da legislação citada, aguardando a validação da autora.
 2. **Reforma Tributária (EC 132/2023, LC 214/2025)** — a transição prevê a CBS no lugar
    do PIS/COFINS a partir de 2027, a redução do IPI e a substituição gradual do ICMS
    pelo IBS (2029–2032). A v1 ensina o modelo vigente antes da reforma. O motor de
@@ -364,3 +370,45 @@ A regra geral da revenda continua sendo a R-IPI-01 (o IPI integra o custo).
 O Lucro Presumido é mantido como simplificação didática, para o jogador treinar ICMS,
 PIS e COFINS destacados. Uma hamburgueria desse porte estaria, na vida real, no Simples
 Nacional.
+
+## 23. Progressão didática e situações tributárias
+
+⚠️ **VALIDAR** — seção redigida a partir da legislação citada, pendente de validação.
+
+- **R-DID-01** — 📘 SIMPLIFICAÇÃO: fase sem tributos. Nos capítulos 2 e 3 da campanha,
+  as compras e vendas são registradas pelo valor total da nota, sem destaque de ICMS,
+  IPI, PIS e COFINS, para o jogador aprender primeiro a movimentação patrimonial. A
+  compra entra no estoque pelo total: `D Estoque / C Caixa|Bancos|Fornecedores`. A
+  venda reconhece só a receita e o custo:
+  `D Caixa|Clientes / C Receita Bruta` e `D CMV|CPV / C Estoque`. A operação declara
+  `semTributos`; uma nota assim não pode ter IPI. Os tributos entram no capítulo 4.
+- **R-ICMS-07** — IPI na base do ICMS. Quando falta alguma das condições da R-ICMS-03,
+  o IPI integra a base de cálculo do ICMS. No jogo, é o caso do **material de uso e
+  consumo** comprado de um estabelecimento industrial: o produto não se destina à
+  industrialização nem à comercialização, e a base é
+  `valor dos produtos + frete + IPI`. Como também não há crédito (R-MCO-01), o ICMS
+  destacado é só informativo e a nota inteira vai ao custo.
+  Base: CF, art. 155, §2º, XI; LC 87/96, art. 13, §1º e §2º.
+- **R-ICMS-08** — Requisitos do crédito de ICMS (detalha a R-ICMS-04). Há crédito
+  quando, ao mesmo tempo: (a) a empresa é contribuinte do ICMS no regime normal de
+  apuração; (b) a mercadoria entra para revenda ou como insumo de um produto cuja saída
+  é tributada; (c) o imposto vem destacado em documento fiscal idôneo. Não há crédito
+  na entrada de material de uso e consumo (R-MCO-01) nem quando a saída seguinte é
+  isenta ou não tributada. Base: CF, art. 155, §2º, I e II; LC 87/96, arts. 19, 20
+  (caput e §§ 1º e 3º), 23 e 33, I.
+- **R-ICMS-09** — 📘 SIMPLIFICAÇÃO: sem substituição tributária nem regimes especiais.
+  Todos os itens do jogo seguem o regime normal de débito e crédito, com a alíquota
+  única da R-ICMS-01. Na vida real, refrigerantes costumam estar sujeitos à
+  substituição tributária (o comerciante não se credita nem se debita), e bares,
+  restaurantes e lanchonetes muitas vezes optam por regimes especiais, calculados sobre
+  a receita e sem direito a crédito.
+
+### As cinco situações da campanha
+
+| Situação | Operação | Quem vende | Finalidade | IPI na base do ICMS? | ICMS | IPI |
+|---|---|---|---|---|---|---|
+| A | Material de limpeza | Indústria | Uso e consumo | Sim (R-ICMS-07) | Não recuperável (R-MCO-01) | Não recuperável (R-IPI-01) |
+| B | Refrigerante | Indústria | Revenda | Não (R-ICMS-03) | Recuperável | Não recuperável: custo (R-IPI-01) |
+| C | Pão, carne, queijo e alface | Atacadista | Insumo do lanche | Não há IPI | Recuperável (R-ICMS-08) | — |
+| D | Embalagem do congelado | Indústria | Industrialização | Não (R-ICMS-03) | Recuperável | Recuperável (R-IPI-04) |
+| E | Material de limpeza e IPI do refrigerante | — | — | — | Vão ao custo de aquisição (R-COM-01; CPC 16 (R1), item 11) | |

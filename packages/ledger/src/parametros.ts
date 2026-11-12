@@ -48,4 +48,8 @@ export const NOTAS_DIDATICAS = {
     "As alíquotas de IPI do jogo são didáticas. Na TIPI, preparações de carne bovina têm alíquota zero.",
   "R-PRD-01":
     "Nesta versão, o custo do produto fabricado é só o dos insumos da receita. Mão de obra e gastos gerais de fabricação ficam como despesa do período.",
+  "R-DID-01":
+    "Nas primeiras operações, as notas aparecem pelo valor total, sem impostos destacados, para você treinar o raciocínio básico. Os tributos entram quando a casa cresce.",
+  "R-ICMS-09":
+    "No jogo, todos os itens seguem o regime normal do ICMS (débito e crédito), com uma alíquota só. Na vida real, refrigerantes costumam estar na substituição tributária, e bares e restaurantes muitas vezes usam regimes especiais, sem crédito.",
 } as const;

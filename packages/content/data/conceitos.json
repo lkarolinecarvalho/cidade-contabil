@@ -44,19 +44,19 @@
   {
     "id": "custo-aquisicao",
     "nome": "Custo de aquisição das mercadorias",
-    "nivel": 2,
+    "nivel": 3,
     "definicao": "O que a mercadoria custou para chegar ao estoque: o preço, mais o frete e os tributos não recuperáveis, menos os tributos recuperáveis."
   },
   {
     "id": "icms-por-dentro",
     "nome": "ICMS por dentro",
-    "nivel": 2,
+    "nivel": 3,
     "definicao": "O ICMS faz parte do próprio preço: o valor da nota já inclui o imposto."
   },
   {
     "id": "icms-a-recuperar",
     "nome": "ICMS a Recuperar",
-    "nivel": 2,
+    "nivel": 3,
     "definicao": "Crédito de ICMS das compras, que a empresa compensa com o ICMS devido nas vendas. É um ativo."
   },
   {
@@ -68,13 +68,13 @@
   {
     "id": "ipi-no-custo-comercio",
     "nome": "IPI no custo do comerciante",
-    "nivel": 2,
+    "nivel": 3,
     "definicao": "Quem só revende não recupera o IPI. O imposto pago na compra entra no custo da mercadoria."
   },
   {
     "id": "receita-e-deducoes",
     "nome": "Receita bruta e deduções",
-    "nivel": 2,
+    "nivel": 3,
     "definicao": "Receita Bruta é o total das vendas. Dela saem as deduções (tributos, devoluções, abatimentos e descontos) para chegar à Receita Líquida."
   },
   {
@@ -98,19 +98,19 @@
   {
     "id": "pagamento-de-obrigacoes",
     "nome": "Pagamento de obrigações",
-    "nivel": 3,
+    "nivel": 2,
     "definicao": "Pagar uma dívida já registrada diminui o dinheiro e o Passivo. Não é despesa nova."
   },
   {
     "id": "competencia",
     "nome": "Regime de competência",
-    "nivel": 3,
+    "nivel": 2,
     "definicao": "Receitas e despesas pertencem ao período em que acontecem, e não ao período em que o dinheiro entra ou sai."
   },
   {
     "id": "despesas-operacionais",
     "nome": "Despesas pagas no ato",
-    "nivel": 3,
+    "nivel": 2,
     "definicao": "Gastos para manter a empresa funcionando, como salários e energia. Reduzem o resultado do período."
   },
   {
@@ -214,5 +214,29 @@
     "nome": "Produção e produtos acabados",
     "nivel": 4,
     "definicao": "Quando a produção termina, o custo dos insumos consumidos passa para Produtos Acabados. O resultado só é afetado na venda."
+  },
+  {
+    "id": "compra-a-vista",
+    "nome": "Compra à vista para o estoque",
+    "nivel": 2,
+    "definicao": "Compra paga na hora: o dinheiro diminui e o estoque aumenta no mesmo valor. O total do Ativo não muda."
+  },
+  {
+    "id": "tributo-recuperavel",
+    "nome": "Tributo recuperável e não recuperável",
+    "nivel": 3,
+    "definicao": "Recuperável é o tributo que vira crédito e fica fora do custo. O não recuperável integra o custo de aquisição."
+  },
+  {
+    "id": "credito-de-icms",
+    "nome": "Crédito de ICMS",
+    "nivel": 3,
+    "definicao": "Direito de descontar o ICMS da compra. Exige contribuinte no regime normal, entrada para revenda ou insumo e imposto destacado em nota."
+  },
+  {
+    "id": "ipi-na-base-do-icms",
+    "nome": "IPI na base do ICMS",
+    "nivel": 3,
+    "definicao": "O IPI fica fora da base do ICMS na venda entre contribuintes de produto para revenda ou industrialização. Nos demais casos, integra a base."
   }
 ]

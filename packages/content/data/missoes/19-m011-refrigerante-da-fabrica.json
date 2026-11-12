@@ -1,0 +1,57 @@
+{
+  "id": "m011-refrigerante-da-fabrica",
+  "titulo": "Direto da fábrica",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m011-insumos-com-icms"],
+  "aulas": ["ipi-e-icms-na-mesma-nota"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Desta vez a nota vem da fábrica de refrigerante que eu represento. E fábrica destaca IPI."
+    },
+    {
+      "fala": "npc",
+      "texto": "Você compra para revender. Então o IPI fica fora da conta do ICMS, mas não volta para você."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota fiscal da fábrica",
+    "linhas": [
+      "Emitente: Fábrica de Bebidas Serra Azul (indústria)",
+      "Destinatário: Chapa da Praça Ltda., contribuinte do ICMS",
+      "Finalidade: revenda",
+      "500 refrigerantes a R$ 3,00: R$ 1.500,00",
+      "IPI de 4%, por fora: R$ 60,00",
+      "Total da nota: R$ 1.560,00",
+      "Base do ICMS: R$ 1.500,00 (sem o IPI)",
+      "ICMS de 18% destacado: R$ 270,00",
+      "À vista, pelo banco"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "refrigerante",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 300
+        }
+      ],
+      "ipiAliquota": 400,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "avista",
+        "meio": "bancos"
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["ipi-na-base-do-icms", "ipi-no-custo-comercio", "custo-aquisicao"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

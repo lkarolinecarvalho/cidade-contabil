@@ -72,6 +72,8 @@ export type Operacao =
       readonly descontoComercial?: PontosBase;
       /** R-IPI-04: compra para a fábrica; o IPI vira crédito. */
       readonly ipiRecuperavel?: boolean;
+      /** R-DID-01: fase inicial da campanha; a nota entra pelo total, sem tributos. */
+      readonly semTributos?: boolean;
     }
   | {
       readonly tipo: "venda";
@@ -83,6 +85,8 @@ export type Operacao =
       readonly descontoIncondicional?: PontosBase;
       /** R-IPI-05: IPI cobrado por fora, na venda de produto fabricado. */
       readonly ipiAliquota?: PontosBase;
+      /** R-DID-01: fase inicial da campanha; só a receita e o custo, sem tributos. */
+      readonly semTributos?: boolean;
     }
   | {
       readonly tipo: "recebimento";
@@ -252,7 +256,16 @@ export interface EstadoContabil {
 export interface ValoresCalculados {
   readonly totalNota?: Centavos;
   readonly ipi?: Centavos;
+  /** ICMS que vira crédito (compra) ou débito (venda). */
   readonly icms?: Centavos;
+  /** Na compra: valor dos produtos, já com o desconto da nota. */
+  readonly produtos?: Centavos;
+  /** Na compra: base de cálculo do ICMS (R-ICMS-03, R-ICMS-07). */
+  readonly baseIcms?: Centavos;
+  /** Na compra: ICMS destacado na nota, recuperável ou não. */
+  readonly icmsDestacado?: Centavos;
+  /** Na compra: IPI que vira crédito (R-IPI-04). */
+  readonly ipiRecuperado?: Centavos;
   readonly custoEstoque?: Centavos;
   readonly receitaBruta?: Centavos;
   readonly pis?: Centavos;

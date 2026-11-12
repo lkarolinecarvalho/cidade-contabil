@@ -1,11 +1,12 @@
 {
   "id": "m010-embalagens",
   "titulo": "Embalagens para o congelado",
-  "capitulo": 5,
+  "capitulo": 7,
   "nivel": 4,
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
-  "requisitos": ["m006-energia"],
+  "requisitos": ["m009-devolver-consignado"],
+  "aulas": ["industria-e-ipi"],
   "dialogo": [
     {
       "fala": "npc",
@@ -17,18 +18,23 @@
     }
   ],
   "proposta": {
-    "titulo": "Nota c3 do fornecedor",
+    "titulo": "Nota fiscal c4",
     "linhas": [
+      "Emitente: Fábrica de Embalagens Papel Bom (indústria)",
+      "Destinatário: Chapa da Praça Ltda., agora também indústria",
+      "Finalidade: embalar o hambúrguer congelado (industrialização)",
       "400 embalagens a R$ 1,00: R$ 400,00",
-      "IPI de 5%: R$ 20,00 (recuperável)",
+      "IPI de 5%, por fora: R$ 20,00",
       "Total da nota: R$ 420,00",
-      "ICMS de 18% incluído no preço dos produtos",
+      "Base do ICMS: R$ 400,00 (sem o IPI)",
+      "ICMS de 18% destacado: R$ 72,00",
       "A prazo: 30 dias"
     ]
   },
   "operacoes": [
     {
       "tipo": "compra",
+      "nota": "c4",
       "itens": [
         {
           "produto": "embalagem",
@@ -42,7 +48,6 @@
         "tipo": "prazo",
         "dias": 30
       },
-      "nota": "c3",
       "ipiRecuperavel": true
     }
   ],
@@ -50,5 +55,12 @@
   "conceitos": ["ipi-recuperavel"],
   "recompensa": {
     "pontos": 100
+  },
+  "comparacao": {
+    "com": "m011-refrigerante-da-fabrica",
+    "titulo": "O mesmo IPI, dois destinos",
+    "la": "Refrigerante para revender",
+    "aqui": "Embalagem para fabricar",
+    "porque": "Nas duas notas o IPI fica fora da base do ICMS, e o ICMS volta. A diferença está no IPI: quem só revende não o recupera; a indústria, na compra de embalagem para o que fabrica, recupera."
   }
 }

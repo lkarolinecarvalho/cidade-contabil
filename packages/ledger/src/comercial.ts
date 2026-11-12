@@ -123,6 +123,15 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
   }
 
   const ipiRecuperavel = operacao.ipiRecuperavel === true;
+  // R-DID-01: na fase inicial, a nota entra pelo valor total, sem tributos destacados.
+  const semTributos = operacao.semTributos === true;
+  if (semTributos && (operacao.ipiAliquota > 0 || ipiRecuperavel)) {
+    throw new ErroDeOperacao(
+      "valor_invalido",
+      "Uma compra sem tributos destacados não tem IPI.",
+      "R-DID-01",
+    );
+  }
   // R-DSC-01: o desconto comercial não é registrado; a compra entra pelo líquido.
   const liquidos = operacao.itens.map((item) => {
     const bruto = item.quantidade * item.precoUnitarioCentavos;
@@ -143,6 +152,10 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
   let ipiTotal = 0;
   let ipiCreditado = 0;
   let custoTotal = 0;
+  let produtosTotal = 0;
+  let baseIcmsTotal = 0;
+  let icmsDestacadoTotal = 0;
+  let ipiNaBase = false;
 
   operacao.itens.forEach((item, indice) => {
     const liquido = liquidos[indice] ?? 0;
@@ -154,9 +167,15 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
     const ipi = aplicarAliquota(liquido, operacao.ipiAliquota);
     // R-FRE-01: o frete da nota integra o total, o custo e a base do ICMS.
     const totalDaLinha = liquido + ipi + frete;
+    // R-ICMS-02, R-ICMS-03: ICMS por dentro; base = produtos + frete, sem o IPI, quando
+    // o produto se destina à comercialização ou à industrialização.
+    // R-ICMS-07: no material de uso e consumo, o IPI integra a base do ICMS.
+    const baseIcms = semTributos ? 0 : liquido + frete + (tipo === "consumo" ? ipi : 0);
+    const icmsDestacado = aplicarAliquota(baseIcms, parametros.icmsAliquota);
+    if (tipo === "consumo" && ipi > 0) ipiNaBase = true;
+    // R-ICMS-08: só há crédito na entrada para revenda ou como insumo.
     // R-MCO-01: material de uso e consumo não dá crédito de ICMS.
-    // R-ICMS-02, R-ICMS-03: ICMS por dentro; base = produtos + frete, sem o IPI.
-    const icms = tipo === "consumo" ? 0 : aplicarAliquota(liquido + frete, parametros.icmsAliquota);
+    const icms = tipo === "consumo" ? 0 : icmsDestacado;
     // R-IPI-04: nas compras para a fábrica, o IPI é recuperável.
     const creditoDeIpi = ipiRecuperavel && tipo !== "consumo" ? ipi : 0;
     // R-COM-01: custo = produtos + IPI + frete − tributos recuperáveis.
@@ -189,6 +208,9 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
     ipiTotal += ipi;
     ipiCreditado += creditoDeIpi;
     custoTotal += custo;
+    produtosTotal += liquido;
+    baseIcmsTotal += baseIcms;
+    icmsDestacadoTotal += icmsDestacado;
   });
 
   const aVista = operacao.condicao.tipo === "avista";
@@ -198,8 +220,13 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
       ? contaDoMeio(papeis, operacao.condicao.meio)
       : papeis.fornecedores;
 
-  const regras: IdRegra[] = ["R-COM-01", "R-COM-02", "R-COM-03", "R-COM-04"];
-  if (icmsTotal > 0 || !tipos.has("consumo")) regras.push("R-ICMS-02", "R-ICMS-03", "R-ICMS-04");
+  const regras: IdRegra[] = semTributos
+    ? ["R-DID-01", "R-COM-02", "R-COM-04"]
+    : ["R-COM-01", "R-COM-02", "R-COM-03", "R-COM-04"];
+  if (!semTributos && (icmsTotal > 0 || !tipos.has("consumo"))) {
+    regras.push("R-ICMS-02", "R-ICMS-03", "R-ICMS-04", "R-ICMS-08");
+  }
+  if (ipiNaBase) regras.push("R-ICMS-07");
   if (tipos.has("insumo")) regras.push("R-INS-02");
   if (tipos.has("consumo")) regras.push("R-MCO-01");
   if (operacao.itens.length > 1) regras.push("R-NOT-01", "R-NOT-03");
@@ -207,6 +234,23 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
   if (desconto > 0) regras.push("R-DSC-01");
   if (ipiTotal > 0) regras.push(ipiCreditado > 0 ? "R-IPI-04" : "R-IPI-01");
   if (operacao.freteCentavos > 0) regras.push("R-FRE-01");
+  // As regras que distinguem esta compra das outras vêm primeiro: são as que o
+  // jogador vê no retorno do lançamento.
+  const DESTAQUE: readonly IdRegra[] = [
+    "R-DID-01",
+    "R-ICMS-07",
+    "R-MCO-01",
+    "R-IPI-04",
+    "R-IPI-01",
+    "R-DSC-01",
+    "R-ICMS-08",
+  ];
+  const posicao = (regra: IdRegra) => {
+    const indice = DESTAQUE.indexOf(regra);
+    return indice < 0 ? DESTAQUE.length : indice;
+  };
+  // sort é estável: fora do destaque, a ordem original se mantém.
+  regras.sort((x, y) => posicao(x) - posicao(y));
 
   const oQue =
     tipos.size > 1
@@ -240,6 +284,10 @@ export function calcularCompra(estado: EstadoContabil, operacao: De<"compra">): 
       ipi: ipiTotal,
       icms: icmsTotal,
       custoEstoque: custoTotal,
+      produtos: produtosTotal,
+      baseIcms: baseIcmsTotal,
+      icmsDestacado: icmsDestacadoTotal,
+      ipiRecuperado: ipiCreditado,
       ...(descontoTotal > 0 ? { desconto: descontoTotal } : {}),
     },
     rascunhos: [
@@ -328,6 +376,15 @@ export function calcularVenda(estado: EstadoContabil, operacao: De<"venda">): Ca
     exigirInteiroPositivo(operacao.condicao.dias, "Prazo em dias");
   }
   exigirNotaNova(estado, operacao.nota);
+  // R-DID-01: na fase inicial, a venda reconhece só a receita e o custo.
+  const semTributos = operacao.semTributos === true;
+  if (semTributos && ipiAliquota > 0) {
+    throw new ErroDeOperacao(
+      "valor_invalido",
+      "Uma venda sem tributos destacados não tem IPI.",
+      "R-DID-01",
+    );
+  }
   if (ipiAliquota > 0) {
     const preparado = operacao.itens.find((item) => item.produto in catalogo.receitas);
     if (preparado) {
@@ -359,10 +416,10 @@ export function calcularVenda(estado: EstadoContabil, operacao: De<"venda">): Ca
     // R-DSC-03: a receita bruta é registrada cheia; os tributos incidem sobre o líquido.
     const liquido = brutoDaLinha - aplicarAliquota(brutoDaLinha, desconto);
     // R-ICMS-02: ICMS por dentro, sobre o valor da operação.
-    const icms = aplicarAliquota(liquido, parametros.icmsAliquota);
+    const icms = semTributos ? 0 : aplicarAliquota(liquido, parametros.icmsAliquota);
     // R-PC-01, R-PC-02: regime cumulativo; base = receita − ICMS destacado.
-    const pis = aplicarAliquota(liquido - icms, parametros.pisAliquota);
-    const cofins = aplicarAliquota(liquido - icms, parametros.cofinsAliquota);
+    const pis = semTributos ? 0 : aplicarAliquota(liquido - icms, parametros.pisAliquota);
+    const cofins = semTributos ? 0 : aplicarAliquota(liquido - icms, parametros.cofinsAliquota);
     // R-IPI-05: o IPI é cobrado por fora e não é receita.
     const ipi = aplicarAliquota(liquido, ipiAliquota);
 
@@ -400,7 +457,9 @@ export function calcularVenda(estado: EstadoContabil, operacao: De<"venda">): Ca
   const aVista = operacao.condicao.tipo === "avista";
   const soMercadorias = cpv === 0;
   const descontoTotal = bruto - liquidoTotal;
-  const regrasDaVenda: IdRegra[] = ["R-VEN-01", "R-GER-03"];
+  const regrasDaVenda: IdRegra[] = semTributos
+    ? ["R-DID-01", "R-VEN-01", "R-GER-03"]
+    : ["R-VEN-01", "R-GER-03"];
   if (operacao.itens.length > 1) regrasDaVenda.push("R-NOT-01");
   if (descontoTotal > 0) regrasDaVenda.push("R-DSC-03");
   if (ipiTotal > 0) regrasDaVenda.push("R-IPI-05", "R-IPI-07");

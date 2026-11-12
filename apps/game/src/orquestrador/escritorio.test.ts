@@ -130,7 +130,7 @@ describe("Consulta do Escritório", () => {
     expect(todas.find((c) => c.nome === "Caixa")).toMatchObject({
       natureza: "devedora",
       redutora: false,
-      saldoCentavos: 760_000,
+      saldoCentavos: 1_217_500,
     });
     expect(todas.filter((c) => c.redutora).map((c) => c.codigo)).toEqual([
       "1.2.3.8",
@@ -240,12 +240,13 @@ describe("painel de Missões e aviso do próximo destino", () => {
   it("acompanha o progresso: feitas, atual e em breve, com a conta por capítulo", () => {
     const estado = jogarAte("m004-compra-avista");
     const capitulos = campanhaPorCapitulo(estado.missoesConcluidas);
-    // Duas conversas com a Marta e seis missões com operação.
-    expect(capitulos[0]).toMatchObject({ concluidas: 8 });
+    // Três conversas com a Marta e seis missões com operação.
+    expect(capitulos[0]).toMatchObject({ concluidas: 9 });
     expect(capitulos[1]?.concluidas).toBe(1);
     expect(capitulos[1]?.missoes.map((m) => m.situacao)).toEqual([
       "concluida",
       "atual",
+      "em_breve",
       "em_breve",
     ]);
     // Campanha concluída: nenhuma atual.
@@ -337,10 +338,10 @@ describe("comentários do contador para os erros das operações novas", () => {
   });
 
   it("desconto financeiro levado ao estoque em vez de receita financeira (R-DSC-02)", () => {
-    const conferencia = conferir("m006-pagamento-fornecedor", [
-      D(CONTAS.fornecedores, "6.000,00"),
-      C(CONTAS.bancos, "5.880,00"),
-      C(CONTAS.estoqueInsumos, "120,00"),
+    const conferencia = conferir("m008-pagamento-antecipado", [
+      D(CONTAS.fornecedores, "2.800,00"),
+      C(CONTAS.bancos, "2.744,00"),
+      C(CONTAS.estoqueInsumos, "56,00"),
     ]);
     expect(conferencia.regras).toEqual(["R-DSC-02"]);
     expect(conferencia.comentario).toMatch(/receita financeira/);

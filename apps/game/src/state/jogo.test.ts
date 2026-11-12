@@ -66,8 +66,8 @@ describe("estado do jogo", () => {
     const saldoDe = (nome: string) =>
       linhas.find((l) => l.nome === nome)?.saldoDevedorCentavos ?? 0;
     expect(saldoDe("Caixa")).toBe(720_000);
-    expect(saldoDe("Bancos Conta Movimento")).toBe(2_044_000);
-    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(2_764_000);
+    expect(saldoDe("Bancos Conta Movimento")).toBe(1_400_000);
+    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(2_120_000);
   });
 
   it("R-ENT-01: a carteira pessoal nunca aparece no razão", () => {
@@ -110,7 +110,7 @@ describe("estado do jogo", () => {
   it("a próxima missão e o nível acompanham o progresso", () => {
     // A campanha começa pelas conversas com a Marta; o primeiro lançamento vem depois.
     expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m000-apresentacao");
-    expect(proximaMissao(jogarAte("m000-para-que-serve"), missoes)?.id).toBe("m001-constituicao");
+    expect(proximaMissao(jogarAte("m000-como-registrar"), missoes)?.id).toBe("m001-constituicao");
     const noCapitulo2 = jogarAte("m003-equipamentos");
     expect(proximaMissao(noCapitulo2, missoes)?.id).toBe("m004-compra-avista");
     expect(nivelDoJogador(noCapitulo2, missoes)).toBe(2);
@@ -191,7 +191,7 @@ describe("andamento da missão", () => {
 
   it("respeita requisitos e não repete missão concluída", () => {
     const primeira = missao("m001-constituicao");
-    const estado = jogarMissaoInteira(jogarAte("m000-para-que-serve"), primeira);
+    const estado = jogarMissaoInteira(jogarAte("m000-como-registrar"), primeira);
     expect(() => concluirMissao(estado, primeira)).toThrow(/já foi concluída/);
     expect(() => executarProximaOperacao(novoJogo(), missao("m002-compra-imovel"))).toThrow(
       /anteriores/,

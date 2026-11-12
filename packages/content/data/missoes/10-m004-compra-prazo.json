@@ -6,6 +6,7 @@
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
   "requisitos": ["m004-compra-avista"],
+  "aulas": ["comprar-a-prazo"],
   "dialogo": [
     {
       "fala": "npc",
@@ -13,7 +14,7 @@
     },
     {
       "fala": "npc",
-      "texto": "Isso você não revende como está: você transforma em hambúrguer. Pode pagar em 30 dias."
+      "texto": "Isso você não revende como está: transforma em hambúrguer. Pode pagar depois, em 30 dias."
     }
   ],
   "proposta": {
@@ -24,13 +25,13 @@
       "1.000 queijos a R$ 1,00",
       "1.000 alfaces a R$ 0,50",
       "Total da nota: R$ 6.500,00",
-      "ICMS de 18% incluído no preço",
       "A prazo: 30 dias"
     ]
   },
   "operacoes": [
     {
       "tipo": "compra",
+      "nota": "c1",
       "itens": [
         {
           "produto": "pao",
@@ -59,12 +60,12 @@
         "tipo": "prazo",
         "dias": 30
       },
-      "nota": "c1"
+      "semTributos": true
     }
   ],
   "ajudaLancamento": "auto",
-  "conceitos": ["insumos-e-mercadorias", "compra-a-prazo-fornecedores", "icms-por-dentro"],
+  "conceitos": ["compra-a-prazo-fornecedores", "insumos-e-mercadorias"],
   "recompensa": {
-    "pontos": 80
+    "pontos": 70
   }
 }

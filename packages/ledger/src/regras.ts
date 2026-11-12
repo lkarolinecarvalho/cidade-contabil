@@ -85,6 +85,10 @@ export const REGRAS = [
   "R-IPI-06",
   "R-IPI-07",
   "R-PRD-01",
+  "R-DID-01",
+  "R-ICMS-07",
+  "R-ICMS-08",
+  "R-ICMS-09",
 ] as const;
 
 export type IdRegra = (typeof REGRAS)[number];

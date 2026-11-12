@@ -232,25 +232,142 @@
     ]
   },
   {
-    "id": "impostos-na-nota",
-    "titulo": "Os impostos dentro da nota",
-    "resumo": "ICMS por dentro, IPI por fora, e o que volta como crédito.",
+    "id": "capital-social",
+    "titulo": "O capital social: prometer e entregar",
+    "resumo": "O dinheiro que os sócios colocam para a empresa nascer.",
     "pontos": [
-      "O ICMS é cobrado por dentro: ele já faz parte do preço que aparece na nota.",
-      "Quem compra para revender ou para produzir recupera o ICMS: ele vira um crédito, em ICMS a Recuperar, e fica fora do custo.",
-      "O IPI é cobrado por fora: é somado ao preço. Quem só revende não o recupera, e ele entra no custo da mercadoria."
+      "Para a empresa nascer, os sócios combinam quanto dinheiro vão colocar nela. Esse valor é o capital social.",
+      "Prometer o dinheiro no contrato chama-se subscrever. Entregar o dinheiro de fato chama-se integralizar.",
+      "Enquanto o dinheiro não entra, a promessa fica anotada em Capital a Integralizar, que diminui o Patrimônio Líquido."
     ],
-    "exemplo": "Numa nota de R$ 1.000,00 com ICMS de 18%, R$ 180,00 são imposto que volta como crédito e R$ 820,00 são o custo da mercadoria.",
+    "exemplo": "Você e o Sr. Osvaldo vão subscrever R$ 100.000,00. Nesse dia nenhum dinheiro entra: o Patrimônio Líquido fica em zero até a primeira integralização.",
     "perguntas": [
       {
-        "enunciado": "O ICMS que o comerciante recupera na compra de mercadorias para revenda faz parte do custo do estoque.",
+        "enunciado": "Subscrever o capital é o mesmo que depositar o dinheiro na conta da empresa.",
         "gabarito": "E",
-        "explicacao": "O imposto recuperável não é custo: vai para ICMS a Recuperar, no Ativo."
+        "explicacao": "Subscrever é só prometer, no contrato. O dinheiro entra depois, na integralização."
       },
       {
-        "enunciado": "O IPI é cobrado por fora: é somado ao valor dos produtos na nota.",
+        "enunciado": "O capital prometido e ainda não entregue pelos sócios fica registrado em Capital a Integralizar.",
         "gabarito": "C",
-        "explicacao": "O total da nota é o valor dos produtos mais o IPI. Já o ICMS está dentro do valor dos produtos."
+        "explicacao": "Capital a Integralizar reduz o Patrimônio Líquido até os sócios entregarem o que prometeram."
+      }
+    ]
+  },
+  {
+    "id": "a-empresa-e-voce",
+    "titulo": "A empresa e você são pessoas diferentes",
+    "resumo": "O patrimônio da empresa não se mistura com o dos sócios.",
+    "pontos": [
+      "A empresa tem o patrimônio dela. Você tem o seu. A Contabilidade não mistura os dois: é o princípio da entidade.",
+      "O dinheiro da sua carteira só passa a ser da empresa quando você o entrega a ela.",
+      "Do lado da empresa, entra dinheiro no banco e diminui o capital que faltava integralizar."
+    ],
+    "exemplo": "Dos R$ 80.000,00 que entram hoje, R$ 72.000,00 saem da sua carteira. A contabilidade da Chapa da Praça registra só a entrada no banco dela.",
+    "perguntas": [
+      {
+        "enunciado": "O dinheiro que o sócio guarda na conta pessoal faz parte do patrimônio da empresa.",
+        "gabarito": "E",
+        "explicacao": "São patrimônios separados. O dinheiro só é da empresa depois de entregue a ela."
+      },
+      {
+        "enunciado": "Quando o sócio integraliza capital em dinheiro, a empresa registra a entrada desse recurso.",
+        "gabarito": "C",
+        "explicacao": "A empresa registra o que entrou nela. O que saiu do bolso do sócio não é lançado na contabilidade da empresa."
+      }
+    ]
+  },
+  {
+    "id": "bens-para-usar",
+    "titulo": "Bens para usar, e não para vender",
+    "resumo": "O ponto, as mesas e a chapa: o Imobilizado.",
+    "pontos": [
+      "Algumas coisas a empresa compra para usar por muito tempo: o ponto, as mesas, a chapa. Esse grupo se chama Imobilizado.",
+      "Comprar um bem desses não é despesa: a empresa troca dinheiro por um bem. Um ativo sai, outro entra.",
+      "No imóvel, o terreno e a construção ficam em contas separadas: Terrenos e Edificações."
+    ],
+    "exemplo": "O ponto da praça custa R$ 60.000,00: R$ 20.000,00 de terreno e R$ 40.000,00 de edificação. Sai dinheiro do banco e entram dois bens no Imobilizado.",
+    "perguntas": [
+      {
+        "enunciado": "A compra de um imóvel para uso da própria empresa é uma despesa do mês.",
+        "gabarito": "E",
+        "explicacao": "É uma troca de ativos: sai dinheiro, entra o imóvel. O resultado não muda na compra."
+      },
+      {
+        "enunciado": "Na compra de um imóvel de uso próprio, o terreno e a edificação são registrados em contas separadas.",
+        "gabarito": "C",
+        "explicacao": "Terrenos e Edificações são contas diferentes do Imobilizado."
+      }
+    ]
+  },
+  {
+    "id": "comprar-para-o-estoque",
+    "titulo": "Comprar para o estoque",
+    "resumo": "O que acontece quando a casa compra e paga na hora.",
+    "pontos": [
+      "Precisamos abastecer o estoque. Podemos pagar tudo agora ou combinar o pagamento com o fornecedor.",
+      "O que a casa compra para vender fica guardado no Estoque, que é uma conta do Ativo.",
+      "Pagando à vista, o dinheiro diminui e o estoque aumenta no mesmo valor. A empresa não ficou mais pobre: só trocou dinheiro por mercadoria.",
+      "Por isso comprar para o estoque não é despesa."
+    ],
+    "exemplo": "500 refrigerantes a R$ 3,00 custam R$ 1.500,00. Saem R$ 1.500,00 do banco e entram R$ 1.500,00 em Estoque de Mercadorias.",
+    "perguntas": [
+      {
+        "enunciado": "Na compra à vista para o estoque, o total do Ativo não muda.",
+        "gabarito": "C",
+        "explicacao": "Sai dinheiro e entra mercadoria, no mesmo valor: um ativo é trocado por outro."
+      },
+      {
+        "enunciado": "Na compra à vista de mercadorias, o dinheiro que sai do banco vira despesa na hora.",
+        "gabarito": "E",
+        "explicacao": "O dinheiro vira estoque. O custo só vai ao resultado quando a mercadoria for vendida."
+      }
+    ]
+  },
+  {
+    "id": "comprar-a-prazo",
+    "titulo": "Comprar a prazo: nasce uma dívida",
+    "resumo": "Levar agora, pagar depois, e o que são insumos.",
+    "pontos": [
+      "Comprar a prazo é levar agora e pagar depois. O estoque entra hoje; o dinheiro só sai no dia do pagamento.",
+      "Enquanto não paga, a empresa deve. Essa dívida fica na conta Fornecedores, no Passivo.",
+      "O Ativo e o Passivo aumentam no mesmo valor. A parte dos sócios não muda.",
+      "O que vai virar lanche se chama insumo e tem a sua própria conta: Estoque de Insumos."
+    ],
+    "exemplo": "Numa compra de R$ 6.500,00 a prazo, o Estoque de Insumos aumenta R$ 6.500,00 e a dívida com Fornecedores também: R$ 6.500,00.",
+    "perguntas": [
+      {
+        "enunciado": "Na compra a prazo, a dívida com quem vendeu fica registrada na conta Fornecedores.",
+        "gabarito": "C",
+        "explicacao": "Fornecedores é a conta do Passivo que guarda o que a empresa deve pelas compras a prazo."
+      },
+      {
+        "enunciado": "Na compra a prazo, o dinheiro do banco diminui no dia da compra.",
+        "gabarito": "E",
+        "explicacao": "No dia da compra nasce só a dívida. O dinheiro sai no dia do pagamento."
+      }
+    ]
+  },
+  {
+    "id": "pagar-a-divida",
+    "titulo": "Pagar a dívida",
+    "resumo": "O que muda quando a casa paga o fornecedor.",
+    "pontos": [
+      "No dia do pagamento, o dinheiro sai do banco e a dívida com o fornecedor desaparece.",
+      "O Ativo e o Passivo diminuem no mesmo valor.",
+      "Pagar uma dívida não é despesa: a compra já tinha sido registrada lá atrás."
+    ],
+    "exemplo": "Ao pagar os R$ 6.500,00 da nota c1, Bancos diminui R$ 6.500,00 e Fornecedores também. O estoque não muda.",
+    "perguntas": [
+      {
+        "enunciado": "O pagamento de uma dívida com fornecedor reduz o Ativo e o Passivo no mesmo valor.",
+        "gabarito": "C",
+        "explicacao": "Sai dinheiro (Ativo) e some a dívida (Passivo). O Patrimônio Líquido não muda."
+      },
+      {
+        "enunciado": "Pagar o fornecedor é uma despesa do mês do pagamento.",
+        "gabarito": "E",
+        "explicacao": "O pagamento só quita a dívida. Não há despesa nesse momento."
       }
     ]
   },
@@ -264,7 +381,7 @@
       "Despesa é o gasto para manter a casa funcionando, como os salários e a conta de luz.",
       "Receita menos custos e despesas dá o resultado: lucro, se sobrar; prejuízo, se faltar."
     ],
-    "exemplo": "Um hambúrguer vendido a R$ 20,00 que consumiu R$ 5,33 de insumos deixa R$ 14,67, antes dos impostos e das despesas.",
+    "exemplo": "Um hambúrguer vendido a R$ 20,00 que consumiu R$ 6,50 de insumos deixa R$ 13,50, antes das despesas da casa.",
     "perguntas": [
       {
         "enunciado": "Comprar mercadoria para o estoque já é uma despesa da empresa.",
@@ -275,6 +392,451 @@
         "enunciado": "O custo do que foi vendido vai ao resultado junto com a receita da venda.",
         "gabarito": "C",
         "explicacao": "Receita e custo andam juntos: os dois são reconhecidos no momento da venda."
+      }
+    ]
+  },
+  {
+    "id": "vender-a-prazo",
+    "titulo": "Vender a prazo: nasce um direito",
+    "resumo": "Entregar agora, receber depois.",
+    "pontos": [
+      "Vender a prazo é entregar agora e receber depois. A venda já aconteceu: a receita é de hoje.",
+      "O que o cliente ficou devendo é um direito da empresa. Ele fica na conta Clientes, no Ativo.",
+      "Quando o cliente paga, o dinheiro entra e a conta Clientes diminui. Não é uma nova receita."
+    ],
+    "exemplo": "A encomenda de R$ 4.600,00 entra hoje como receita e como Clientes. No dia do pagamento, Clientes vira dinheiro no banco.",
+    "perguntas": [
+      {
+        "enunciado": "Na venda a prazo, a receita só é registrada quando o cliente paga.",
+        "gabarito": "E",
+        "explicacao": "A receita é do dia da venda. O pagamento só transforma Clientes em dinheiro."
+      },
+      {
+        "enunciado": "O valor que o cliente ficou devendo é registrado na conta Clientes, no Ativo.",
+        "gabarito": "C",
+        "explicacao": "É um direito da empresa: um valor a receber."
+      }
+    ]
+  },
+  {
+    "id": "regimes-contabeis",
+    "titulo": "Regimes de competência e de caixa",
+    "resumo": "Quando uma receita ou uma despesa entra no resultado.",
+    "pontos": [
+      "Competência: receitas e despesas entram no resultado quando ocorrem, mesmo sem dinheiro entrando ou saindo.",
+      "Caixa: só entram quando o dinheiro é recebido ou pago.",
+      "A contabilidade das empresas segue o regime de competência."
+    ],
+    "exemplo": "Os salários de janeiro, pagos em fevereiro, são despesa de janeiro. A encomenda vendida a prazo é receita no dia da venda, e não no dia em que o cliente paga.",
+    "perguntas": [
+      {
+        "enunciado": "Pelo regime de competência, a despesa de salários é reconhecida no mês em que os salários são pagos.",
+        "gabarito": "E",
+        "explicacao": "Ela é reconhecida no mês em que o trabalho foi prestado, ainda que o pagamento seja depois."
+      },
+      {
+        "enunciado": "No regime de caixa, uma venda a prazo só é reconhecida como receita quando o cliente paga.",
+        "gabarito": "C",
+        "explicacao": "No regime de caixa, o que conta é a entrada do dinheiro. Na competência, a receita é da data da venda."
+      }
+    ]
+  },
+  {
+    "id": "o-que-sao-tributos",
+    "titulo": "O que são tributos?",
+    "resumo": "Por que os impostos aparecem nas compras e nas vendas.",
+    "pontos": [
+      "Tributo é o dinheiro que a lei obriga a entregar ao governo. Imposto é um tipo de tributo.",
+      "Eles aparecem nas operações comerciais porque comprar, vender e fabricar são fatos que a lei tributa.",
+      "Na nossa casa aparecem quatro: ICMS (estadual, sobre a venda de mercadorias), IPI (federal, sobre produtos industrializados), PIS e COFINS (federais, sobre a receita).",
+      "Até aqui as notas vieram pelo valor total, para simplificar. A partir de agora, os impostos aparecem destacados."
+    ],
+    "exemplo": "Quando a Chapa da Praça vende um lanche, parte do preço é ICMS, que ela repassa ao estado. Esse dinheiro passa pelo caixa, mas não é da casa.",
+    "perguntas": [
+      {
+        "enunciado": "O ICMS é um imposto estadual que incide sobre a circulação de mercadorias.",
+        "gabarito": "C",
+        "explicacao": "É cobrado pelos estados quando a mercadoria circula, como numa venda."
+      },
+      {
+        "enunciado": "O IPI incide sobre qualquer venda feita por um comerciante.",
+        "gabarito": "E",
+        "explicacao": "O IPI é federal e incide sobre produtos industrializados: quem o destaca na nota é a indústria, ou quem a lei equipara a ela."
+      }
+    ]
+  },
+  {
+    "id": "impostos-na-nota",
+    "titulo": "Por dentro e por fora",
+    "resumo": "Como o ICMS e o IPI aparecem na nota.",
+    "pontos": [
+      "O ICMS é calculado por dentro: ele já está no preço. Numa nota de R$ 1.000,00 com ICMS de 18%, R$ 180,00 são imposto.",
+      "O IPI é calculado por fora: é somado ao preço. R$ 1.000,00 de produtos com IPI de 5% dão uma nota de R$ 1.050,00.",
+      "Por isso o valor que você paga numa compra nem sempre é o valor que entra no estoque."
+    ],
+    "exemplo": "Produtos de R$ 1.000,00 com IPI de 5%: a nota soma R$ 1.050,00. O ICMS de 18% não aumenta o total: ele já estava dentro dos R$ 1.000,00.",
+    "perguntas": [
+      {
+        "enunciado": "O ICMS é somado ao preço dos produtos para chegar ao total da nota.",
+        "gabarito": "E",
+        "explicacao": "Quem é somado é o IPI. O ICMS é por dentro: já faz parte do preço."
+      },
+      {
+        "enunciado": "O IPI é cobrado por fora: é somado ao valor dos produtos na nota.",
+        "gabarito": "C",
+        "explicacao": "O total da nota é o valor dos produtos mais o IPI."
+      }
+    ]
+  },
+  {
+    "id": "recuperavel-ou-nao",
+    "titulo": "Imposto que volta e imposto que fica",
+    "resumo": "Tributo recuperável, não recuperável e o custo do estoque.",
+    "pontos": [
+      "Tributo recuperável é o que a empresa pagou na compra e pode descontar do que vai dever nas vendas. Ele vira um crédito, no Ativo.",
+      "Tributo não recuperável é o que não volta. Ele faz parte do que a mercadoria custou.",
+      "Custo do estoque = o que se pagou pela compra, menos os tributos recuperáveis.",
+      "Se o imposto volta ou não depende de quem compra, de quem vende e da finalidade da compra."
+    ],
+    "exemplo": "Compra de R$ 1.000,00 com R$ 180,00 de ICMS recuperável: entram R$ 820,00 no estoque e R$ 180,00 em ICMS a Recuperar.",
+    "perguntas": [
+      {
+        "enunciado": "O tributo recuperável faz parte do custo do estoque.",
+        "gabarito": "E",
+        "explicacao": "O recuperável vira crédito, numa conta própria do Ativo. Só o não recuperável integra o custo."
+      },
+      {
+        "enunciado": "O tributo que a empresa não pode recuperar integra o custo de aquisição da mercadoria.",
+        "gabarito": "C",
+        "explicacao": "Se o imposto não volta, ele é parte do que a mercadoria custou."
+      }
+    ]
+  },
+  {
+    "id": "nao-cumulatividade",
+    "titulo": "A não cumulatividade",
+    "resumo": "Por que só a diferença de imposto é paga.",
+    "pontos": [
+      "O ICMS e o IPI são não cumulativos: em cada etapa, desconta-se o imposto que já foi cobrado na etapa anterior.",
+      "Na prática: o imposto das vendas (a recolher) menos o imposto das compras (a recuperar). Só a diferença é paga.",
+      "Essa conta é feita no fim do mês e se chama apuração."
+    ],
+    "exemplo": "Se no mês a casa deve R$ 800,00 de ICMS pelas vendas e tem R$ 500,00 de crédito das compras, paga só R$ 300,00.",
+    "perguntas": [
+      {
+        "enunciado": "Pela não cumulatividade, o imposto cobrado nas etapas anteriores é compensado com o devido na etapa seguinte.",
+        "gabarito": "C",
+        "explicacao": "É isso que evita o imposto em cascata: cada um paga só sobre o que acrescentou."
+      },
+      {
+        "enunciado": "O ICMS destacado nas compras é somado ao ICMS das vendas para calcular o valor a pagar.",
+        "gabarito": "E",
+        "explicacao": "Ele é descontado, e não somado: imposto das vendas menos o crédito das compras."
+      }
+    ]
+  },
+  {
+    "id": "credito-de-icms",
+    "titulo": "Quando o ICMS volta",
+    "resumo": "Os requisitos para aproveitar o crédito de ICMS.",
+    "pontos": [
+      "Nem toda compra dá crédito de ICMS. Três coisas precisam acontecer ao mesmo tempo.",
+      "Primeira: a empresa é contribuinte do ICMS e apura o imposto pelo regime normal, de débito e crédito.",
+      "Segunda: a mercadoria entra para ser revendida ou para virar um produto que será vendido com imposto.",
+      "Terceira: o ICMS vem destacado numa nota fiscal válida."
+    ],
+    "exemplo": "O pão e a carne viram hambúrguer, que a casa vende com ICMS. A nota do João destaca R$ 585,00: esse valor vira crédito, em ICMS a Recuperar.",
+    "perguntas": [
+      {
+        "enunciado": "Toda compra feita por uma empresa dá direito a crédito de ICMS.",
+        "gabarito": "E",
+        "explicacao": "Não. O material usado na própria casa, por exemplo, não dá crédito."
+      },
+      {
+        "enunciado": "No regime normal, o ICMS destacado na compra de insumos de um produto vendido com imposto é crédito do comprador.",
+        "gabarito": "C",
+        "explicacao": "Contribuinte no regime normal, insumo de saída tributada e imposto destacado em nota: os três requisitos estão presentes."
+      }
+    ]
+  },
+  {
+    "id": "ipi-e-icms-na-mesma-nota",
+    "titulo": "IPI e ICMS na mesma nota",
+    "resumo": "Quando o IPI entra ou não na base do ICMS.",
+    "pontos": [
+      "Quando quem vende é uma indústria, a nota traz os dois impostos: o IPI, por fora, e o ICMS, por dentro.",
+      "O IPI fica fora da base do ICMS quando três condições se juntam: venda entre contribuintes, produto para revender ou industrializar, e os dois impostos incidindo.",
+      "Faltando uma delas, o IPI entra na base do ICMS. É o caso de quem compra para usar ou consumir.",
+      "Quem só revende não recupera o IPI: ele entra no custo. O ICMS, esse sim, volta como crédito."
+    ],
+    "exemplo": "Refrigerante para revender: produtos R$ 1.500,00, IPI R$ 60,00, total R$ 1.560,00. ICMS sobre R$ 1.500,00: R$ 270,00. Custo: 1.560 − 270 = R$ 1.290,00.",
+    "perguntas": [
+      {
+        "enunciado": "Na compra de mercadoria para revenda feita por um contribuinte a uma indústria, o IPI integra a base de cálculo do ICMS.",
+        "gabarito": "E",
+        "explicacao": "Entre contribuintes, com produto para revenda, o IPI fica fora da base do ICMS."
+      },
+      {
+        "enunciado": "A empresa que compra mercadoria para revender não recupera o IPI, que passa a integrar o custo do estoque.",
+        "gabarito": "C",
+        "explicacao": "Só a indústria recupera o IPI. Para quem revende, ele é custo."
+      }
+    ]
+  },
+  {
+    "id": "uso-e-consumo",
+    "titulo": "Comprar para usar",
+    "resumo": "Material de uso e consumo: nada volta.",
+    "pontos": [
+      "Material de limpeza não é revendido nem vira lanche: é material de uso e consumo da própria casa.",
+      "Nesse caso, o IPI entra na base do ICMS: o ICMS é calculado sobre os produtos mais o IPI.",
+      "E nenhum dos dois impostos volta: não há crédito de ICMS nem de IPI. A nota inteira é custo.",
+      "O material fica no Ativo, em Material de Consumo, e vira despesa aos poucos, conforme é usado."
+    ],
+    "exemplo": "Produtos R$ 500,00, IPI R$ 25,00, total R$ 525,00. ICMS de 18% sobre R$ 525,00: R$ 94,50, só informativo. Entram R$ 525,00 em Material de Consumo.",
+    "perguntas": [
+      {
+        "enunciado": "Na compra de material para uso e consumo, o IPI integra a base de cálculo do ICMS.",
+        "gabarito": "C",
+        "explicacao": "O produto não será revendido nem industrializado: falta a condição que deixaria o IPI fora da base."
+      },
+      {
+        "enunciado": "O ICMS destacado na compra de material de uso e consumo é crédito do comprador.",
+        "gabarito": "E",
+        "explicacao": "Material de uso e consumo não dá crédito de ICMS. O imposto fica no custo."
+      }
+    ]
+  },
+  {
+    "id": "tributos-sobre-vendas",
+    "titulo": "Os impostos da venda",
+    "resumo": "ICMS, PIS e COFINS: deduções da receita.",
+    "pontos": [
+      "Na venda, a casa cobra o ICMS do cliente, dentro do preço, e fica devendo esse valor ao estado: ICMS a Recolher.",
+      "Sobre a receita também incidem o PIS e a COFINS, que a casa deve ao governo federal.",
+      "Esses impostos não são despesa: são deduções da receita. Receita Bruta menos deduções dá a Receita Líquida.",
+      "No regime da nossa casa, o PIS e a COFINS são cumulativos: não dão crédito nas compras."
+    ],
+    "exemplo": "Venda de R$ 4.600,00: ICMS de R$ 828,00. PIS e COFINS incidem sobre R$ 3.772,00: R$ 24,52 e R$ 113,16.",
+    "perguntas": [
+      {
+        "enunciado": "O ICMS sobre as vendas é uma despesa operacional da empresa.",
+        "gabarito": "E",
+        "explicacao": "É uma dedução da Receita Bruta, e não uma despesa operacional."
+      },
+      {
+        "enunciado": "ICMS, PIS e COFINS sobre as vendas são deduções da Receita Bruta.",
+        "gabarito": "C",
+        "explicacao": "Eles aparecem na DRE logo abaixo da Receita Bruta, antes da Receita Líquida."
+      }
+    ]
+  },
+  {
+    "id": "devolucoes-e-abatimentos",
+    "titulo": "Devolução e abatimento",
+    "resumo": "Quando a mercadoria volta, e quando só o preço diminui.",
+    "pontos": [
+      "Devolução: a mercadoria volta para quem vendeu. Sai do estoque, e a dívida diminui.",
+      "Se a compra deu crédito de ICMS, o crédito da parte devolvida é desfeito (estornado).",
+      "Abatimento: a mercadoria fica, mas o preço diminui. A quantidade em estoque não muda; o custo e a dívida diminuem."
+    ],
+    "exemplo": "Devolvendo 100 carnes de R$ 4,00: a dívida cai R$ 400,00, o estoque cai R$ 328,00 e o crédito de ICMS cai R$ 72,00.",
+    "perguntas": [
+      {
+        "enunciado": "No abatimento sobre compras, parte da mercadoria volta para o fornecedor.",
+        "gabarito": "E",
+        "explicacao": "No abatimento nada é devolvido: só o preço diminui."
+      },
+      {
+        "enunciado": "Na devolução de uma compra que gerou crédito de ICMS, o crédito da parte devolvida é estornado.",
+        "gabarito": "C",
+        "explicacao": "Se a mercadoria voltou, o crédito que veio com ela também volta."
+      }
+    ]
+  },
+  {
+    "id": "descontos",
+    "titulo": "Dois tipos de desconto",
+    "resumo": "Desconto comercial e desconto financeiro.",
+    "pontos": [
+      "Desconto comercial: vem na própria nota, sem condição. A compra entra pelo valor já com o desconto, e ele nem é registrado.",
+      "Desconto financeiro: é dado depois, para quem paga antes do vencimento. Não muda o estoque.",
+      "Para quem paga antes, o desconto financeiro é receita financeira. Para quem o concede, é despesa financeira."
+    ],
+    "exemplo": "Carne de R$ 2.000,00 com 10% na nota entra por R$ 1.800,00. Já os R$ 56,00 ganhos por pagar o João antes do prazo são receita financeira.",
+    "perguntas": [
+      {
+        "enunciado": "O desconto comercial destacado na nota de compra é registrado como receita financeira.",
+        "gabarito": "E",
+        "explicacao": "Ele não é registrado: a compra entra pelo valor líquido. Receita financeira é o desconto por pagar antes."
+      },
+      {
+        "enunciado": "O desconto obtido por pagar o fornecedor antes do vencimento é uma receita financeira.",
+        "gabarito": "C",
+        "explicacao": "É um ganho financeiro, ligado ao pagamento, e não à mercadoria."
+      }
+    ]
+  },
+  {
+    "id": "deducoes-da-receita",
+    "titulo": "O que diminui a receita",
+    "resumo": "Desconto na nota, devolução e abatimento de venda.",
+    "pontos": [
+      "A Receita Bruta é registrada cheia. O desconto dado na nota aparece separado, como dedução.",
+      "Se o cliente devolve mercadoria, a devolução também é dedução. A mercadoria volta ao estoque e os impostos dessa parte são desfeitos.",
+      "Abatimento concedido depois da venda, sem devolução, é outra dedução da receita."
+    ],
+    "exemplo": "Encomenda de R$ 4.600,00 com 10% de desconto: Receita Bruta de R$ 4.600,00, desconto de R$ 460,00 e R$ 4.140,00 a receber.",
+    "perguntas": [
+      {
+        "enunciado": "O desconto incondicional dado na nota de venda é uma despesa financeira.",
+        "gabarito": "E",
+        "explicacao": "É uma dedução da Receita Bruta. Despesa financeira é o desconto dado a quem paga antes."
+      },
+      {
+        "enunciado": "Devoluções de vendas são deduções da Receita Bruta.",
+        "gabarito": "C",
+        "explicacao": "Elas aparecem na DRE entre a Receita Bruta e a Receita Líquida."
+      }
+    ]
+  },
+  {
+    "id": "consignacao",
+    "titulo": "Mercadoria em consignação",
+    "resumo": "Vender o que ainda é dos outros.",
+    "pontos": [
+      "Na consignação, o dono deixa a mercadoria na sua casa para você vender. Enquanto não vende, ela continua sendo dele.",
+      "Por isso, receber mercadoria em consignação não gera lançamento: ela não entra no seu estoque.",
+      "Quando você vende uma unidade, registra a compra dessa unidade e, em seguida, a venda.",
+      "O que sobrar volta para o dono, de novo sem lançamento."
+    ],
+    "exemplo": "A marca deixa 300 refrigerantes na geladeira. Se 150 forem vendidos, a casa compra só esses 150 e devolve os outros 150.",
+    "perguntas": [
+      {
+        "enunciado": "A mercadoria recebida em consignação entra no estoque de quem a recebeu.",
+        "gabarito": "E",
+        "explicacao": "Ela continua sendo do consignante. Quem recebe não tem o controle dela."
+      },
+      {
+        "enunciado": "Quem recebe mercadoria em consignação só registra a compra das unidades que vender.",
+        "gabarito": "C",
+        "explicacao": "A compra acontece, de fato, no momento da venda de cada unidade."
+      }
+    ]
+  },
+  {
+    "id": "industria-e-ipi",
+    "titulo": "Quando a casa vira indústria",
+    "resumo": "O IPI que volta para quem fabrica.",
+    "pontos": [
+      "Fritar o hambúrguer para servir na hora não é industrialização. Fabricar, embalar e vender congelado para o mercado é.",
+      "A indústria é contribuinte do IPI: cobra o imposto nas vendas e recupera o das compras de matéria-prima e de embalagem.",
+      "Então, nessa compra, o IPI não entra no custo: vira crédito, em IPI a Recuperar. O ICMS também volta."
+    ],
+    "exemplo": "Embalagens de R$ 400,00 com IPI de R$ 20,00: total R$ 420,00. Voltam R$ 72,00 de ICMS e R$ 20,00 de IPI. Custo: R$ 328,00.",
+    "perguntas": [
+      {
+        "enunciado": "Para a indústria, o IPI pago na compra de material de embalagem integra o custo do estoque.",
+        "gabarito": "E",
+        "explicacao": "Para a indústria, esse IPI é recuperável: vira crédito e fica fora do custo."
+      },
+      {
+        "enunciado": "O preparo de lanches para venda direta ao consumidor não torna a lanchonete contribuinte do IPI.",
+        "gabarito": "C",
+        "explicacao": "Esse preparo não é considerado industrialização."
+      }
+    ]
+  },
+  {
+    "id": "producao",
+    "titulo": "Do insumo ao produto pronto",
+    "resumo": "O que a produção muda nas contas.",
+    "pontos": [
+      "Produzir é transformar insumos em produto. A carne e a embalagem deixam de ser insumo e viram hambúrguer congelado.",
+      "Na contabilidade, o custo sai de Estoque de Insumos e entra em Produtos Acabados. É uma troca dentro do Ativo.",
+      "Produzir não é despesa nem receita: o custo só vai ao resultado quando o produto é vendido."
+    ],
+    "exemplo": "Produzir 300 congelados consome 300 carnes e 300 embalagens. O custo delas passa para Produtos Acabados.",
+    "perguntas": [
+      {
+        "enunciado": "A produção reduz o resultado do período em que acontece.",
+        "gabarito": "E",
+        "explicacao": "Ela só muda o custo de conta, dentro do Ativo. O resultado muda na venda."
+      },
+      {
+        "enunciado": "Ao concluir a produção, o custo dos insumos consumidos passa para Produtos Acabados.",
+        "gabarito": "C",
+        "explicacao": "Sai de Estoque de Insumos e entra em Produtos Acabados, no mesmo valor."
+      }
+    ]
+  },
+  {
+    "id": "ipi-na-venda",
+    "titulo": "O IPI na venda",
+    "resumo": "O imposto que quem fabrica cobra por fora.",
+    "pontos": [
+      "Quem fabrica cobra o IPI do cliente, por fora: ele é somado ao valor dos produtos na nota.",
+      "Esse IPI não é receita da casa: é dinheiro do governo que passa por ela. Fica em IPI a Recolher.",
+      "O mercado compra para revender. Por isso o IPI fica fora da base do ICMS, que incide só sobre os produtos."
+    ],
+    "exemplo": "250 congelados a R$ 12,00: produtos R$ 3.000,00, IPI de R$ 150,00, nota de R$ 3.150,00. Receita Bruta: R$ 3.000,00.",
+    "perguntas": [
+      {
+        "enunciado": "O IPI cobrado do cliente na venda faz parte da Receita Bruta do fabricante.",
+        "gabarito": "E",
+        "explicacao": "O IPI é cobrado por fora e pertence ao governo: não é receita."
+      },
+      {
+        "enunciado": "O IPI destacado na venda é registrado como obrigação, em IPI a Recolher.",
+        "gabarito": "C",
+        "explicacao": "A casa cobra do cliente e fica devendo ao governo."
+      }
+    ]
+  },
+  {
+    "id": "depreciacao",
+    "titulo": "O desgaste dos bens",
+    "resumo": "Como o valor dos bens vira despesa aos poucos.",
+    "pontos": [
+      "Os bens que a casa usa perdem valor com o tempo e o uso. Esse desgaste se chama depreciação.",
+      "Todo mês, uma parte do valor do bem vira despesa. O bem continua no Ativo, com a depreciação acumulada descontada.",
+      "Terreno não deprecia: ele não se desgasta."
+    ],
+    "exemplo": "A chapa e o freezer custaram R$ 12.000,00 e devem durar 5 anos: R$ 12.000,00 ÷ 60 meses = R$ 200,00 de depreciação por mês.",
+    "perguntas": [
+      {
+        "enunciado": "Os terrenos são depreciados junto com as edificações.",
+        "gabarito": "E",
+        "explicacao": "Terreno não sofre depreciação. Só a edificação."
+      },
+      {
+        "enunciado": "A depreciação do mês é registrada como despesa, em contrapartida da Depreciação Acumulada.",
+        "gabarito": "C",
+        "explicacao": "Débito em Despesa de Depreciação e crédito em Depreciação Acumulada, que reduz o bem no Ativo."
+      }
+    ]
+  },
+  {
+    "id": "apuracao-dos-impostos",
+    "titulo": "O acerto do fim do mês",
+    "resumo": "A apuração do ICMS e do IPI.",
+    "pontos": [
+      "No fim do mês, a casa junta o imposto das vendas (a recolher) e o crédito das compras (a recuperar).",
+      "Compensa-se um com o outro, até o menor dos dois valores. É a apuração.",
+      "Se sobrar imposto a recolher, a casa paga. Se sobrar crédito, ele fica para o mês seguinte.",
+      "O ICMS e o IPI são apurados separadamente: o crédito de um não paga o outro."
+    ],
+    "exemplo": "ICMS a recolher de R$ 800,00 e a recuperar de R$ 500,00: compensam-se R$ 500,00 e restam R$ 300,00 a pagar.",
+    "perguntas": [
+      {
+        "enunciado": "Se o crédito de ICMS for maior que o débito do mês, a diferença é receita da empresa.",
+        "gabarito": "E",
+        "explicacao": "A diferença continua como crédito, em ICMS a Recuperar, para os meses seguintes."
+      },
+      {
+        "enunciado": "Na apuração, o imposto a recolher é compensado com o imposto a recuperar até o menor dos dois saldos.",
+        "gabarito": "C",
+        "explicacao": "O que sobrar de um lado ou de outro permanece na respectiva conta."
       }
     ]
   },
@@ -351,29 +913,6 @@
         "enunciado": "Para ser representação fidedigna, a informação deve ser completa, neutra e isenta de erros.",
         "gabarito": "C",
         "explicacao": "São os três atributos da representação fidedigna na Estrutura Conceitual."
-      }
-    ]
-  },
-  {
-    "id": "regimes-contabeis",
-    "titulo": "Regimes de competência e de caixa",
-    "resumo": "Quando uma receita ou uma despesa entra no resultado.",
-    "pontos": [
-      "Competência: receitas e despesas entram no resultado quando ocorrem, mesmo sem dinheiro entrando ou saindo.",
-      "Caixa: só entram quando o dinheiro é recebido ou pago.",
-      "A contabilidade das empresas segue o regime de competência."
-    ],
-    "exemplo": "Os salários de janeiro, pagos em fevereiro, são despesa de janeiro. A encomenda vendida a prazo é receita no dia da venda, e não no dia em que o cliente paga.",
-    "perguntas": [
-      {
-        "enunciado": "Pelo regime de competência, a despesa de salários é reconhecida no mês em que os salários são pagos.",
-        "gabarito": "E",
-        "explicacao": "Ela é reconhecida no mês em que o trabalho foi prestado, ainda que o pagamento seja depois."
-      },
-      {
-        "enunciado": "No regime de caixa, uma venda a prazo só é reconhecida como receita quando o cliente paga.",
-        "gabarito": "C",
-        "explicacao": "No regime de caixa, o que conta é a entrada do dinheiro. Na competência, a receita é da data da venda."
       }
     ]
   },

@@ -1,0 +1,59 @@
+{
+  "id": "m009-encomenda-com-desconto",
+  "titulo": "Outra encomenda",
+  "capitulo": 5,
+  "nivel": 3,
+  "estabelecimento": "minha-loja",
+  "npc": "antonio-restaurante",
+  "requisitos": ["m008-pagamento-antecipado"],
+  "aulas": ["deducoes-da-receita"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O evento foi um sucesso. Quero repetir a encomenda!"
+    },
+    {
+      "fala": "npc",
+      "texto": "Para cliente fiel, sai um desconto na nota? Pago em 30 dias."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota v1 para o Antônio",
+    "linhas": [
+      "200 hambúrgueres a R$ 20,00: R$ 4.000,00",
+      "100 refrigerantes a R$ 6,00: R$ 600,00",
+      "Desconto de 10% na nota: R$ 460,00",
+      "Total da nota: R$ 4.140,00",
+      "ICMS, PIS e COFINS sobre o valor com desconto",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "venda",
+      "nota": "v1",
+      "itens": [
+        {
+          "produto": "hamburguer",
+          "quantidade": 200,
+          "precoUnitarioCentavos": 2000
+        },
+        {
+          "produto": "refrigerante",
+          "quantidade": 100,
+          "precoUnitarioCentavos": 600
+        }
+      ],
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "descontoIncondicional": 1000
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["desconto-comercial", "venda-a-prazo-clientes"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

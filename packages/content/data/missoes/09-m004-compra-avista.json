@@ -1,0 +1,48 @@
+{
+  "id": "m004-compra-avista",
+  "titulo": "Abastecer a casa",
+  "capitulo": 2,
+  "nivel": 2,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m003-equipamentos"],
+  "aulas": ["comprar-para-o-estoque"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Vai abrir a hamburgueria? Então vai precisar de bebida gelada."
+    },
+    {
+      "fala": "npc",
+      "texto": "Tenho 500 refrigerantes para pronta entrega. Pagando agora, pelo banco, eu libero hoje."
+    }
+  ],
+  "proposta": {
+    "titulo": "Pedido ao fornecedor",
+    "linhas": ["500 refrigerantes a R$ 3,00", "Total: R$ 1.500,00", "À vista, pelo banco"]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "refrigerante",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 300
+        }
+      ],
+      "ipiAliquota": 0,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "avista",
+        "meio": "bancos"
+      },
+      "semTributos": true
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["compra-a-vista"],
+  "recompensa": {
+    "pontos": 60
+  }
+}

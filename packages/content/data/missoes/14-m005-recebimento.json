@@ -1,0 +1,35 @@
+{
+  "id": "m005-recebimento",
+  "titulo": "O Antônio pagou",
+  "capitulo": 3,
+  "nivel": 2,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m005-venda-prazo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Boa notícia: o Antônio pagou a encomenda."
+    },
+    {
+      "fala": "npc",
+      "texto": "O dinheiro já está na conta da Chapa da Praça."
+    }
+  ],
+  "proposta": {
+    "titulo": "Recebimento do cliente",
+    "linhas": ["Encomenda do Antônio: R$ 4.600,00", "Recebido hoje, pelo banco"]
+  },
+  "operacoes": [
+    {
+      "tipo": "recebimento",
+      "valorCentavos": 460000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["venda-a-prazo-clientes"],
+  "recompensa": {
+    "pontos": 60
+  }
+}

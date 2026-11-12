@@ -12,6 +12,8 @@ import { type IdRegra, NOTAS_DIDATICAS, REGRAS } from "./index";
  * jogo. Ficam fora da exigência de teste no ledger, com o motivo registrado.
  */
 const FORA_DO_MOTOR: Partial<Record<IdRegra, string>> = {
+  "R-ICMS-09":
+    "Delimita o que o jogo não trata (substituição tributária e regimes especiais): não há operação para testar.",
   "R-CAP-01":
     "Os dois sócios existem na narrativa (ADR-0007); o motor registra o capital total (R-CAP-05).",
   "R-ENT-03":

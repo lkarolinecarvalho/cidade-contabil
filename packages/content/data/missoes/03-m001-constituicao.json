@@ -5,8 +5,8 @@
   "nivel": 1,
   "estabelecimento": "escritorio-contabil",
   "npc": "marta-contadora",
-  "requisitos": ["m000-para-que-serve"],
-  "aulas": ["contas-debito-e-credito"],
+  "requisitos": ["m000-como-registrar"],
+  "aulas": ["capital-social"],
   "dialogo": [
     {
       "fala": "npc",

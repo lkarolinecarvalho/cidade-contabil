@@ -114,7 +114,7 @@ describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => 
   });
 
   it("entre conceitos vencidos, a caixa mais baixa vem primeiro", () => {
-    const compra = missao("m004-compra-avista"); // custo-aquisicao, ipi-no-custo-comercio, icms-a-recuperar
+    const compra = missao("m011-refrigerante-da-fabrica"); // ipi-na-base-do-icms, ipi-no-custo-comercio, custo-aquisicao
     const custo = doConceito("custo-aquisicao");
     const porDentro = doConceito("ipi-no-custo-comercio");
     // custo-aquisicao acertado duas vezes (caixa 3); ipi-no-custo-comercio errado (caixa 1).
@@ -125,7 +125,8 @@ describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => 
     const escolhidos = selecionarAfirmativas(compra, conteudo.afirmativas, noDia(estado, 10)).map(
       (a) => a.conceitoId,
     );
-    expect(escolhidos).toEqual(["ipi-no-custo-comercio", "icms-a-recuperar"]);
+    // O conceito nunca visto e o errado (caixa 1) passam à frente do acertado (caixa 3).
+    expect(escolhidos).toEqual(["ipi-na-base-do-icms", "ipi-no-custo-comercio"]);
   });
 
   it("a Revisão só cobra conceitos já encontrados, respeita o nível e o limite", () => {

@@ -1,0 +1,64 @@
+{
+  "id": "m008-material-de-limpeza",
+  "titulo": "Casa limpa",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m011-refrigerante-da-fabrica"],
+  "aulas": ["uso-e-consumo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Detergente e desinfetante, direto da fábrica. Isso você não vende: usa na casa."
+    },
+    {
+      "fala": "npc",
+      "texto": "Aí muda tudo: quem compra para usar não recupera imposto nenhum."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota fiscal da fábrica",
+    "linhas": [
+      "Emitente: Indústria Brilho Limpo (indústria)",
+      "Destinatário: Chapa da Praça Ltda., contribuinte do ICMS",
+      "Finalidade: uso e consumo da casa",
+      "20 unidades de material de limpeza a R$ 25,00: R$ 500,00",
+      "IPI de 5%, por fora: R$ 25,00",
+      "Total da nota: R$ 525,00",
+      "Base do ICMS: R$ 525,00 (com o IPI)",
+      "ICMS de 18% destacado: R$ 94,50",
+      "À vista, com o dinheiro do caixa"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "material-de-limpeza",
+          "quantidade": 20,
+          "precoUnitarioCentavos": 2500
+        }
+      ],
+      "ipiAliquota": 500,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "avista",
+        "meio": "caixa"
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["material-de-consumo", "ipi-na-base-do-icms"],
+  "recompensa": {
+    "pontos": 100
+  },
+  "comparacao": {
+    "com": "m011-refrigerante-da-fabrica",
+    "titulo": "Duas notas de fábrica, duas finalidades",
+    "la": "Refrigerante para revender",
+    "aqui": "Material de limpeza para usar",
+    "porque": "As duas notas vêm de uma indústria e têm IPI. O que muda é a finalidade: o refrigerante é revendido; o material é consumido na casa. Por isso, aqui, o IPI entra na base do ICMS e nenhum imposto é recuperável."
+  }
+}

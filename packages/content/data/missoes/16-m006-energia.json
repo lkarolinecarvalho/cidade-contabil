@@ -1,8 +1,8 @@
 {
   "id": "m006-energia",
   "titulo": "A conta de luz",
-  "capitulo": 4,
-  "nivel": 4,
+  "capitulo": 3,
+  "nivel": 2,
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
   "requisitos": ["m006-salarios"],

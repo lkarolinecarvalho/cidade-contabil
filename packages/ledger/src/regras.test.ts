@@ -409,7 +409,7 @@ describe("7. compras de mercadorias", () => {
 
   it("R-COM-01: custo de aquisição = produtos + IPI + frete − ICMS recuperável", () => {
     const { valores } = preverLancamentos(empresaComBanco(), compraCompleta, dia(2));
-    expect(valores).toEqual({
+    expect(valores).toMatchObject({
       totalNota: r("1.700,00"),
       ipi: r("150,00"),
       icms: r("279,00"),

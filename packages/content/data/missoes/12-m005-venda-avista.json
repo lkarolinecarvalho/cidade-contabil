@@ -5,7 +5,7 @@
   "nivel": 2,
   "estabelecimento": "minha-loja",
   "npc": "lurdes-cliente",
-  "requisitos": ["m004-compra-prazo"],
+  "requisitos": ["m006-pagamento-fornecedor"],
   "aulas": ["receita-custo-e-lucro"],
   "dialogo": [
     {
@@ -43,12 +43,13 @@
       ],
       "condicao": {
         "tipo": "avista"
-      }
+      },
+      "semTributos": true
     }
   ],
   "ajudaLancamento": "auto",
-  "conceitos": ["receita-e-deducoes", "receita-do-lanche", "cmv"],
+  "conceitos": ["receita-do-lanche", "cmv"],
   "recompensa": {
-    "pontos": 100
+    "pontos": 90
   }
 }

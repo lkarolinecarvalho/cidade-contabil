@@ -80,10 +80,10 @@ const C = (conta: string, reais: string): Partida => ({
 
 describe("efeito no patrimônio", () => {
   it("compra de insumos a prazo: Estoque de Insumos, ICMS a Recuperar e Fornecedores aumentam", () => {
-    const estado = antesDe("m004-compra-prazo");
+    const estado = antesDe("m011-insumos-com-icms");
     const { lancamentos } = preverLancamentos(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-prazo"),
+      operacaoDe(estado, "m011-insumos-com-icms"),
       estado.data,
     );
     expect(
@@ -93,9 +93,9 @@ describe("efeito no patrimônio", () => {
         e.valorCentavos,
       ]),
     ).toEqual([
-      ["Estoque de Insumos", "aumenta", 533_000],
-      ["ICMS a Recuperar", "aumenta", 117_000],
-      ["Fornecedores", "aumenta", 650_000],
+      ["Estoque de Insumos", "aumenta", 266_500],
+      ["ICMS a Recuperar", "aumenta", 58_500],
+      ["Fornecedores", "aumenta", 325_000],
     ]);
   });
 
@@ -118,10 +118,10 @@ describe("efeito no patrimônio", () => {
   });
 
   it("venda: o estoque diminui pelo custo e as demais contas aumentam", () => {
-    const estado = antesDe("m005-venda-avista");
+    const estado = antesDe("m011-venda-com-tributos");
     const { lancamentos } = preverLancamentos(
       estado.contabil,
-      operacaoDe(estado, "m005-venda-avista"),
+      operacaoDe(estado, "m011-venda-com-tributos"),
       estado.data,
     );
     const efeito = efeitoDosLancamentos(estado.contabil.planoDeContas, lancamentos);
@@ -130,8 +130,8 @@ describe("efeito no patrimônio", () => {
     expect(
       efeito.filter((e) => e.direcao === "diminui").map((e) => [e.nome, e.valorCentavos]),
     ).toEqual([
-      ["Estoque de Mercadorias", 51_600],
-      ["Estoque de Insumos", 159_900],
+      ["Estoque de Mercadorias", 27_000],
+      ["Estoque de Insumos", 118_300],
     ]);
   });
 });
@@ -243,14 +243,14 @@ describe("níveis de ajuda no lançamento", () => {
 
 describe("conferência do lançamento e comentário do contador (erros didáticos)", () => {
   it("lançamento correto não tem prévia nem comentário", () => {
-    const estado = antesDe("m004-compra-prazo");
+    const estado = antesDe("m011-insumos-com-icms");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-prazo"),
+      operacaoDe(estado, "m011-insumos-com-icms"),
       [
-        D(CONTAS.estoqueInsumos, "5.330,00"),
-        D(CONTAS.icmsARecuperar, "1.170,00"),
-        C(CONTAS.fornecedores, "6.500,00"),
+        D(CONTAS.estoqueInsumos, "2.665,00"),
+        D(CONTAS.icmsARecuperar, "585,00"),
+        C(CONTAS.fornecedores, "3.250,00"),
       ],
       estado.data,
     );
@@ -260,10 +260,10 @@ describe("conferência do lançamento e comentário do contador (erros didático
   });
 
   it("lançamento desequilibrado: só o aviso de débitos ≠ créditos, sem prévia", () => {
-    const estado = antesDe("m004-compra-prazo");
+    const estado = antesDe("m011-insumos-com-icms");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-prazo"),
+      operacaoDe(estado, "m011-insumos-com-icms"),
       [D(CONTAS.estoque, "20.000,00"), C(CONTAS.fornecedores, "16.400,00")],
       estado.data,
     );
@@ -327,10 +327,10 @@ describe("conferência do lançamento e comentário do contador (erros didático
   });
 
   it("capítulo 4 — estoque pelo valor da nota: estoque superavaliado, ICMS a Recuperar zerado", () => {
-    const estado = antesDe("m004-compra-avista");
+    const estado = antesDe("m011-refrigerante-da-fabrica");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-avista"),
+      operacaoDe(estado, "m011-refrigerante-da-fabrica"),
       [D(CONTAS.estoque, "1.560,00"), C(CONTAS.bancos, "1.560,00")],
       estado.data,
     );
@@ -342,22 +342,25 @@ describe("conferência do lançamento e comentário do contador (erros didático
   });
 
   it("capítulo 4 — compra como despesa: prejuízo falso no mês", () => {
-    const estado = antesDe("m004-compra-avista");
+    const estado = antesDe("m011-refrigerante-da-fabrica");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-avista"),
+      operacaoDe(estado, "m011-refrigerante-da-fabrica"),
       [D(CONTAS.cmv, "1.560,00"), C(CONTAS.bancos, "1.560,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-COM-04"]);
     expect(conferencia.comentario).toContain("prejuízo falso de R$ 1.560,00");
-    expect(conferencia.previa?.comOSeuLancamento.resultadoDoMesCentavos).toBe(-156_000);
-    expect(conferencia.previa?.correto.resultadoDoMesCentavos).toBe(0);
+    // A compra certa não mexe no resultado; como despesa, ele cairia R$ 1.560,00.
+    expect(
+      (conferencia.previa?.comOSeuLancamento.resultadoDoMesCentavos ?? 0) -
+        (conferencia.previa?.correto.resultadoDoMesCentavos ?? 0),
+    ).toBe(-156_000);
   });
 
   it("capítulo 5 — venda sem CMV: lucro superavaliado e estoque que não diminui", () => {
-    const estado = antesDe("m005-venda-avista");
-    const operacao = operacaoDe(estado, "m005-venda-avista");
+    const estado = antesDe("m011-venda-com-tributos");
+    const operacao = operacaoDe(estado, "m011-venda-com-tributos");
     const semCmv = preverLancamentos(estado.contabil, operacao, estado.data)
       .lancamentos.flatMap((l) => l.partidas)
       .filter(
@@ -369,12 +372,12 @@ describe("conferência do lançamento e comentário do contador (erros didático
       );
     const conferencia = conferirLancamento(estado.contabil, operacao, semCmv, estado.data);
     expect(conferencia.regras).toEqual(["R-VEN-02"]);
-    // 516,00 de refrigerante mais 1.599,00 de insumos dos hambúrgueres.
-    expect(conferencia.comentario).toContain("R$ 2.115,00 maior");
+    // 270,00 de refrigerante mais 1.183,00 de insumos dos hambúrgueres.
+    expect(conferencia.comentario).toContain("R$ 1.453,00 maior");
     expect(
       (conferencia.previa?.comOSeuLancamento.ativoCirculanteCentavos ?? 0) -
         (conferencia.previa?.correto.ativoCirculanteCentavos ?? 0),
-    ).toBe(211_500);
+    ).toBe(145_300);
   });
 
   it("capítulo 6 — salário lançado como pagamento: a despesa é do mês, o pagamento é outro fato", () => {
@@ -390,23 +393,23 @@ describe("conferência do lançamento e comentário do contador (erros didático
   });
 
   it("pagamento a fornecedor lançado como despesa nova: resultado pior do que é", () => {
-    const estado = antesDe("m006-pagamento-fornecedor");
+    const estado = antesDe("m008-pagamento-antecipado");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m006-pagamento-fornecedor"),
-      [D(CONTAS.despesaSalarios, "6.000,00"), C(CONTAS.bancos, "6.000,00")],
+      operacaoDe(estado, "m008-pagamento-antecipado"),
+      [D(CONTAS.despesaSalarios, "2.800,00"), C(CONTAS.bancos, "2.800,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-DES-01"]);
-    // A despesa falsa de 6.000,00 e a receita financeira de 120,00 que deixou de aparecer.
-    expect(conferencia.comentario).toContain("R$ 6.120,00 pior");
+    // A despesa falsa de 2.800,00 e a receita financeira de 56,00 que deixou de aparecer.
+    expect(conferencia.comentario).toContain("R$ 2.856,00 pior");
   });
 
   it("lados trocados: a prévia lista as contas que ficariam com saldo diferente", () => {
-    const estado = antesDe("m004-compra-avista");
+    const estado = antesDe("m011-refrigerante-da-fabrica");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m004-compra-avista"),
+      operacaoDe(estado, "m011-refrigerante-da-fabrica"),
       [
         C(CONTAS.estoque, "1.290,00"),
         C(CONTAS.icmsARecuperar, "270,00"),
@@ -424,9 +427,9 @@ describe("conferência do lançamento e comentário do contador (erros didático
         c.corretoCentavos,
       ]),
     ).toEqual([
-      ["Bancos Conta Movimento", 2_356_000, 2_044_000],
-      ["Estoque de Mercadorias", -129_000, 129_000],
-      ["ICMS a Recuperar", -27_000, 27_000],
+      ["Bancos Conta Movimento", 1_956_000, 1_644_000],
+      ["Estoque de Mercadorias", -69_000, 189_000],
+      ["ICMS a Recuperar", 31_500, 85_500],
     ]);
   });
 
@@ -453,7 +456,7 @@ describe("texto das regras", () => {
 });
 
 describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
-  it("capítulos 1 a 6 de ponta a ponta; a DRE e o Balanço batem com o cenário da campanha", () => {
+  it("capítulos 1 a 8 de ponta a ponta; a DRE e o Balanço batem com o cenário da campanha", () => {
     let estado = novoJogo();
     let afirmativasRespondidas = 0;
     const semLancamento: string[] = [];
@@ -508,17 +511,17 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
 
     const fim = { ...estado.data, dia: 30 };
     const d = dre(estado.contabil, { de: { ...fim, dia: 1 }, ate: fim });
-    expect(d.totalReceitaBrutaCentavos).toBe(1_570_000);
-    expect(d.receitaLiquidaCentavos).toBe(1_185_534);
-    expect(d.lucroBrutoCentavos).toBe(715_890);
-    expect(d.resultadoCentavos).toBe(291_693);
+    expect(d.totalReceitaBrutaCentavos).toBe(2_490_000);
+    expect(d.receitaLiquidaCentavos).toBe(2_160_116);
+    expect(d.lucroBrutoCentavos).toBe(1_321_522);
+    expect(d.resultadoCentavos).toBe(889_425);
 
     const bp = balanco(estado.contabil, fim);
-    expect(bp.ativo.totalCirculanteCentavos).toBe(3_243_192);
+    expect(bp.ativo.totalCirculanteCentavos).toBe(3_844_842);
     expect(bp.ativo.totalNaoCirculanteCentavos).toBe(7_761_667);
-    expect(bp.ativo.totalCentavos).toBe(11_004_859);
-    expect(bp.passivo.totalCirculanteCentavos).toBe(713_166);
-    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_291_693);
+    expect(bp.ativo.totalCentavos).toBe(11_606_509);
+    expect(bp.passivo.totalCirculanteCentavos).toBe(717_084);
+    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_889_425);
     expect(estado.carteiraCentavos).toBe(1_000_000);
   });
 });

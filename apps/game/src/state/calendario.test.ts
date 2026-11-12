@@ -106,33 +106,48 @@ describe("títulos e vencimentos", () => {
   });
 
   it("compra a prazo cria título; devolução, abatimento e pagamento baixam o saldo", () => {
+    // Nota c1, ainda sem tributos destacados.
     const comCompra = jogarAte("m004-compra-prazo");
     expect(comCompra.titulos).toMatchObject([
       { tipo: "pagar", valorCentavos: 650_000, saldoCentavos: 650_000 },
     ]);
     const [aPagar] = comCompra.titulos;
     expect(aPagar && compararDatas(aPagar.vencimento, somarDias(aPagar.emissao, 30))).toBe(0);
-
-    // A devolução de 400,00 e o abatimento de 100,00 reduzem o que se deve da nota c1.
-    expect(jogarAte("m008-abatimento-compra").titulos).toMatchObject([
-      { tipo: "pagar", valorCentavos: 650_000, saldoCentavos: 600_000 },
-    ]);
-    // O pagamento antecipado quita a nota c1; a nota c2 continua em aberto.
     expect(jogarAte("m006-pagamento-fornecedor").titulos).toMatchObject([
       { tipo: "pagar", saldoCentavos: 0 },
-      { tipo: "pagar", valorCentavos: 180_000, saldoCentavos: 180_000 },
+    ]);
+
+    const aPagarDe = (estado: EstadoDoJogo) => estado.titulos.filter((t) => t.tipo === "pagar");
+    // A devolução de 400,00 e o abatimento de 50,00 reduzem o que se deve da nota c2.
+    expect(aPagarDe(jogarAte("m008-abatimento-compra"))).toMatchObject([
+      { saldoCentavos: 0 },
+      { valorCentavos: 325_000, saldoCentavos: 280_000 },
+    ]);
+    // O pagamento antecipado quita a nota c2; a nota c3 continua em aberto.
+    expect(aPagarDe(jogarAte("m008-pagamento-antecipado"))).toMatchObject([
+      { saldoCentavos: 0 },
+      { saldoCentavos: 0 },
+      { valorCentavos: 180_000, saldoCentavos: 180_000 },
     ]);
   });
 
   it("venda a prazo cria título pelo total da nota, com o desconto e o IPI", () => {
     const aReceber = (estado: EstadoDoJogo) => estado.titulos.filter((t) => t.tipo === "receber");
-    // Nota v1: 4.600,00 menos 10% de desconto.
+    // Primeira encomenda, sem tributos: 4.600,00, recebida em seguida.
     expect(aReceber(jogarAte("m005-venda-prazo"))).toMatchObject([
-      { valorCentavos: 414_000, saldoCentavos: 414_000 },
+      { valorCentavos: 460_000, saldoCentavos: 460_000 },
     ]);
+    expect(aReceber(jogarAte("m005-recebimento"))).toMatchObject([{ saldoCentavos: 0 }]);
+    // Nota v1: 4.600,00 menos 10% de desconto.
+    expect(aReceber(jogarAte("m009-encomenda-com-desconto")).at(-1)).toMatchObject({
+      valorCentavos: 414_000,
+      saldoCentavos: 414_000,
+    });
     // Devolução de 108,00 e abatimento de 100,00; depois, o recebimento antecipado.
-    expect(aReceber(jogarAte("m009-abatimento-venda"))).toMatchObject([{ saldoCentavos: 393_200 }]);
-    expect(aReceber(jogarAte("m009-receber-antes"))).toMatchObject([{ saldoCentavos: 0 }]);
+    expect(aReceber(jogarAte("m009-abatimento-venda")).at(-1)).toMatchObject({
+      saldoCentavos: 393_200,
+    });
+    expect(aReceber(jogarAte("m009-receber-antes")).at(-1)).toMatchObject({ saldoCentavos: 0 });
     // Nota v2: 3.000,00 mais 150,00 de IPI por fora.
     expect(aReceber(jogarAte("m010-venda-congelado")).at(-1)).toMatchObject({
       valorCentavos: 315_000,
@@ -154,7 +169,7 @@ describe("títulos e vencimentos", () => {
 describe("dias e ações", () => {
   it("cada operação gasta uma ação; sem ações, só encerrando o dia", () => {
     // As conversas com a Marta não gastam ação.
-    let estado = jogarAte("m000-para-que-serve");
+    let estado = jogarAte("m000-como-registrar");
     expect(acoesRestantes(estado)).toBe(ACOES_POR_DIA);
     estado = executarProximaOperacao(estado, missao("m001-constituicao"));
     expect(acoesRestantes(estado)).toBe(ACOES_POR_DIA - 1);
@@ -193,19 +208,19 @@ describe("um mês completo (aceite do M6)", () => {
   it("termina no dia 30, fechado, com a apuração e a DRE corretas", () => {
     expect(fim.data).toEqual(dia(30));
     expect(mesFechado(fim)).toBe(true);
-    // Apuração do ICMS: compensa 1.845,00 de crédito; sobram 878,76 a pagar.
+    // Apuração do ICMS: compensa 1.260,00 de crédito; sobram 995,76 a pagar.
     expect(saldo(fim, "ICMS a Recuperar")).toBe(0);
-    expect(saldo(fim, "ICMS a Recolher")).toBe(87_876);
-    expect(fim.icmsAPagarCentavos).toBe(87_876);
+    expect(saldo(fim, "ICMS a Recolher")).toBe(99_576);
+    expect(fim.icmsAPagarCentavos).toBe(99_576);
     // Apuração do IPI: compensa 20,00; sobram 130,00.
     expect(saldo(fim, "IPI a Recolher")).toBe(13_000);
 
     const d = dre(fim.contabil, { de: dia(1), ate: dia(30) });
-    expect(d.totalReceitaBrutaCentavos).toBe(1_570_000);
-    expect(d.receitaLiquidaCentavos).toBe(1_185_534);
-    expect(d.lucroBrutoCentavos).toBe(715_890);
-    expect(d.resultadoCentavos).toBe(291_693);
-    expect(balanco(fim.contabil, dia(30)).ativo.totalCentavos).toBe(11_004_859);
+    expect(d.totalReceitaBrutaCentavos).toBe(2_490_000);
+    expect(d.receitaLiquidaCentavos).toBe(2_160_116);
+    expect(d.lucroBrutoCentavos).toBe(1_321_522);
+    expect(d.resultadoCentavos).toBe(889_425);
+    expect(balanco(fim.contabil, dia(30)).ativo.totalCentavos).toBe(11_606_509);
   });
 
   it("depois do fechamento o mês vira, e a DRE do mês novo começa zerada", () => {
@@ -256,12 +271,12 @@ describe("um mês completo (aceite do M6)", () => {
   });
 
   it("ICMS com saldo devedor na apuração é pago no Posto Fiscal", () => {
-    expect(fim.icmsAPagarCentavos).toBe(87_876);
+    expect(fim.icmsAPagarCentavos).toBe(99_576);
     const bancosAntes = saldo(fim, "Bancos Conta Movimento");
     const pago = pagarIcms(fim);
     expect(pago.icmsAPagarCentavos).toBe(0);
     expect(saldo(pago, "ICMS a Recolher")).toBe(0);
-    expect(saldo(pago, "Bancos Conta Movimento")).toBe(bancosAntes - 87_876);
+    expect(saldo(pago, "Bancos Conta Movimento")).toBe(bancosAntes - 99_576);
     expect(() => pagarIcms(pago)).toThrow(/Não há ICMS/);
   });
 

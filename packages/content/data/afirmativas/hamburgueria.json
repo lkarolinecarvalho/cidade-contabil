@@ -13,9 +13,9 @@
     "id": "af-insumos-e-mercadorias-02",
     "conceitoId": "insumos-e-mercadorias",
     "nivelMin": 2,
-    "enunciado": "Na compra de insumos por empresa contribuinte do ICMS, o imposto destacado na nota integra o custo do estoque, pois só há crédito de ICMS na compra de mercadorias para revenda.",
+    "enunciado": "Os insumos comprados para o preparo dos lanches são registrados na mesma conta de estoque das mercadorias compradas para revenda.",
     "gabarito": "E",
-    "explicacao": "A compra de insumos também dá crédito de ICMS. O imposto vai para ICMS a Recuperar e fica fora do custo do estoque.",
+    "explicacao": "Insumos e mercadorias ficam em contas separadas do Ativo Circulante: Estoque de Insumos e Estoque de Mercadorias.",
     "regras": ["R-INS-01", "R-INS-02"],
     "momentos": ["pos_operacao", "revisao"]
   },

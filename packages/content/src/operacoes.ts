@@ -21,12 +21,13 @@ export function paraOperacaoDoMotor(
       // R-CAP-05: o motor registra o total; as participações ficam fora do razão.
       return { tipo: "subscricao", valorCentavos: operacao.valorCentavos };
     case "compra": {
-      const { condicao, nota, descontoComercial, ipiRecuperavel, ...resto } = operacao;
+      const { condicao, nota, descontoComercial, ipiRecuperavel, semTributos, ...resto } = operacao;
       // Campos opcionais só entram quando existem.
       const opcionais = {
         ...(nota !== undefined ? { nota } : {}),
         ...(descontoComercial !== undefined ? { descontoComercial } : {}),
         ...(ipiRecuperavel !== undefined ? { ipiRecuperavel } : {}),
+        ...(semTributos ? { semTributos } : {}),
       };
       if (condicao.tipo === "prazo") return { ...resto, ...opcionais, condicao };
       const meio = condicao.meio === "escolha_do_jogador" ? contexto.meioEscolhido : condicao.meio;
@@ -34,12 +35,13 @@ export function paraOperacaoDoMotor(
       return { ...resto, ...opcionais, condicao: { tipo: "avista", meio } };
     }
     case "venda": {
-      const { nota, descontoIncondicional, ipiAliquota, ...resto } = operacao;
+      const { nota, descontoIncondicional, ipiAliquota, semTributos, ...resto } = operacao;
       return {
         ...resto,
         ...(nota !== undefined ? { nota } : {}),
         ...(descontoIncondicional !== undefined ? { descontoIncondicional } : {}),
         ...(ipiAliquota !== undefined ? { ipiAliquota } : {}),
+        ...(semTributos ? { semTributos } : {}),
       };
     }
     case "recebimento":

@@ -11,51 +11,46 @@ import {
   type EstadoContabil,
   type Operacao,
 } from "./index";
-import { dia, executar, r, reais, saldoDe } from "./testes/apoio";
+import { dia, executar, reais, saldoDe } from "./testes/apoio";
 
 /**
  * Teste dourado principal: docs/cenario-campanha.md, a campanha da hamburgueria,
  * centavo por centavo. Os passos rodam em sequência sobre o mesmo estado.
- * Os valores esperados foram calculados à mão, fora do motor.
+ * Os valores esperados foram calculados à mão, fora do motor (valores em centavos nas
+ * operações; partidas como "D Conta 1.234,56", na ordem do razão).
  */
 
-const item = (produto: string, quantidade: number, preco: string) => ({
-  produto,
-  quantidade,
-  precoUnitarioCentavos: r(preco),
-});
-const aPrazo = { tipo: "prazo", dias: 30 } as const;
 const mes = { ano: 1, mes: 1 };
 
 interface Passo {
   readonly titulo: string;
   readonly dia: number;
   readonly operacao: Operacao;
-  /** Partidas esperadas, como "D Conta 1.234,56", na ordem do razão. */
   readonly linhas: readonly string[];
 }
 
 const PASSOS: readonly Passo[] = [
   {
-    titulo: "1 — subscrição do capital de R$ 100.000,00",
+    titulo: "1 — Subscrição do capital — R$ 100.000,00",
     dia: 1,
-    operacao: { tipo: "subscricao", valorCentavos: r("100.000,00") },
+    operacao: { tipo: "subscricao", valorCentavos: 10000000 },
     linhas: ["D (−) Capital a Integralizar 100.000,00", "C Capital Social Subscrito 100.000,00"],
   },
   {
-    titulo: "2 — integralização de R$ 80.000,00 no banco",
+    titulo: "2 — Integralização de R$ 80.000,00 no banco",
     dia: 2,
-    operacao: { tipo: "integralizacao", valorCentavos: r("80.000,00"), meio: "bancos" },
+    operacao: { tipo: "integralizacao", valorCentavos: 8000000, meio: "bancos" },
     linhas: ["D Bancos Conta Movimento 80.000,00", "C (−) Capital a Integralizar 80.000,00"],
   },
   {
-    titulo: "3 — ponto comercial: terreno e edificação, pelo banco",
+    titulo:
+      "3 — Compra do ponto comercial: terreno R$ 20.000,00 e edificação R$ 40.000,00, pelo banco",
     dia: 3,
     operacao: {
       tipo: "compra_imobilizado",
       itens: [
-        { classe: "terrenos", valorCentavos: r("20.000,00") },
-        { classe: "edificacoes", valorCentavos: r("40.000,00") },
+        { classe: "terrenos", valorCentavos: 2000000 },
+        { classe: "edificacoes", valorCentavos: 4000000 },
       ],
       meio: "bancos",
     },
@@ -66,37 +61,172 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "4 — integralização final de R$ 20.000,00",
+    titulo: "4 — Integralização final de R$ 20.000,00 no banco",
     dia: 4,
-    operacao: { tipo: "integralizacao", valorCentavos: r("20.000,00"), meio: "bancos" },
+    operacao: { tipo: "integralizacao", valorCentavos: 2000000, meio: "bancos" },
     linhas: ["D Bancos Conta Movimento 20.000,00", "C (−) Capital a Integralizar 20.000,00"],
   },
   {
-    titulo: "5 — mesas e balcão",
+    titulo: "5 — Mesas e balcão por R$ 6.000,00, pelo banco",
     dia: 5,
     operacao: {
       tipo: "compra_imobilizado",
-      itens: [{ classe: "moveis_utensilios", valorCentavos: r("6.000,00") }],
+      itens: [{ classe: "moveis_utensilios", valorCentavos: 600000 }],
       meio: "bancos",
     },
     linhas: ["D Móveis e Utensílios 6.000,00", "C Bancos Conta Movimento 6.000,00"],
   },
   {
-    titulo: "6 — chapa e freezer",
-    dia: 5,
+    titulo: "6 — Chapa e freezer por R$ 12.000,00, pelo banco",
+    dia: 6,
     operacao: {
       tipo: "compra_imobilizado",
-      itens: [{ classe: "equipamentos", valorCentavos: r("12.000,00") }],
+      itens: [{ classe: "equipamentos", valorCentavos: 1200000 }],
       meio: "bancos",
     },
     linhas: ["D Equipamentos 12.000,00", "C Bancos Conta Movimento 12.000,00"],
   },
   {
-    titulo: "7 — refrigerante à vista, com IPI de 4% no custo",
-    dia: 6,
+    titulo: "7 — Compra à vista (banco) de 500 refrigerantes a R$ 3,00, sem tributos destacados",
+    dia: 7,
     operacao: {
       tipo: "compra",
-      itens: [item("refrigerante", 500, "3,00")],
+      itens: [{ produto: "refrigerante", quantidade: 500, precoUnitarioCentavos: 300 }],
+      ipiAliquota: 0,
+      freteCentavos: 0,
+      condicao: { tipo: "avista", meio: "bancos" },
+      semTributos: true,
+    },
+    linhas: ["D Estoque de Mercadorias 1.500,00", "C Bancos Conta Movimento 1.500,00"],
+  },
+  {
+    titulo:
+      "8 — Compra a prazo (nota c1), sem tributos destacados: 1.000 pães a R$ 1,00, 1.000 carnes a R$ 4,00, 1.000 queijos a R$ 1,00 e 1.000 alfaces a R$ 0,50",
+    dia: 7,
+    operacao: {
+      tipo: "compra",
+      nota: "c1",
+      itens: [
+        { produto: "pao", quantidade: 1000, precoUnitarioCentavos: 100 },
+        { produto: "carne", quantidade: 1000, precoUnitarioCentavos: 400 },
+        { produto: "queijo", quantidade: 1000, precoUnitarioCentavos: 100 },
+        { produto: "alface", quantidade: 1000, precoUnitarioCentavos: 50 },
+      ],
+      ipiAliquota: 0,
+      freteCentavos: 0,
+      condicao: { tipo: "prazo", dias: 30 },
+      semTributos: true,
+    },
+    linhas: ["D Estoque de Insumos 6.500,00", "C Fornecedores 6.500,00"],
+  },
+  {
+    titulo: "9 — Pagamento da nota c1 (R$ 6.500,00), pelo banco",
+    dia: 8,
+    operacao: {
+      tipo: "pagamento",
+      obrigacao: "fornecedores",
+      valorCentavos: 650000,
+      meio: "bancos",
+    },
+    linhas: ["D Fornecedores 6.500,00", "C Bancos Conta Movimento 6.500,00"],
+  },
+  {
+    titulo:
+      "10 — Inauguração: venda à vista de 300 hambúrgueres a R$ 20,00 e 200 refrigerantes a R$ 6,00, sem tributos destacados",
+    dia: 9,
+    operacao: {
+      tipo: "venda",
+      itens: [
+        { produto: "hamburguer", quantidade: 300, precoUnitarioCentavos: 2000 },
+        { produto: "refrigerante", quantidade: 200, precoUnitarioCentavos: 600 },
+      ],
+      condicao: { tipo: "avista" },
+      semTributos: true,
+    },
+    linhas: [
+      "D Caixa 7.200,00",
+      "C Receita Bruta de Vendas 7.200,00",
+      "D Custo das Mercadorias Vendidas (CMV) 600,00",
+      "C Estoque de Mercadorias 600,00",
+      "D Custo dos Produtos Vendidos (CPV) 1.950,00",
+      "C Estoque de Insumos 1.950,00",
+    ],
+  },
+  {
+    titulo:
+      "11 — Venda a prazo de 200 hambúrgueres a R$ 20,00 e 100 refrigerantes a R$ 6,00, sem tributos destacados",
+    dia: 10,
+    operacao: {
+      tipo: "venda",
+      itens: [
+        { produto: "hamburguer", quantidade: 200, precoUnitarioCentavos: 2000 },
+        { produto: "refrigerante", quantidade: 100, precoUnitarioCentavos: 600 },
+      ],
+      condicao: { tipo: "prazo", dias: 30 },
+      semTributos: true,
+    },
+    linhas: [
+      "D Clientes 4.600,00",
+      "C Receita Bruta de Vendas 4.600,00",
+      "D Custo das Mercadorias Vendidas (CMV) 300,00",
+      "C Estoque de Mercadorias 300,00",
+      "D Custo dos Produtos Vendidos (CPV) 1.300,00",
+      "C Estoque de Insumos 1.300,00",
+    ],
+  },
+  {
+    titulo: "12 — Recebimento do cliente (R$ 4.600,00), pelo banco",
+    dia: 11,
+    operacao: { tipo: "recebimento", valorCentavos: 460000, meio: "bancos" },
+    linhas: ["D Bancos Conta Movimento 4.600,00", "C Clientes 4.600,00"],
+  },
+  {
+    titulo: "13 — Salários do mês: R$ 3.000,00, a pagar no mês seguinte",
+    dia: 12,
+    operacao: { tipo: "provisao_salarios", valorCentavos: 300000 },
+    linhas: ["D Despesas com Salários 3.000,00", "C Salários a Pagar 3.000,00"],
+  },
+  {
+    titulo: "14 — Energia elétrica de R$ 600,00, paga pelo banco",
+    dia: 13,
+    operacao: {
+      tipo: "despesa",
+      natureza: "energia_eletrica",
+      valorCentavos: 60000,
+      meio: "bancos",
+    },
+    linhas: ["D Despesa com Energia Elétrica 600,00", "C Bancos Conta Movimento 600,00"],
+  },
+  {
+    titulo:
+      "15 — Situação C — compra a prazo (nota c2) de insumos, de atacadista, com ICMS recuperável: 500 pães a R$ 1,00, 500 carnes a R$ 4,00, 500 queijos a R$ 1,00 e 500 alfaces a R$ 0,50",
+    dia: 14,
+    operacao: {
+      tipo: "compra",
+      nota: "c2",
+      itens: [
+        { produto: "pao", quantidade: 500, precoUnitarioCentavos: 100 },
+        { produto: "carne", quantidade: 500, precoUnitarioCentavos: 400 },
+        { produto: "queijo", quantidade: 500, precoUnitarioCentavos: 100 },
+        { produto: "alface", quantidade: 500, precoUnitarioCentavos: 50 },
+      ],
+      ipiAliquota: 0,
+      freteCentavos: 0,
+      condicao: { tipo: "prazo", dias: 30 },
+    },
+    linhas: [
+      "D Estoque de Insumos 2.665,00",
+      "D ICMS a Recuperar 585,00",
+      "C Fornecedores 3.250,00",
+    ],
+  },
+  {
+    titulo:
+      "16 — Situação B — compra à vista (banco), da fábrica, de 500 refrigerantes a R$ 3,00 para revenda, com IPI de 4% fora da base do ICMS",
+    dia: 14,
+    operacao: {
+      tipo: "compra",
+      itens: [{ produto: "refrigerante", quantidade: 500, precoUnitarioCentavos: 300 }],
       ipiAliquota: 400,
       freteCentavos: 0,
       condicao: { tipo: "avista", meio: "bancos" },
@@ -108,82 +238,72 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "8 — insumos a prazo, nota c1 com quatro itens",
-    dia: 7,
+    titulo:
+      "17 — Situações A e E — compra à vista (caixa), da fábrica, de 20 unidades de material de limpeza a R$ 25,00 para uso e consumo, com IPI de 5% na base do ICMS e nenhum tributo recuperável",
+    dia: 15,
     operacao: {
       tipo: "compra",
-      nota: "c1",
-      itens: [
-        item("pao", 1000, "1,00"),
-        item("carne", 1000, "4,00"),
-        item("queijo", 1000, "1,00"),
-        item("alface", 1000, "0,50"),
-      ],
-      ipiAliquota: 0,
+      itens: [{ produto: "material-de-limpeza", quantidade: 20, precoUnitarioCentavos: 2500 }],
+      ipiAliquota: 500,
       freteCentavos: 0,
-      condicao: aPrazo,
+      condicao: { tipo: "avista", meio: "caixa" },
     },
-    linhas: [
-      "D Estoque de Insumos 5.330,00",
-      "D ICMS a Recuperar 1.170,00",
-      "C Fornecedores 6.500,00",
-    ],
+    linhas: ["D Material de Consumo 525,00", "C Caixa 525,00"],
   },
   {
-    titulo: "9 — inauguração: 300 hambúrgueres e 200 refrigerantes à vista",
-    dia: 8,
+    titulo:
+      "18 — Venda à vista, com tributos, de 200 hambúrgueres a R$ 20,00 e 100 refrigerantes a R$ 6,00",
+    dia: 16,
     operacao: {
       tipo: "venda",
-      itens: [item("hamburguer", 300, "20,00"), item("refrigerante", 200, "6,00")],
+      itens: [
+        { produto: "hamburguer", quantidade: 200, precoUnitarioCentavos: 2000 },
+        { produto: "refrigerante", quantidade: 100, precoUnitarioCentavos: 600 },
+      ],
       condicao: { tipo: "avista" },
     },
     linhas: [
-      "D Caixa 7.200,00",
-      "C Receita Bruta de Vendas 7.200,00",
-      "D ICMS sobre Vendas 1.296,00",
-      "C ICMS a Recolher 1.296,00",
-      "D PIS sobre Faturamento 38,38",
-      "C PIS a Recolher 38,38",
-      "D COFINS sobre Faturamento 177,12",
-      "C COFINS a Recolher 177,12",
-      "D Custo das Mercadorias Vendidas (CMV) 516,00",
-      "C Estoque de Mercadorias 516,00",
-      "D Custo dos Produtos Vendidos (CPV) 1.599,00",
-      "C Estoque de Insumos 1.599,00",
+      "D Caixa 4.600,00",
+      "C Receita Bruta de Vendas 4.600,00",
+      "D ICMS sobre Vendas 828,00",
+      "C ICMS a Recolher 828,00",
+      "D PIS sobre Faturamento 24,52",
+      "C PIS a Recolher 24,52",
+      "D COFINS sobre Faturamento 113,16",
+      "C COFINS a Recolher 113,16",
+      "D Custo das Mercadorias Vendidas (CMV) 270,00",
+      "C Estoque de Mercadorias 270,00",
+      "D Custo dos Produtos Vendidos (CPV) 1.183,00",
+      "C Estoque de Insumos 1.183,00",
     ],
   },
   {
-    titulo: "10 — devolução de 100 carnes da nota c1",
-    dia: 9,
+    titulo: "19 — Devolução de 100 carnes da nota c2",
+    dia: 17,
     operacao: {
       tipo: "devolucao_compra",
-      nota: "c1",
+      nota: "c2",
       itens: [{ produto: "carne", quantidade: 100 }],
     },
     linhas: ["D Fornecedores 400,00", "C Estoque de Insumos 328,00", "C ICMS a Recuperar 72,00"],
   },
   {
-    titulo: "11 — abatimento de R$ 100,00 sobre o pão da nota c1",
-    dia: 10,
-    operacao: {
-      tipo: "abatimento_compra",
-      nota: "c1",
-      produto: "pao",
-      valorCentavos: r("100,00"),
-    },
-    linhas: ["D Fornecedores 100,00", "C Estoque de Insumos 100,00"],
+    titulo: "20 — Abatimento de R$ 50,00 sobre o pão da nota c2",
+    dia: 18,
+    operacao: { tipo: "abatimento_compra", nota: "c2", produto: "pao", valorCentavos: 5000 },
+    linhas: ["D Fornecedores 50,00", "C Estoque de Insumos 50,00"],
   },
   {
-    titulo: "12 — carne a prazo com 10% de desconto na nota (c2)",
-    dia: 11,
+    titulo: "21 — Compra a prazo (nota c3) de 500 carnes a R$ 4,00, com 10% de desconto na nota",
+    dia: 19,
     operacao: {
       tipo: "compra",
-      nota: "c2",
-      itens: [item("carne", 500, "4,00")],
+      nota: "c3",
+      itens: [{ produto: "carne", quantidade: 500, precoUnitarioCentavos: 400 }],
       ipiAliquota: 0,
       freteCentavos: 0,
+      condicao: { tipo: "prazo", dias: 30 },
       descontoComercial: 1000,
-      condicao: aPrazo,
     },
     linhas: [
       "D Estoque de Insumos 1.476,00",
@@ -192,42 +312,35 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "13 — pagamento antecipado da nota c1, com desconto de R$ 120,00",
-    dia: 12,
+    titulo:
+      "22 — Pagamento antecipado da nota c2 (R$ 2.800,00), pelo banco, com desconto de R$ 56,00",
+    dia: 20,
     operacao: {
       tipo: "pagamento",
       obrigacao: "fornecedores",
-      valorCentavos: r("6.000,00"),
+      valorCentavos: 280000,
       meio: "bancos",
-      descontoFinanceiroCentavos: r("120,00"),
+      descontoFinanceiroCentavos: 5600,
     },
     linhas: [
-      "D Fornecedores 6.000,00",
-      "C Bancos Conta Movimento 5.880,00",
-      "C Descontos Financeiros Obtidos 120,00",
+      "D Fornecedores 2.800,00",
+      "C Bancos Conta Movimento 2.744,00",
+      "C Descontos Financeiros Obtidos 56,00",
     ],
   },
   {
-    titulo: "14 — material de limpeza à vista, pelo caixa",
-    dia: 13,
-    operacao: {
-      tipo: "compra",
-      itens: [item("material-de-limpeza", 20, "25,00")],
-      ipiAliquota: 0,
-      freteCentavos: 0,
-      condicao: { tipo: "avista", meio: "caixa" },
-    },
-    linhas: ["D Material de Consumo 500,00", "C Caixa 500,00"],
-  },
-  {
-    titulo: "15 — encomenda a prazo (v1), com 10% de desconto na nota",
-    dia: 14,
+    titulo:
+      "23 — Encomenda a prazo (nota v1): 200 hambúrgueres a R$ 20,00 e 100 refrigerantes a R$ 6,00, com 10% de desconto na nota",
+    dia: 21,
     operacao: {
       tipo: "venda",
       nota: "v1",
-      itens: [item("hamburguer", 200, "20,00"), item("refrigerante", 100, "6,00")],
+      itens: [
+        { produto: "hamburguer", quantidade: 200, precoUnitarioCentavos: 2000 },
+        { produto: "refrigerante", quantidade: 100, precoUnitarioCentavos: 600 },
+      ],
+      condicao: { tipo: "prazo", dias: 30 },
       descontoIncondicional: 1000,
-      condicao: aPrazo,
     },
     linhas: [
       "D Clientes 4.140,00",
@@ -239,15 +352,15 @@ const PASSOS: readonly Passo[] = [
       "C PIS a Recolher 22,07",
       "D COFINS sobre Faturamento 101,84",
       "C COFINS a Recolher 101,84",
-      "D Custo das Mercadorias Vendidas (CMV) 258,00",
-      "C Estoque de Mercadorias 258,00",
-      "D Custo dos Produtos Vendidos (CPV) 1.007,61",
-      "C Estoque de Insumos 1.007,61",
+      "D Custo das Mercadorias Vendidas (CMV) 270,00",
+      "C Estoque de Mercadorias 270,00",
+      "D Custo dos Produtos Vendidos (CPV) 1.119,17",
+      "C Estoque de Insumos 1.119,17",
     ],
   },
   {
-    titulo: "16 — devolução de 20 refrigerantes da nota v1",
-    dia: 15,
+    titulo: "24 — Devolução de 20 refrigerantes da nota v1",
+    dia: 21,
     operacao: {
       tipo: "devolucao_venda",
       nota: "v1",
@@ -262,24 +375,25 @@ const PASSOS: readonly Passo[] = [
       "C PIS sobre Faturamento 0,58",
       "D COFINS a Recolher 2,66",
       "C COFINS sobre Faturamento 2,66",
-      "D Estoque de Mercadorias 51,60",
-      "C Custo das Mercadorias Vendidas (CMV) 51,60",
+      "D Estoque de Mercadorias 54,00",
+      "C Custo das Mercadorias Vendidas (CMV) 54,00",
     ],
   },
   {
-    titulo: "17 — abatimento de R$ 100,00 sobre a encomenda",
-    dia: 16,
-    operacao: { tipo: "abatimento_venda", valorCentavos: r("100,00"), contrapartida: "clientes" },
+    titulo: "25 — Abatimento de R$ 100,00 sobre a encomenda",
+    dia: 22,
+    operacao: { tipo: "abatimento_venda", valorCentavos: 10000, contrapartida: "clientes" },
     linhas: ["D Abatimentos sobre Vendas 100,00", "C Clientes 100,00"],
   },
   {
-    titulo: "18 — recebimento antecipado da nota v1, com desconto de R$ 78,64",
-    dia: 17,
+    titulo:
+      "26 — Recebimento antecipado da nota v1 (R$ 3.932,00), pelo banco, com desconto de R$ 78,64",
+    dia: 23,
     operacao: {
       tipo: "recebimento",
-      valorCentavos: r("3.932,00"),
+      valorCentavos: 393200,
       meio: "bancos",
-      descontoFinanceiroCentavos: r("78,64"),
+      descontoFinanceiroCentavos: 7864,
     },
     linhas: [
       "D Bancos Conta Movimento 3.853,36",
@@ -288,24 +402,24 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "19 — 300 refrigerantes recebidos em consignação: sem lançamento",
-    dia: 18,
+    titulo: "27 — Recebimento de 300 refrigerantes em consignação, a R$ 3,00 — sem lançamento",
+    dia: 24,
     operacao: {
       tipo: "recebimento_consignacao",
       produto: "refrigerante",
       quantidade: 300,
-      precoUnitarioCentavos: r("3,00"),
+      precoUnitarioCentavos: 300,
     },
     linhas: [],
   },
   {
-    titulo: "20 — venda à vista de 150 refrigerantes consignados",
-    dia: 19,
+    titulo: "28 — Venda à vista de 150 refrigerantes consignados a R$ 6,00",
+    dia: 25,
     operacao: {
       tipo: "venda_consignada",
       produto: "refrigerante",
       quantidade: 150,
-      precoUnitarioCentavos: r("6,00"),
+      precoUnitarioCentavos: 600,
       condicao: { tipo: "avista" },
     },
     linhas: [
@@ -320,44 +434,28 @@ const PASSOS: readonly Passo[] = [
       "C PIS a Recolher 4,80",
       "D COFINS sobre Faturamento 22,14",
       "C COFINS a Recolher 22,14",
-      "D Custo das Mercadorias Vendidas (CMV) 379,70",
-      "C Estoque de Mercadorias 379,70",
+      "D Custo das Mercadorias Vendidas (CMV) 396,94",
+      "C Estoque de Mercadorias 396,94",
     ],
   },
   {
-    titulo: "21 — devolução ao consignante de 150 refrigerantes: sem lançamento",
-    dia: 20,
+    titulo: "29 — Devolução ao consignante de 150 refrigerantes — sem lançamento",
+    dia: 26,
     operacao: { tipo: "devolucao_consignacao", produto: "refrigerante", quantidade: 150 },
     linhas: [],
   },
   {
-    titulo: "22 — salários do mês, a pagar no mês seguinte",
-    dia: 21,
-    operacao: { tipo: "provisao_salarios", valorCentavos: r("3.000,00") },
-    linhas: ["D Despesas com Salários 3.000,00", "C Salários a Pagar 3.000,00"],
-  },
-  {
-    titulo: "23 — energia elétrica, paga pelo banco",
-    dia: 22,
-    operacao: {
-      tipo: "despesa",
-      natureza: "energia_eletrica",
-      valorCentavos: r("600,00"),
-      meio: "bancos",
-    },
-    linhas: ["D Despesa com Energia Elétrica 600,00", "C Bancos Conta Movimento 600,00"],
-  },
-  {
-    titulo: "24 — embalagens a prazo (c3), com IPI de 5% recuperável",
-    dia: 23,
+    titulo:
+      "30 — Situação D — compra a prazo (nota c4), da fábrica, de 400 embalagens a R$ 1,00 para industrialização, com IPI de 5% recuperável",
+    dia: 27,
     operacao: {
       tipo: "compra",
-      nota: "c3",
-      itens: [item("embalagem", 400, "1,00")],
+      nota: "c4",
+      itens: [{ produto: "embalagem", quantidade: 400, precoUnitarioCentavos: 100 }],
       ipiAliquota: 500,
-      ipiRecuperavel: true,
       freteCentavos: 0,
-      condicao: aPrazo,
+      condicao: { tipo: "prazo", dias: 30 },
+      ipiRecuperavel: true,
     },
     linhas: [
       "D Estoque de Insumos 328,00",
@@ -367,20 +465,21 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "25 — produção de 300 hambúrgueres congelados",
-    dia: 24,
+    titulo: "31 — Produção de 300 hambúrgueres congelados",
+    dia: 28,
     operacao: { tipo: "producao", produto: "hamburguer-congelado", quantidade: 300 },
-    linhas: ["D Produtos Acabados 1.185,27", "C Estoque de Insumos 1.185,27"],
+    linhas: ["D Produtos Acabados 1.261,00", "C Estoque de Insumos 1.261,00"],
   },
   {
-    titulo: "26 — venda a prazo (v2) de 250 congelados, com IPI de 5%",
-    dia: 25,
+    titulo:
+      "32 — Venda a prazo (nota v2), para o mercado, de 250 hambúrgueres congelados a R$ 12,00, com IPI de 5% por fora",
+    dia: 28,
     operacao: {
       tipo: "venda",
       nota: "v2",
-      itens: [item("hamburguer-congelado", 250, "12,00")],
+      itens: [{ produto: "hamburguer-congelado", quantidade: 250, precoUnitarioCentavos: 1200 }],
+      condicao: { tipo: "prazo", dias: 30 },
       ipiAliquota: 500,
-      condicao: aPrazo,
     },
     linhas: [
       "D Clientes 3.150,00",
@@ -392,12 +491,12 @@ const PASSOS: readonly Passo[] = [
       "C PIS a Recolher 15,99",
       "D COFINS sobre Faturamento 73,80",
       "C COFINS a Recolher 73,80",
-      "D Custo dos Produtos Vendidos (CPV) 987,73",
-      "C Produtos Acabados 987,73",
+      "D Custo dos Produtos Vendidos (CPV) 1.050,83",
+      "C Produtos Acabados 1.050,83",
     ],
   },
   {
-    titulo: "27 — depreciação do mês",
+    titulo: "33 — Depreciação do mês",
     dia: 30,
     operacao: depreciarMes(criarEmpresa(), mes),
     linhas: [
@@ -410,23 +509,19 @@ const PASSOS: readonly Passo[] = [
     ],
   },
   {
-    titulo: "28 — inventário do material de limpeza: restam 8 unidades",
+    titulo: "34 — Inventário do material de limpeza: restam 8 unidades",
     dia: 30,
-    operacao: {
-      tipo: "inventario_consumo",
-      produto: "material-de-limpeza",
-      quantidadeRestante: 8,
-    },
-    linhas: ["D Despesa com Material de Consumo 300,00", "C Material de Consumo 300,00"],
+    operacao: { tipo: "inventario_consumo", produto: "material-de-limpeza", quantidadeRestante: 8 },
+    linhas: ["D Despesa com Material de Consumo 315,00", "C Material de Consumo 315,00"],
   },
   {
-    titulo: "29 — apuração do ICMS",
+    titulo: "35 — Apuração do ICMS",
     dia: 30,
     operacao: apurarIcms(criarEmpresa(), mes),
-    linhas: ["D ICMS a Recolher 1.845,00", "C ICMS a Recuperar 1.845,00"],
+    linhas: ["D ICMS a Recolher 1.260,00", "C ICMS a Recuperar 1.260,00"],
   },
   {
-    titulo: "30 — apuração do IPI",
+    titulo: "36 — Apuração do IPI",
     dia: 30,
     operacao: apurarIpi(criarEmpresa(), mes),
     linhas: ["D IPI a Recolher 20,00", "C IPI a Recuperar 20,00"],
@@ -454,21 +549,21 @@ describe("cenário da campanha (teste dourado)", () => {
       ]),
     );
     expect(emEstoque).toEqual({
-      refrigerante: "220 un. = 556,90",
-      pao: "500 un. = 338,57",
-      carne: "600 un. = 1.878,55",
-      queijo: "500 un. = 410,00",
-      alface: "500 un. = 205,00",
-      "material-de-limpeza": "8 un. = 200,00",
+      refrigerante: "520 un. = 1.376,06",
+      pao: "600 un. = 508,50",
+      carne: "700 un. = 2.368,33",
+      queijo: "600 un. = 546,00",
+      alface: "600 un. = 273,00",
+      "material-de-limpeza": "8 un. = 210,00",
       embalagem: "100 un. = 82,00",
-      "hamburguer-congelado": "50 un. = 197,54",
+      "hamburguer-congelado": "50 un. = 210,17",
     });
     expect(estado.consignado.refrigerante?.quantidade).toBe(0);
   });
 
   it("saldos depois das apurações", () => {
     expect(saldoDe(estado, "ICMS a Recuperar")).toBe("0,00");
-    expect(saldoDe(estado, "ICMS a Recolher")).toBe("878,76 C");
+    expect(saldoDe(estado, "ICMS a Recolher")).toBe("995,76 C");
     expect(saldoDe(estado, "IPI a Recuperar")).toBe("0,00");
     expect(saldoDe(estado, "IPI a Recolher")).toBe("130,00 C");
     expect(saldoDe(estado, "Fornecedores")).toBe("2.670,00 C");
@@ -480,33 +575,35 @@ describe("cenário da campanha (teste dourado)", () => {
     const porNome = (linhasDre: typeof d.deducoes) =>
       Object.fromEntries(linhasDre.map((l) => [l.nome, reais(l.valorCentavos)]));
 
-    expect(reais(d.totalReceitaBrutaCentavos)).toBe("15.700,00");
+    expect(reais(d.totalReceitaBrutaCentavos)).toBe("24.900,00");
     expect(porNome(d.deducoes)).toEqual({
-      "ICMS sobre Vendas": "2.723,76",
-      "PIS sobre Faturamento": "80,66",
-      "COFINS sobre Faturamento": "372,24",
+      "ICMS sobre Vendas": "2.255,76",
+      "PIS sobre Faturamento": "66,80",
+      "COFINS sobre Faturamento": "308,28",
       "Devoluções de Vendas": "108,00",
       "Abatimentos sobre Vendas": "100,00",
       "Descontos Incondicionais Concedidos": "460,00",
     });
-    expect(reais(d.receitaLiquidaCentavos)).toBe("11.855,34");
+    expect(reais(d.receitaLiquidaCentavos)).toBe("21.601,16");
     expect(porNome(d.custos)).toEqual({
-      "Custo das Mercadorias Vendidas (CMV)": "1.102,10",
-      "Custo dos Produtos Vendidos (CPV)": "3.594,34",
+      "Custo das Mercadorias Vendidas (CMV)": "1.782,94",
+      "Custo dos Produtos Vendidos (CPV)": "6.603,00",
     });
-    expect(reais(d.lucroBrutoCentavos)).toBe("7.158,90");
+    expect(reais(d.lucroBrutoCentavos)).toBe("13.215,22");
     expect(porNome(d.despesasOperacionais)).toEqual({
       "Despesas com Salários": "3.000,00",
       "Despesa com Energia Elétrica": "600,00",
       "Despesa de Depreciação": "383,33",
-      "Despesa com Material de Consumo": "300,00",
+      "Despesa com Material de Consumo": "315,00",
     });
-    expect(porNome(d.receitasFinanceiras)).toEqual({ "Descontos Financeiros Obtidos": "120,00" });
+    expect(porNome(d.receitasFinanceiras)).toEqual({
+      "Descontos Financeiros Obtidos": "56,00",
+    });
     expect(porNome(d.despesasFinanceiras)).toEqual({
       "Descontos Financeiros Concedidos": "78,64",
     });
-    expect(reais(d.resultadoFinanceiroCentavos)).toBe("41,36");
-    expect(reais(d.resultadoCentavos)).toBe("2.916,93");
+    expect(reais(d.resultadoFinanceiroCentavos)).toBe("-22,64");
+    expect(reais(d.resultadoCentavos)).toBe("8.894,25");
   });
 
   it("Balanço Patrimonial", () => {
@@ -515,17 +612,17 @@ describe("cenário da campanha (teste dourado)", () => {
       Object.fromEntries(linhasBp.map((l) => [l.nome, reais(l.valorCentavos)]));
 
     expect(porNome(bp.ativo.circulante)).toEqual({
-      Caixa: "7.600,00",
-      "Bancos Conta Movimento": "17.813,36",
+      Caixa: "12.175,00",
+      "Bancos Conta Movimento": "17.549,36",
       Clientes: "3.150,00",
-      "Estoque de Mercadorias": "556,90",
+      "Estoque de Mercadorias": "1.376,06",
       "ICMS a Recuperar": "0,00",
-      "Estoque de Insumos": "2.914,12",
-      "Produtos Acabados": "197,54",
-      "Material de Consumo": "200,00",
+      "Estoque de Insumos": "3.777,83",
+      "Produtos Acabados": "210,17",
+      "Material de Consumo": "210,00",
       "IPI a Recuperar": "0,00",
     });
-    expect(reais(bp.ativo.totalCirculanteCentavos)).toBe("32.431,92");
+    expect(reais(bp.ativo.totalCirculanteCentavos)).toBe("38.448,42");
     expect(
       bp.ativo.imobilizado.map((l) => [
         l.nome,
@@ -540,31 +637,31 @@ describe("cenário da campanha (teste dourado)", () => {
       ["Equipamentos", "12.000,00", "200,00", "11.800,00"],
     ]);
     expect(reais(bp.ativo.totalNaoCirculanteCentavos)).toBe("77.616,67");
-    expect(reais(bp.ativo.totalCentavos)).toBe("110.048,59");
+    expect(reais(bp.ativo.totalCentavos)).toBe("116.065,09");
 
     expect(porNome(bp.passivo.circulante)).toEqual({
       Fornecedores: "2.670,00",
-      "ICMS a Recolher": "878,76",
-      "PIS a Recolher": "80,66",
-      "COFINS a Recolher": "372,24",
+      "ICMS a Recolher": "995,76",
+      "PIS a Recolher": "66,80",
+      "COFINS a Recolher": "308,28",
       "Salários a Pagar": "3.000,00",
       "IPI a Recolher": "130,00",
     });
-    expect(reais(bp.passivo.totalCirculanteCentavos)).toBe("7.131,66");
+    expect(reais(bp.passivo.totalCirculanteCentavos)).toBe("7.170,84");
 
     expect(porNome(bp.patrimonioLiquido.contas)).toEqual({
       "Capital Social Subscrito": "100.000,00",
       "(−) Capital a Integralizar": "0,00",
       "Lucros ou Prejuízos Acumulados": "0,00",
     });
-    expect(reais(bp.patrimonioLiquido.resultadoDoPeriodoCentavos)).toBe("2.916,93");
-    expect(reais(bp.patrimonioLiquido.totalCentavos)).toBe("102.916,93");
-    expect(reais(bp.totalPassivoEPatrimonioLiquidoCentavos)).toBe("110.048,59");
+    expect(reais(bp.patrimonioLiquido.resultadoDoPeriodoCentavos)).toBe("8.894,25");
+    expect(reais(bp.patrimonioLiquido.totalCentavos)).toBe("108.894,25");
+    expect(reais(bp.totalPassivoEPatrimonioLiquidoCentavos)).toBe("116.065,09");
   });
 
-  it("Balancete: total devedor = total credor = 123.334,99", () => {
+  it("Balancete: total devedor = total credor = 132.510,17", () => {
     const b = balancete(estado);
-    expect(reais(b.totalDevedorCentavos)).toBe("123.334,99");
-    expect(reais(b.totalCredorCentavos)).toBe("123.334,99");
+    expect(reais(b.totalDevedorCentavos)).toBe("132.510,17");
+    expect(reais(b.totalCredorCentavos)).toBe("132.510,17");
   });
 });

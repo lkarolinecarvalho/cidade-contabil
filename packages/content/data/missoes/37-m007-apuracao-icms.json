@@ -1,11 +1,12 @@
 {
   "id": "m007-apuracao-icms",
   "titulo": "Acerto com o Fisco",
-  "capitulo": 6,
+  "capitulo": 8,
   "nivel": 5,
   "estabelecimento": "posto-fiscal",
   "npc": "sergio-fiscal",
   "requisitos": ["m007-depreciacao"],
+  "aulas": ["apuracao-dos-impostos"],
   "dialogo": [
     {
       "fala": "npc",

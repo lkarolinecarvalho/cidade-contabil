@@ -1,11 +1,12 @@
 {
   "id": "m010-producao",
   "titulo": "Linha de produção",
-  "capitulo": 5,
+  "capitulo": 7,
   "nivel": 4,
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
   "requisitos": ["m010-embalagens"],
+  "aulas": ["producao"],
   "dialogo": [
     {
       "fala": "npc",

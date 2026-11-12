@@ -1,0 +1,30 @@
+{
+  "id": "m011-conversa-tributos",
+  "titulo": "Os impostos entram em cena",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": ["m006-energia"],
+  "aulas": ["o-que-sao-tributos", "impostos-na-nota", "recuperavel-ou-nao", "nao-cumulatividade"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Nosso negócio está crescendo. Agora precisamos entender melhor os impostos das nossas operações."
+    },
+    {
+      "fala": "npc",
+      "texto": "Dependendo do produto, do fornecedor e da finalidade da compra, o tratamento contábil pode ser diferente."
+    },
+    {
+      "fala": "npc",
+      "texto": "Vamos por partes: um conceito de cada vez."
+    }
+  ],
+  "operacoes": [],
+  "ajudaLancamento": "auto",
+  "conceitos": [],
+  "recompensa": {
+    "pontos": 40
+  }
+}

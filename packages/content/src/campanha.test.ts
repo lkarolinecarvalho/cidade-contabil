@@ -48,7 +48,8 @@ describe("campanha da hamburgueria jogada pelo motor", () => {
         estado = aplicar(
           estado,
           paraOperacaoDoMotor(operacao, { mes }),
-          dia(fechamento ? 30 : indice + 1),
+          // Várias operações por dia: a campanha inteira cabe no mês.
+          dia(fechamento ? 30 : Math.floor(indice / 2) + 1),
         );
       }
     });
@@ -56,38 +57,51 @@ describe("campanha da hamburgueria jogada pelo motor", () => {
   const fimDoMes = dia(30);
 
   it("todas as operações das missões são aceitas pelo motor, na ordem da campanha", () => {
-    expect(missoes.filter((m) => m.operacoes.length > 0)).toHaveLength(28);
+    expect(missoes.filter((m) => m.operacoes.length > 0)).toHaveLength(34);
+    // As conversas com a Marta não têm operação.
     expect(missoes.filter((m) => m.operacoes.length === 0).map((m) => m.id)).toEqual([
       "m000-apresentacao",
       "m000-para-que-serve",
+      "m000-como-registrar",
+      "m011-conversa-tributos",
     ]);
-    expect(missoes.reduce((soma, m) => soma + m.operacoes.length, 0)).toBe(30);
+    expect(missoes.reduce((soma, m) => soma + m.operacoes.length, 0)).toBe(36);
     expect(estado.lancamentos.length).toBeGreaterThan(40);
   });
 
   it("a DRE do mês bate com o cenário da campanha", () => {
     const d = dre(estado, { de: dia(1), ate: fimDoMes });
-    expect(d.totalReceitaBrutaCentavos).toBe(1_570_000);
-    expect(d.receitaLiquidaCentavos).toBe(1_185_534);
-    expect(d.lucroBrutoCentavos).toBe(715_890);
-    expect(d.resultadoFinanceiroCentavos).toBe(4_136);
-    expect(d.resultadoCentavos).toBe(291_693);
+    expect(d.totalReceitaBrutaCentavos).toBe(2_490_000);
+    expect(d.receitaLiquidaCentavos).toBe(2_160_116);
+    expect(d.lucroBrutoCentavos).toBe(1_321_522);
+    expect(d.resultadoFinanceiroCentavos).toBe(-2_264);
+    expect(d.resultadoCentavos).toBe(889_425);
   });
 
   it("o Balanço Patrimonial bate com o cenário da campanha", () => {
     const bp = balanco(estado, fimDoMes);
-    expect(bp.ativo.totalCirculanteCentavos).toBe(3_243_192);
+    expect(bp.ativo.totalCirculanteCentavos).toBe(3_844_842);
     expect(bp.ativo.totalNaoCirculanteCentavos).toBe(7_761_667);
-    expect(bp.ativo.totalCentavos).toBe(11_004_859);
-    expect(bp.passivo.totalCirculanteCentavos).toBe(713_166);
-    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_291_693);
-    expect(bp.totalPassivoEPatrimonioLiquidoCentavos).toBe(11_004_859);
+    expect(bp.ativo.totalCentavos).toBe(11_606_509);
+    expect(bp.passivo.totalCirculanteCentavos).toBe(717_084);
+    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_889_425);
+    expect(bp.totalPassivoEPatrimonioLiquidoCentavos).toBe(11_606_509);
   });
 
-  it("o balancete fecha em 123.334,99", () => {
+  it("o balancete fecha em 132.510,17", () => {
     const b = balancete(estado);
-    expect(b.totalDevedorCentavos).toBe(12_333_499);
-    expect(b.totalCredorCentavos).toBe(12_333_499);
+    expect(b.totalDevedorCentavos).toBe(13_251_017);
+    expect(b.totalCredorCentavos).toBe(13_251_017);
+  });
+
+  it("os capítulos 2 e 3 não têm tributos; do 4 em diante, toda compra e venda tem", () => {
+    for (const missao of missoes) {
+      for (const operacao of missao.operacoes) {
+        if (operacao.tipo !== "compra" && operacao.tipo !== "venda") continue;
+        const semTributos = operacao.semTributos === true;
+        expect(semTributos, missao.id).toBe((missao.capitulo ?? 0) <= 3);
+      }
+    }
   });
 
   it("a carteira pessoal do avatar termina com R$ 10.000,00, fora do razão", () => {
@@ -127,6 +141,18 @@ describe("paraOperacaoDoMotor", () => {
       { mes },
     );
     expect(Object.keys(venda).sort()).toEqual(["condicao", "itens", "tipo"]);
+    // R-DID-01: a marca de "sem tributos" chega ao motor.
+    expect(
+      paraOperacaoDoMotor(
+        {
+          tipo: "venda",
+          itens: [{ produto: "refrigerante", quantidade: 1, precoUnitarioCentavos: 600 }],
+          condicao: { tipo: "avista" },
+          semTributos: true,
+        },
+        { mes },
+      ),
+    ).toMatchObject({ semTributos: true });
     expect(
       paraOperacaoDoMotor(
         {

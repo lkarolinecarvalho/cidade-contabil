@@ -1,0 +1,56 @@
+{
+  "id": "m005-venda-prazo",
+  "titulo": "A encomenda do evento",
+  "capitulo": 3,
+  "nivel": 2,
+  "estabelecimento": "minha-loja",
+  "npc": "antonio-restaurante",
+  "requisitos": ["m005-venda-avista"],
+  "aulas": ["vender-a-prazo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Vou fazer um evento na empresa e quero os seus lanches."
+    },
+    {
+      "fala": "npc",
+      "texto": "É bastante coisa. Posso pagar daqui a 30 dias?"
+    }
+  ],
+  "proposta": {
+    "titulo": "Encomenda do Antônio",
+    "linhas": [
+      "200 hambúrgueres a R$ 20,00: R$ 4.000,00",
+      "100 refrigerantes a R$ 6,00: R$ 600,00",
+      "Total: R$ 4.600,00",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "venda",
+      "itens": [
+        {
+          "produto": "hamburguer",
+          "quantidade": 200,
+          "precoUnitarioCentavos": 2000
+        },
+        {
+          "produto": "refrigerante",
+          "quantidade": 100,
+          "precoUnitarioCentavos": 600
+        }
+      ],
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "semTributos": true
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["venda-a-prazo-clientes"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

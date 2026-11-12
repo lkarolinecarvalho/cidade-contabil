@@ -9,18 +9,26 @@
   },
   {
     "numero": 3,
-    "titulo": "Problemas de todo dia"
+    "titulo": "A casa funcionando"
   },
   {
     "numero": 4,
-    "titulo": "A casa cresce"
+    "titulo": "Os impostos entram em cena"
   },
   {
     "numero": 5,
-    "titulo": "A fábrica"
+    "titulo": "Problemas de todo dia"
   },
   {
     "numero": 6,
+    "titulo": "A geladeira da marca"
+  },
+  {
+    "numero": 7,
+    "titulo": "A fábrica"
+  },
+  {
+    "numero": 8,
     "titulo": "Fechando o mês"
   }
 ]

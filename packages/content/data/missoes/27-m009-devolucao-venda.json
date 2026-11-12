@@ -1,15 +1,15 @@
 {
   "id": "m009-devolucao-venda",
   "titulo": "Sobrou refrigerante",
-  "capitulo": 4,
+  "capitulo": 5,
   "nivel": 3,
   "estabelecimento": "minha-loja",
   "npc": "antonio-restaurante",
-  "requisitos": ["m005-venda-prazo"],
+  "requisitos": ["m009-encomenda-com-desconto"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "O evento foi um sucesso! Só sobraram 20 refrigerantes fechados. Posso devolver?"
+      "texto": "Sobraram 20 refrigerantes fechados da encomenda. Posso devolver?"
     }
   ],
   "proposta": {

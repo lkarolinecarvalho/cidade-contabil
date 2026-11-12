@@ -1,0 +1,71 @@
+{
+  "id": "m011-insumos-com-icms",
+  "titulo": "Nota com imposto",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m011-conversa-tributos"],
+  "aulas": ["credito-de-icms"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Agora que a casa cresceu, as notas vêm com o imposto destacado."
+    },
+    {
+      "fala": "npc",
+      "texto": "Sou atacadista: na minha nota não tem IPI. Só o ICMS, que já está dentro do preço."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota fiscal c2",
+    "linhas": [
+      "Emitente: Distribuidora do João (atacadista)",
+      "Destinatário: Chapa da Praça Ltda., contribuinte do ICMS",
+      "Finalidade: insumos para os lanches",
+      "500 pães a R$ 1,00, 500 carnes a R$ 4,00, 500 queijos a R$ 1,00 e 500 alfaces a R$ 0,50",
+      "Total da nota: R$ 3.250,00",
+      "ICMS de 18% destacado, já dentro do preço: R$ 585,00",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "nota": "c2",
+      "itens": [
+        {
+          "produto": "pao",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 100
+        },
+        {
+          "produto": "carne",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 400
+        },
+        {
+          "produto": "queijo",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 100
+        },
+        {
+          "produto": "alface",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 50
+        }
+      ],
+      "ipiAliquota": 0,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["credito-de-icms", "icms-a-recuperar", "icms-por-dentro"],
+  "recompensa": {
+    "pontos": 90
+  }
+}

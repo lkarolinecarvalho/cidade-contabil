@@ -1,11 +1,12 @@
 {
   "id": "m007-depreciacao",
   "titulo": "O desgaste e o que foi usado",
-  "capitulo": 6,
+  "capitulo": 8,
   "nivel": 5,
   "estabelecimento": "escritorio-contabil",
   "npc": "marta-contadora",
   "requisitos": ["m010-venda-congelado"],
+  "aulas": ["depreciacao"],
   "dialogo": [
     {
       "fala": "npc",

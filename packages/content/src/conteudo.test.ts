@@ -51,9 +51,9 @@ describe("conteúdo do jogo", () => {
     ]);
   });
 
-  it("tem missões para os capítulos 1 a 6, em ordem de jogo, com nível que nunca cai", () => {
+  it("tem missões para os capítulos 1 a 8, em ordem de jogo, com nível que nunca cai", () => {
     const capitulos = conteudo.missoes.map((m) => m.capitulo);
-    expect([...new Set(capitulos)]).toEqual([1, 2, 3, 4, 5, 6]);
+    expect([...new Set(capitulos)]).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(capitulos).toEqual([...capitulos].sort());
     const niveis = conteudo.missoes.map((m) => m.nivel);
     expect(niveis).toEqual([...niveis].sort());
@@ -90,7 +90,7 @@ describe("conteúdo do jogo", () => {
   });
 
   it("todo capítulo tem título e missões; todo conceito tem uma definição curta", () => {
-    expect(conteudo.capitulos.map((c) => c.numero)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(conteudo.capitulos.map((c) => c.numero)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     for (const capitulo of conteudo.capitulos) {
       expect(
         conteudo.missoes.some((m) => m.capitulo === capitulo.numero),
@@ -112,8 +112,10 @@ describe("conteúdo do jogo", () => {
     }
   });
 
-  it("a campanha começa por duas conversas com a Marta, sem operação nem lançamento", () => {
-    const [primeira, segunda, terceira] = conteudo.missoes;
+  it("a campanha começa por conversas com a Marta, sem operação nem lançamento", () => {
+    const [primeira, segunda, registrar, terceira] = conteudo.missoes;
+    expect(registrar?.aulas).toEqual(["contas-debito-e-credito", "o-lancamento"]);
+    expect(registrar?.operacoes).toEqual([]);
     expect(primeira?.id).toBe("m000-apresentacao");
     expect(primeira?.dialogo[0]?.texto).toMatch(/^Olá! Eu sou a Marta/);
     expect(primeira?.aulas).toEqual(["o-que-e-contabilidade", "o-patrimonio", "por-que-registrar"]);
@@ -127,15 +129,71 @@ describe("conteúdo do jogo", () => {
       expect(conversa?.estabelecimento).toBe("escritorio-contabil");
       expect(conversa?.npc).toBe("marta-contadora");
     }
-    // O primeiro lançamento só vem depois das duas conversas.
+    // O primeiro lançamento só vem depois das conversas.
     expect(terceira?.id).toBe("m001-constituicao");
-    expect(terceira?.requisitos).toEqual(["m000-para-que-serve"]);
+    expect(terceira?.requisitos).toEqual(["m000-como-registrar"]);
     // Os seis temas da apresentação abrem a lista de teoria, na ordem em que são dados.
     expect(conteudo.teoria.slice(0, 6).map((t) => t.id)).toEqual([
       ...(primeira?.aulas ?? []),
       ...(segunda?.aulas ?? []),
     ]);
     expect(conteudo.teoria[1]?.quadro?.esquerda[0]?.titulo).toBe("Ativo");
+  });
+
+  it("todo conceito novo é apresentado pela Marta antes da operação que o usa", () => {
+    // Missões que trazem um assunto novo começam por uma aula; as demais repetem o
+    // assunto da missão anterior (ex.: a segunda integralização, o abatimento depois
+    // da devolução).
+    const comAula = conteudo.missoes.filter((m) => m.aulas).map((m) => m.id);
+    for (const id of [
+      "m001-constituicao",
+      "m001-integralizacao",
+      "m002-compra-imovel",
+      "m004-compra-avista",
+      "m004-compra-prazo",
+      "m006-pagamento-fornecedor",
+      "m005-venda-avista",
+      "m005-venda-prazo",
+      "m006-salarios",
+      "m011-insumos-com-icms",
+      "m011-refrigerante-da-fabrica",
+      "m008-material-de-limpeza",
+      "m011-venda-com-tributos",
+      "m008-devolucao-compra",
+      "m008-desconto-na-nota",
+      "m009-encomenda-com-desconto",
+      "m009-consignacao",
+      "m010-embalagens",
+      "m010-producao",
+      "m010-venda-congelado",
+      "m007-depreciacao",
+      "m007-apuracao-icms",
+    ]) {
+      expect(comAula, id).toContain(id);
+    }
+    // Os tributos são apresentados numa conversa antes da primeira nota com imposto.
+    const ids = conteudo.missoes.map((m) => m.id);
+    const primeiraComImposto = conteudo.missoes.find((m) =>
+      m.operacoes.some((o) => (o.tipo === "compra" || o.tipo === "venda") && !o.semTributos),
+    );
+    expect(primeiraComImposto?.id).toBe("m011-insumos-com-icms");
+    expect(ids.indexOf("m011-conversa-tributos")).toBe(ids.indexOf("m011-insumos-com-icms") - 1);
+    // Na fase sem tributos, nenhuma afirmativa cobrada fala de imposto.
+    const semImposto = conteudo.missoes.filter((m) => (m.capitulo ?? 0) <= 3);
+    const conceitos = new Set(semImposto.flatMap((m) => m.conceitos));
+    for (const afirmativa of conteudo.afirmativas.filter((a) => conceitos.has(a.conceitoId))) {
+      expect(afirmativa.enunciado, afirmativa.id).not.toMatch(/ICMS|IPI|PIS|COFINS|tribut/i);
+    }
+  });
+
+  it("as comparações são entre duas compras, com a outra missão vindo antes", () => {
+    const ids = conteudo.missoes.map((m) => m.id);
+    const comparadas = conteudo.missoes.filter((m) => m.comparacao);
+    expect(comparadas.map((m) => m.id)).toEqual(["m008-material-de-limpeza", "m010-embalagens"]);
+    for (const m of comparadas) {
+      expect(ids.indexOf(m.comparacao?.com ?? "")).toBeLessThan(ids.indexOf(m.id));
+      expect(ids.indexOf(m.comparacao?.com ?? "")).toBeGreaterThanOrEqual(0);
+    }
   });
 
   it("toda aula é um tema de teoria, e nenhuma se repete", () => {

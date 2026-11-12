@@ -1,0 +1,26 @@
+{
+  "id": "m000-como-registrar",
+  "titulo": "Como a gente anota",
+  "capitulo": 1,
+  "nivel": 1,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": ["m000-para-que-serve"],
+  "aulas": ["contas-debito-e-credito", "o-lancamento"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Antes de abrir a empresa, deixa eu te mostrar como a gente anota cada coisa que acontece."
+    },
+    {
+      "fala": "npc",
+      "texto": "É mais simples do que parece: são gavetas com dois lados."
+    }
+  ],
+  "operacoes": [],
+  "ajudaLancamento": "auto",
+  "conceitos": [],
+  "recompensa": {
+    "pontos": 30
+  }
+}

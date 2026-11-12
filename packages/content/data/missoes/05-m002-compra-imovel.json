@@ -6,6 +6,7 @@
   "estabelecimento": "imobiliaria",
   "npc": "rui-corretor",
   "requisitos": ["m001-integralizacao"],
+  "aulas": ["bens-para-usar"],
   "dialogo": [
     {
       "fala": "npc",

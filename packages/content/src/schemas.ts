@@ -167,6 +167,8 @@ export const operacaoSchema = z.discriminatedUnion("tipo", [
     descontoComercial: pontosBase.optional(),
     /** R-IPI-04: compra para a fábrica; o IPI vira crédito. */
     ipiRecuperavel: z.boolean().optional(),
+    /** R-DID-01: fase inicial; a nota entra pelo total, sem tributos destacados. */
+    semTributos: z.literal(true).optional(),
   }),
   z.strictObject({
     tipo: z.literal("venda"),
@@ -178,6 +180,8 @@ export const operacaoSchema = z.discriminatedUnion("tipo", [
     descontoIncondicional: pontosBase.optional(),
     /** R-IPI-05: IPI cobrado por fora, na venda de produto fabricado. */
     ipiAliquota: pontosBase.optional(),
+    /** R-DID-01: fase inicial; só a receita e o custo, sem tributos. */
+    semTributos: z.literal(true).optional(),
   }),
   z.strictObject({
     tipo: z.literal("recebimento"),
@@ -256,6 +260,21 @@ const proposta = z.strictObject({
   linhas: z.array(texto).min(1),
 });
 
+/**
+ * Comparação com a nota de outra missão, mostrada ao fim: operações parecidas com
+ * tratamentos diferentes. Os valores dos dois lados são calculados pelo motor.
+ */
+const comparacao = z.strictObject({
+  /** Missão anterior, cuja primeira operação também é uma compra. */
+  com: id,
+  titulo: texto,
+  /** Rótulo curto da nota da outra missão e o desta. */
+  la: texto,
+  aqui: texto,
+  /** O que mudou entre as duas e por quê. */
+  porque: texto,
+});
+
 export const missaoSchema = z.strictObject({
   id,
   titulo: texto,
@@ -288,6 +307,7 @@ export const missaoSchema = z.strictObject({
   /** Pelo menos um quando há operações. */
   conceitos: z.array(id),
   recompensa: z.strictObject({ pontos: z.number().int().min(0) }),
+  comparacao: comparacao.optional(),
 });
 
 /** Placeholders que o motor sabe calcular (`ValoresCalculados` do ledger). */

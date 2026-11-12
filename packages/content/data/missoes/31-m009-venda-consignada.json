@@ -1,7 +1,7 @@
 {
   "id": "m009-venda-consignada",
   "titulo": "A geladeira esvaziou",
-  "capitulo": 4,
+  "capitulo": 6,
   "nivel": 4,
   "estabelecimento": "minha-loja",
   "npc": "lurdes-cliente",
@@ -16,7 +16,8 @@
     "titulo": "Vendas da geladeira",
     "linhas": [
       "150 refrigerantes consignados a R$ 6,00: R$ 900,00, à vista",
-      "A pagar à marca: 150 × R$ 3,00 = R$ 450,00"
+      "A pagar à marca: 150 × R$ 3,00 = R$ 450,00",
+      "ICMS de 18% dentro dos dois valores"
     ]
   },
   "operacoes": [

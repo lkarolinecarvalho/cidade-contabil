@@ -234,6 +234,14 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
       if (!missao.proposta) problemas.push(`missão ${missao.id}: falta a proposta`);
       if (missao.conceitos.length === 0) problemas.push(`missão ${missao.id}: falta um conceito`);
     }
+    if (missao.comparacao) {
+      const outra = missoes.find((m) => m.id === missao.comparacao?.com);
+      if (!outra) {
+        problemas.push(`missão ${missao.id}: comparação com missão inexistente`);
+      } else if (outra.operacoes[0]?.tipo !== "compra" || missao.operacoes[0]?.tipo !== "compra") {
+        problemas.push(`missão ${missao.id}: a comparação é entre duas compras`);
+      }
+    }
     for (const aula of missao.aulas ?? []) {
       if (!teoria.some((tema) => tema.id === aula)) {
         problemas.push(`missão ${missao.id}: aula inexistente "${aula}"`);

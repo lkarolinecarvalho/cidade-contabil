@@ -1,0 +1,37 @@
+{
+  "id": "m006-pagamento-fornecedor",
+  "titulo": "Dia de pagar o João",
+  "capitulo": 2,
+  "nivel": 2,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m004-compra-prazo"],
+  "aulas": ["pagar-a-divida"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Chegou o dia de pagar a nota c1 do João."
+    },
+    {
+      "fala": "npc",
+      "texto": "Tem saldo na conta. Faço a transferência?"
+    }
+  ],
+  "proposta": {
+    "titulo": "Pagamento ao fornecedor",
+    "linhas": ["Nota c1: R$ 6.500,00", "Pago hoje, pelo banco", "A dívida com o João fica zerada"]
+  },
+  "operacoes": [
+    {
+      "tipo": "pagamento",
+      "obrigacao": "fornecedores",
+      "valorCentavos": 650000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["pagamento-de-obrigacoes"],
+  "recompensa": {
+    "pontos": 60
+  }
+}

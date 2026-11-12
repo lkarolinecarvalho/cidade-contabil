@@ -680,3 +680,95 @@ describe("21. IPI na fábrica e produção", () => {
     expect(NOTAS_DIDATICAS["R-PRD-01"]).toMatch(/insumos da receita/);
   });
 });
+
+describe("seção 23 — progressão didática e situações tributárias", () => {
+  it("R-DID-01: na fase sem tributos, a compra entra no estoque pelo total da nota", () => {
+    const operacao = compra([item("refrigerante", 500, "3,00")], {
+      condicao: aVistaNoBanco,
+      semTributos: true,
+    });
+    const previsao = preverLancamentos(hamburgueria(), operacao, dia(2));
+    expect(executar(hamburgueria(), operacao, dia(2)).linhas).toEqual([
+      ["Estoque de Mercadorias", "D", "1.500,00"],
+      ["Bancos Conta Movimento", "C", "1.500,00"],
+    ]);
+    expect(previsao.valores).toMatchObject({ totalNota: 150_000, icms: 0, icmsDestacado: 0 });
+    expect(previsao.valores.custoEstoque).toBe(150_000);
+    expect(previsao.lancamentos[0]?.regras[0]).toBe("R-DID-01");
+    expect(NOTAS_DIDATICAS["R-DID-01"]).toMatch(/sem impostos destacados/);
+    // Nota sem tributos não tem IPI.
+    expect(() =>
+      preverLancamentos(hamburgueria(), { ...operacao, ipiAliquota: 400 }, dia(2)),
+    ).toThrow(ErroDeOperacao);
+  });
+
+  it("R-DID-01: na fase sem tributos, a venda reconhece só a receita e o custo", () => {
+    const abastecida = executar(
+      hamburgueria(),
+      compra(
+        [
+          item("pao", 100, "1,00"),
+          item("carne", 100, "4,00"),
+          item("queijo", 100, "1,00"),
+          item("alface", 100, "0,50"),
+        ],
+        { semTributos: true },
+      ),
+      dia(2),
+    ).estado;
+    const operacao = venda([item("hamburguer", 10, "20,00")], { semTributos: true });
+    expect(executar(abastecida, operacao, dia(3)).linhas).toEqual([
+      ["Caixa", "D", "200,00"],
+      ["Receita Bruta de Vendas", "C", "200,00"],
+      ["Custo dos Produtos Vendidos (CPV)", "D", "65,00"],
+      ["Estoque de Insumos", "C", "65,00"],
+    ]);
+    expect(() => preverLancamentos(abastecida, { ...operacao, ipiAliquota: 500 }, dia(3))).toThrow(
+      ErroDeOperacao,
+    );
+  });
+
+  it("R-ICMS-07: no material de uso e consumo, o IPI integra a base do ICMS", () => {
+    // Mesma nota (R$ 500,00 de produtos e IPI de 5%), finalidades diferentes.
+    const paraUsar = compra([item("material-de-limpeza", 20, "25,00")], { ipiAliquota: 500 });
+    const paraRevender = compra([item("refrigerante", 100, "5,00")], { ipiAliquota: 500 });
+    const uso = preverLancamentos(hamburgueria(), paraUsar, dia(2));
+    const revenda = preverLancamentos(hamburgueria(), paraRevender, dia(2));
+    // Uso e consumo: base = produtos + IPI; nada é recuperável; tudo vai ao custo.
+    expect(uso.valores).toMatchObject({
+      produtos: 50_000,
+      ipi: 2_500,
+      totalNota: 52_500,
+      baseIcms: 52_500,
+      icmsDestacado: 9_450,
+      icms: 0,
+      ipiRecuperado: 0,
+      custoEstoque: 52_500,
+    });
+    // As regras que distinguem a compra vêm primeiro: são as que o jogador vê.
+    expect(uso.lancamentos[0]?.regras.slice(0, 2)).toEqual(["R-ICMS-07", "R-MCO-01"]);
+    // Revenda: o IPI fica fora da base (R-ICMS-03) e só o ICMS é recuperável.
+    expect(revenda.valores).toMatchObject({
+      produtos: 50_000,
+      ipi: 2_500,
+      totalNota: 52_500,
+      baseIcms: 50_000,
+      icmsDestacado: 9_000,
+      icms: 9_000,
+      custoEstoque: 43_500,
+    });
+    expect(revenda.lancamentos[0]?.regras).not.toContain("R-ICMS-07");
+  });
+
+  it("R-ICMS-08: há crédito de ICMS na entrada para revenda ou como insumo, e não no uso e consumo", () => {
+    const credito = (produto: string) =>
+      preverLancamentos(hamburgueria(), compra([item(produto, 100, "1,00")]), dia(2));
+    expect(credito("refrigerante").valores.icms).toBe(1_800);
+    expect(credito("pao").valores.icms).toBe(1_800);
+    expect(credito("pao").lancamentos[0]?.regras).toContain("R-ICMS-08");
+    const consumo = credito("material-de-limpeza");
+    expect(consumo.valores.icms).toBe(0);
+    expect(consumo.valores.icmsDestacado).toBe(1_800);
+    expect(consumo.lancamentos[0]?.regras).not.toContain("R-ICMS-08");
+  });
+});

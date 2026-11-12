@@ -1,20 +1,20 @@
 {
   "id": "m006-salarios",
   "titulo": "A folha do mês",
-  "capitulo": 4,
-  "nivel": 4,
+  "capitulo": 3,
+  "nivel": 2,
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
-  "requisitos": ["m009-devolver-consignado"],
+  "requisitos": ["m005-recebimento"],
   "aulas": ["regimes-contabeis"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Fim de mês chegando, chefe!"
+      "texto": "Chefe, o salário da equipe é pago no dia 5 do mês que vem."
     },
     {
       "fala": "npc",
-      "texto": "O salário da equipe é pago no dia 5 do mês que vem. Mas o trabalho foi deste mês."
+      "texto": "Mas o trabalho foi feito neste mês. Como isso fica nas contas?"
     }
   ],
   "proposta": {

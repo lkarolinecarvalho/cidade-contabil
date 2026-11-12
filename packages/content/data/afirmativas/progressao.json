@@ -1,0 +1,132 @@
+[
+  {
+    "id": "af-compra-a-vista-01",
+    "conceitoId": "compra-a-vista",
+    "nivelMin": 2,
+    "enunciado": "Na compra de mercadorias à vista, o Estoque aumenta e as disponibilidades diminuem no mesmo valor, sem alterar o total do Ativo.",
+    "gabarito": "C",
+    "explicacao": "É uma troca de ativos: sai dinheiro, entra mercadoria. O Passivo e o Patrimônio Líquido não mudam.",
+    "regras": ["R-COM-02", "R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-compra-a-vista-02",
+    "conceitoId": "compra-a-vista",
+    "nivelMin": 2,
+    "enunciado": "A compra de mercadorias à vista é uma despesa do mês em que ocorre.",
+    "gabarito": "E",
+    "explicacao": "Compra de mercadoria não é despesa. O custo vai ao resultado quando a mercadoria é vendida.",
+    "regras": ["R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-compra-a-vista-03",
+    "conceitoId": "compra-a-vista",
+    "nivelMin": 2,
+    "enunciado": "Na compra de mercadorias à vista, paga pelo banco, credita-se a conta Fornecedores.",
+    "gabarito": "E",
+    "explicacao": "À vista não nasce dívida: o crédito é em Bancos Conta Movimento. Fornecedores é usada na compra a prazo.",
+    "regras": ["R-COM-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-tributo-recuperavel-01",
+    "conceitoId": "tributo-recuperavel",
+    "nivelMin": 3,
+    "enunciado": "Os tributos não recuperáveis pagos na aquisição integram o custo do estoque; os recuperáveis, não.",
+    "gabarito": "C",
+    "explicacao": "Custo de aquisição = valor pago menos os tributos recuperáveis, que ficam em contas próprias do Ativo.",
+    "regras": ["R-COM-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-tributo-recuperavel-02",
+    "conceitoId": "tributo-recuperavel",
+    "nivelMin": 3,
+    "enunciado": "O ICMS recuperável deve ser somado ao custo das mercadorias, pois foi pago ao fornecedor.",
+    "gabarito": "E",
+    "explicacao": "O ICMS recuperável é registrado em ICMS a Recuperar e fica fora do custo do estoque.",
+    "regras": ["R-COM-01", "R-ICMS-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-tributo-recuperavel-03",
+    "conceitoId": "tributo-recuperavel",
+    "nivelMin": 3,
+    "enunciado": "No regime cumulativo, o PIS e a COFINS devidos sobre as vendas são compensados com créditos das compras.",
+    "gabarito": "E",
+    "explicacao": "No regime cumulativo não há crédito nas compras: o PIS e a COFINS incidem sobre a receita, sem compensação.",
+    "regras": ["R-PC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-credito-de-icms-01",
+    "conceitoId": "credito-de-icms",
+    "nivelMin": 3,
+    "enunciado": "O contribuinte do ICMS no regime normal de apuração tem direito ao crédito do imposto destacado na compra de insumos de produtos cuja saída é tributada.",
+    "gabarito": "C",
+    "explicacao": "Estão presentes os requisitos: contribuinte no regime normal, insumo de saída tributada e imposto destacado em documento fiscal.",
+    "regras": ["R-ICMS-08"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-credito-de-icms-02",
+    "conceitoId": "credito-de-icms",
+    "nivelMin": 3,
+    "enunciado": "A compra de material de uso e consumo dá direito a crédito de ICMS, desde que o imposto esteja destacado na nota fiscal.",
+    "gabarito": "E",
+    "explicacao": "O destaque não basta: material de uso e consumo do próprio estabelecimento não dá direito a crédito.",
+    "regras": ["R-ICMS-08", "R-MCO-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-credito-de-icms-03",
+    "conceitoId": "credito-de-icms",
+    "nivelMin": 3,
+    "enunciado": "O crédito de ICMS independe da finalidade da mercadoria comprada: basta o imposto estar destacado no documento fiscal.",
+    "gabarito": "E",
+    "explicacao": "A finalidade importa: há crédito na entrada para revenda ou como insumo de produto com saída tributada.",
+    "regras": ["R-ICMS-08"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-credito-de-icms-04",
+    "conceitoId": "credito-de-icms",
+    "nivelMin": 3,
+    "enunciado": "Na compra de insumos por empresa contribuinte do ICMS, o imposto destacado na nota integra o custo do estoque, pois só há crédito na compra de mercadorias para revenda.",
+    "gabarito": "E",
+    "explicacao": "Os insumos também dão crédito: o ICMS vai para ICMS a Recuperar e fica fora do custo.",
+    "regras": ["R-INS-02", "R-ICMS-08"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-base-do-icms-01",
+    "conceitoId": "ipi-na-base-do-icms",
+    "nivelMin": 3,
+    "enunciado": "O IPI não integra a base de cálculo do ICMS quando a operação é realizada entre contribuintes, com produto destinado à industrialização ou à comercialização, e configura fato gerador dos dois impostos.",
+    "gabarito": "C",
+    "explicacao": "É a regra da Constituição (art. 155, §2º, XI). Faltando uma das condições, o IPI integra a base.",
+    "regras": ["R-ICMS-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-base-do-icms-02",
+    "conceitoId": "ipi-na-base-do-icms",
+    "nivelMin": 3,
+    "enunciado": "Na venda de produto industrializado a comprador que vai usá-lo ou consumi-lo, o IPI fica fora da base de cálculo do ICMS.",
+    "gabarito": "E",
+    "explicacao": "Se o produto não se destina à industrialização nem à comercialização, o IPI integra a base do ICMS.",
+    "regras": ["R-ICMS-07"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-base-do-icms-03",
+    "conceitoId": "ipi-na-base-do-icms",
+    "nivelMin": 3,
+    "enunciado": "Numa compra de material de uso e consumo com produtos de R$ 500,00 e IPI de R$ 25,00, a base de cálculo do ICMS é de R$ 525,00.",
+    "gabarito": "C",
+    "explicacao": "No uso e consumo, a base do ICMS é o valor dos produtos mais o IPI: 500,00 + 25,00.",
+    "regras": ["R-ICMS-07"],
+    "momentos": ["pos_operacao", "revisao"]
+  }
+]

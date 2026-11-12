@@ -1,11 +1,12 @@
 {
   "id": "m008-devolucao-compra",
   "titulo": "Carne fora do padrão",
-  "capitulo": 3,
+  "capitulo": 5,
   "nivel": 3,
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
-  "requisitos": ["m005-venda-avista"],
+  "requisitos": ["m011-venda-com-tributos"],
+  "aulas": ["devolucoes-e-abatimentos"],
   "dialogo": [
     {
       "fala": "npc",
@@ -15,15 +16,16 @@
   "proposta": {
     "titulo": "Devolução ao fornecedor",
     "linhas": [
-      "100 carnes da nota c1 voltam para o João",
+      "100 carnes da nota c2 voltam para o João",
       "Valor na nota: R$ 400,00",
+      "ICMS dessa parte: R$ 72,00",
       "A dívida com o fornecedor diminui"
     ]
   },
   "operacoes": [
     {
       "tipo": "devolucao_compra",
-      "nota": "c1",
+      "nota": "c2",
       "itens": [
         {
           "produto": "carne",

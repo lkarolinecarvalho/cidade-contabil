@@ -1,7 +1,7 @@
 {
   "id": "m008-abatimento-compra",
   "titulo": "Pão amassado",
-  "capitulo": 3,
+  "capitulo": 5,
   "nivel": 3,
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
@@ -17,15 +17,15 @@
     }
   ],
   "proposta": {
-    "titulo": "Abatimento na nota c1",
-    "linhas": ["Abatimento de R$ 100,00 sobre o pão", "Nenhuma unidade é devolvida"]
+    "titulo": "Abatimento na nota c2",
+    "linhas": ["Abatimento de R$ 50,00 sobre o pão", "Nenhuma unidade é devolvida"]
   },
   "operacoes": [
     {
       "tipo": "abatimento_compra",
-      "nota": "c1",
+      "nota": "c2",
       "produto": "pao",
-      "valorCentavos": 10000
+      "valorCentavos": 5000
     }
   ],
   "ajudaLancamento": "auto",
