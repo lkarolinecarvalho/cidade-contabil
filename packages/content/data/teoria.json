@@ -1,13 +1,37 @@
 [
   {
-    "id": "o-patrimonio",
-    "titulo": "O que a empresa tem e o que ela deve",
-    "resumo": "Começando do zero: as três partes do patrimônio.",
+    "id": "o-que-e-contabilidade",
+    "titulo": "O que é Contabilidade?",
+    "resumo": "Começando do zero: o que ela estuda e para que serve.",
     "pontos": [
-      "Toda empresa tem coisas: dinheiro, mercadoria, a chapa, o que os clientes ainda vão pagar. A contabilidade chama tudo isso de Ativo.",
-      "Toda empresa também deve: ao fornecedor, aos funcionários, ao governo. Essas dívidas são o Passivo.",
-      "Tire as dívidas do que a empresa tem. O que sobra é dos donos, e se chama Patrimônio Líquido.",
-      "Por isso a conta sempre fecha: o que a empresa tem (Ativo) é igual ao que deve (Passivo) mais o que é dos donos (Patrimônio Líquido)."
+      "Contabilidade é a ciência que estuda o patrimônio: tudo o que uma empresa tem e tudo o que ela deve.",
+      "É uma ciência social aplicada. Social, porque estuda o que as pessoas e as organizações fazem na sociedade: comprar, vender, contratar, pagar.",
+      "Ela trabalha com números, cálculos e valores, mas não é uma ciência exata. Os números são a ferramenta.",
+      "Para que serve? Para registrar, organizar e informar como está a situação patrimonial e financeira da empresa."
+    ],
+    "exemplo": "Na Chapa da Praça, o patrimônio vai ser o dinheiro, a chapa, o estoque de pão e de carne e também as dívidas. A Contabilidade acompanha tudo isso.",
+    "perguntas": [
+      {
+        "enunciado": "Por trabalhar com números e cálculos, a Contabilidade é uma ciência exata.",
+        "gabarito": "E",
+        "explicacao": "Ela usa números, mas é uma ciência social aplicada: estuda o patrimônio, que muda pelas atividades das pessoas e das organizações."
+      },
+      {
+        "enunciado": "O que a Contabilidade estuda é o patrimônio.",
+        "gabarito": "C",
+        "explicacao": "O patrimônio é o objeto da Contabilidade: é ele que ela registra, organiza e acompanha."
+      }
+    ]
+  },
+  {
+    "id": "o-patrimonio",
+    "titulo": "O que é patrimônio?",
+    "resumo": "As três partes do patrimônio: Ativo, Passivo e Patrimônio Líquido.",
+    "pontos": [
+      "Ativo são os bens e os direitos: o dinheiro no caixa, o estoque, a chapa e o que os clientes ainda vão pagar.",
+      "Passivo são as obrigações: as dívidas com fornecedores, os salários a pagar, os impostos a recolher.",
+      "Patrimônio Líquido é a parte dos sócios: o que sobra do Ativo depois de tirar o Passivo.",
+      "Por isso a conta sempre fecha: Ativo = Passivo + Patrimônio Líquido."
     ],
     "exemplo": "Se a casa tem R$ 100,00 no banco e deve R$ 30,00 ao fornecedor, os R$ 70,00 que sobram são dos sócios: 100 = 30 + 70.",
     "perguntas": [
@@ -21,7 +45,144 @@
         "gabarito": "E",
         "explicacao": "Dívida é obrigação: fica no Passivo. O Ativo é o que a empresa tem, não o que ela deve."
       }
+    ],
+    "quadro": {
+      "esquerda": [
+        {
+          "titulo": "Ativo",
+          "legenda": "o que a empresa tem",
+          "itens": [
+            "Dinheiro no caixa e no banco",
+            "Estoque de pão, carne e queijo",
+            "A chapa e os móveis",
+            "O que os clientes vão pagar"
+          ]
+        }
+      ],
+      "direita": [
+        {
+          "titulo": "Passivo",
+          "legenda": "o que ela deve",
+          "itens": ["Fornecedores", "Salários a pagar", "Impostos a recolher"]
+        },
+        {
+          "titulo": "Patrimônio Líquido",
+          "legenda": "a parte dos sócios",
+          "itens": ["O capital que os sócios colocaram", "Os lucros"]
+        }
+      ]
+    }
+  },
+  {
+    "id": "por-que-registrar",
+    "titulo": "Por que registrar tudo?",
+    "resumo": "Para que serve anotar e organizar cada operação.",
+    "pontos": [
+      "Comprar, vender, contratar e pagar contas não basta. Cada operação precisa ser registrada e organizada.",
+      "Com os registros, a empresa controla o que possui, quanto deve e quanto tem a receber.",
+      "Ela também acompanha as receitas e as despesas, e descobre se teve lucro ou prejuízo.",
+      "É com eles que se elaboram as demonstrações contábeis, se presta contas aos sócios e se cumprem as obrigações legais e tributárias."
+    ],
+    "exemplo": "Sem registro, ninguém saberia dizer quanto a Chapa da Praça deve ao fornecedor de pão, nem se o mês terminou com lucro. E o fiscal não teria o que conferir.",
+    "perguntas": [
+      {
+        "enunciado": "Os registros contábeis permitem saber quanto a empresa deve e quanto tem a receber.",
+        "gabarito": "C",
+        "explicacao": "Esse é um dos motivos de registrar: controlar o que a empresa possui, o que deve e o que tem a receber."
+      },
+      {
+        "enunciado": "Registrar as operações da empresa serve apenas para pagar os impostos.",
+        "gabarito": "E",
+        "explicacao": "Os impostos são só um dos motivos. O registro também serve para controlar o patrimônio, apurar o lucro e prestar contas aos sócios."
+      }
     ]
+  },
+  {
+    "id": "tecnicas-contabeis",
+    "titulo": "As técnicas contábeis",
+    "resumo": "Os quatro procedimentos com que a Contabilidade trabalha.",
+    "pontos": [
+      "Escrituração: registrar cada fato nos livros contábeis. Exemplo: lançar a compra do pão.",
+      "Demonstrações contábeis: relatórios que resumem os registros. Exemplo: o Balanço Patrimonial do fim do mês.",
+      "Auditoria: examinar os registros e as demonstrações, para confirmar se são confiáveis. Exemplo: conferir se as notas batem com o que foi lançado.",
+      "Análise das demonstrações: interpretar os números. Exemplo: calcular quanto das vendas virou lucro."
+    ],
+    "exemplo": "Na Chapa da Praça, você faz a escrituração a cada operação e vê as demonstrações no fim do mês. Tudo fica guardado aqui no Escritório.",
+    "perguntas": [
+      {
+        "enunciado": "A escrituração, as demonstrações contábeis, a auditoria e a análise das demonstrações são técnicas contábeis.",
+        "gabarito": "C",
+        "explicacao": "São as quatro técnicas clássicas: registrar, demonstrar, conferir e interpretar."
+      },
+      {
+        "enunciado": "A auditoria é a técnica que consiste em registrar os fatos contábeis nos livros da entidade.",
+        "gabarito": "E",
+        "explicacao": "Registrar os fatos é escrituração. A auditoria examina se os registros e as demonstrações são confiáveis."
+      }
+    ]
+  },
+  {
+    "id": "para-decidir",
+    "titulo": "Controlar não basta: é preciso decidir",
+    "resumo": "A informação contábil existe para ajudar nas decisões.",
+    "pontos": [
+      "Registrar e controlar o patrimônio é fundamental. Mas a informação precisa servir para alguma coisa: ajudar a tomar decisões.",
+      "É o momento de contratar mais um funcionário? Temos dinheiro para comprar outro terreno ou abrir uma nova unidade?",
+      "Estamos mesmo tendo lucro com a venda dos hambúrgueres? Vale a pena fazer um novo investimento?",
+      "E o próprio controle se confere: o estoque registrado no balanço é o que realmente temos?"
+    ],
+    "exemplo": "Antes de comprar um segundo freezer, você vai olhar o Balanço e a DRE da Chapa da Praça. É para responder a perguntas assim que eles existem.",
+    "perguntas": [
+      {
+        "enunciado": "As informações da Contabilidade servem para apoiar a tomada de decisões sobre a empresa.",
+        "gabarito": "C",
+        "explicacao": "Registrar e controlar é o meio. O fim é dar informação útil para quem decide."
+      },
+      {
+        "enunciado": "Depois de registrados, os dados contábeis deixam de ter utilidade para quem administra a empresa.",
+        "gabarito": "E",
+        "explicacao": "É o contrário: é com esses dados que o administrador decide se contrata, se investe, se abre outra unidade."
+      }
+    ]
+  },
+  {
+    "id": "usuarios-da-informacao",
+    "titulo": "Quem usa a informação contábil?",
+    "resumo": "Os usuários de dentro e de fora da empresa.",
+    "pontos": [
+      "Quem usa as informações da Contabilidade é chamado de usuário. Há usuários de dentro e de fora da empresa.",
+      "Usuários internos: os administradores e gestores, que tomam as decisões do negócio.",
+      "Usuários externos: investidores, bancos, fornecedores, governo e outros interessados na situação da empresa."
+    ],
+    "exemplo": "Você, que administra a casa, é usuário interno. A Helena, do banco, quando analisa um pedido de crédito, e o Sr. Osvaldo, que investiu sem administrar, são usuários externos.",
+    "perguntas": [
+      {
+        "enunciado": "O banco que analisa as demonstrações de uma empresa para conceder crédito é um usuário externo da informação contábil.",
+        "gabarito": "C",
+        "explicacao": "O banco não participa da gestão: depende dos relatórios divulgados pela entidade."
+      },
+      {
+        "enunciado": "O administrador que decide as compras da empresa é um usuário externo da informação contábil.",
+        "gabarito": "E",
+        "explicacao": "Quem administra o negócio é usuário interno. Externo é quem está de fora, como o banco e o governo."
+      }
+    ],
+    "quadro": {
+      "esquerda": [
+        {
+          "titulo": "Internos",
+          "legenda": "de dentro",
+          "itens": ["Você, que administra a casa"]
+        }
+      ],
+      "direita": [
+        {
+          "titulo": "Externos",
+          "legenda": "de fora",
+          "itens": ["Sr. Osvaldo, que investiu", "O banco", "Os fornecedores", "O governo"]
+        }
+      ]
+    }
   },
   {
     "id": "contas-debito-e-credito",
@@ -124,7 +285,8 @@
     "pontos": [
       "O objeto da Contabilidade é o patrimônio: o conjunto de bens, direitos e obrigações de uma entidade.",
       "O objetivo é fornecer informação útil para quem toma decisões sobre a entidade.",
-      "O campo de aplicação são as entidades: pessoas físicas ou jurídicas, com ou sem fins lucrativos."
+      "O campo de aplicação são as entidades: pessoas físicas ou jurídicas, com ou sem fins lucrativos.",
+      "Pela Estrutura Conceitual (CPC 00), os relatórios de propósito geral são dirigidos principalmente a investidores e credores, existentes e potenciais."
     ],
     "exemplo": "Na Chapa da Praça, o patrimônio é a chapa, o estoque, o dinheiro no banco e as dívidas com o fornecedor. A Contabilidade acompanha tudo isso para você decidir, por exemplo, se dá para comprar outro freezer.",
     "perguntas": [
@@ -137,6 +299,11 @@
         "enunciado": "A Contabilidade também se aplica a entidades sem fins lucrativos, como associações.",
         "gabarito": "C",
         "explicacao": "Toda entidade que tem patrimônio pode ser objeto da Contabilidade, tenha ou não finalidade de lucro."
+      },
+      {
+        "enunciado": "Os relatórios financeiros de propósito geral são elaborados principalmente para atender à administração da entidade.",
+        "gabarito": "E",
+        "explicacao": "Pelo CPC 00, eles se dirigem principalmente a investidores e credores. A administração consegue internamente as informações de que precisa."
       }
     ]
   },
@@ -160,53 +327,6 @@
         "enunciado": "A Contabilidade é classificada como ciência social aplicada.",
         "gabarito": "C",
         "explicacao": "Social, porque o patrimônio é afetado por decisões humanas; aplicada, porque serve a fins práticos."
-      }
-    ]
-  },
-  {
-    "id": "usuarios-da-informacao",
-    "titulo": "Usuários da informação contábil",
-    "resumo": "Quem usa a informação contábil, de dentro e de fora da entidade.",
-    "pontos": [
-      "Usuários internos: quem administra a entidade, como gerentes e administradores.",
-      "Usuários externos: quem está de fora e depende dos relatórios, como investidores, bancos, fornecedores e governo.",
-      "Pela Estrutura Conceitual (CPC 00), os relatórios de propósito geral são dirigidos principalmente a investidores e credores, existentes e potenciais."
-    ],
-    "exemplo": "Você, que administra a casa, é usuário interno. A Helena, do banco, quando analisa um pedido de crédito, e o Sr. Osvaldo, que investiu sem administrar, são usuários externos.",
-    "perguntas": [
-      {
-        "enunciado": "O banco que analisa as demonstrações de uma empresa para conceder crédito é um usuário externo da informação contábil.",
-        "gabarito": "C",
-        "explicacao": "O banco não participa da gestão: depende dos relatórios divulgados pela entidade."
-      },
-      {
-        "enunciado": "Os relatórios financeiros de propósito geral são elaborados principalmente para atender à administração da entidade.",
-        "gabarito": "E",
-        "explicacao": "Pelo CPC 00, eles se dirigem principalmente a investidores e credores. A administração consegue internamente as informações de que precisa."
-      }
-    ]
-  },
-  {
-    "id": "tecnicas-contabeis",
-    "titulo": "Técnicas contábeis",
-    "resumo": "As quatro técnicas com que a Contabilidade trabalha.",
-    "pontos": [
-      "Escrituração: registro dos fatos nos livros, como o Diário e o Razão.",
-      "Demonstrações contábeis: relatórios que resumem os registros, como o Balanço e a DRE.",
-      "Auditoria: exame dos registros e das demonstrações, para confirmar se são confiáveis.",
-      "Análise das demonstrações: interpretação dos números, com índices e comparações."
-    ],
-    "exemplo": "Lançar a compra do pão é escrituração. O Balanço do fim do mês é demonstração. Calcular quanto das vendas virou lucro é análise.",
-    "perguntas": [
-      {
-        "enunciado": "A escrituração, as demonstrações contábeis, a auditoria e a análise das demonstrações são técnicas contábeis.",
-        "gabarito": "C",
-        "explicacao": "São as quatro técnicas clássicas: registrar, demonstrar, conferir e interpretar."
-      },
-      {
-        "enunciado": "A auditoria é a técnica que consiste em registrar os fatos contábeis nos livros da entidade.",
-        "gabarito": "E",
-        "explicacao": "Registrar os fatos é escrituração. A auditoria examina se os registros e as demonstrações são confiáveis."
       }
     ]
   },

@@ -1,0 +1,30 @@
+{
+  "id": "m000-apresentacao",
+  "titulo": "Começando do zero",
+  "capitulo": 1,
+  "nivel": 1,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": [],
+  "aulas": ["o-que-e-contabilidade", "o-patrimonio", "por-que-registrar"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Olá! Eu sou a Marta e cuido da contabilidade da nossa empresa."
+    },
+    {
+      "fala": "npc",
+      "texto": "Vou te ajudar a entender como funciona essa parte do negócio."
+    },
+    {
+      "fala": "npc",
+      "texto": "E não se preocupe: vamos começar do zero!"
+    }
+  ],
+  "operacoes": [],
+  "ajudaLancamento": "auto",
+  "conceitos": [],
+  "recompensa": {
+    "pontos": 30
+  }
+}

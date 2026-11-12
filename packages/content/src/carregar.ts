@@ -223,6 +223,17 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
     if (!idsDeNpcs.has(missao.npc)) {
       problemas.push(`missão ${missao.id}: npc inexistente "${missao.npc}"`);
     }
+    if (missao.operacoes.length === 0) {
+      // Missão de conversa: só teoria, sem fato a registrar.
+      if (!missao.aulas) problemas.push(`missão ${missao.id}: conversa sem aulas`);
+      if (missao.proposta) problemas.push(`missão ${missao.id}: conversa não tem proposta`);
+      if (missao.conceitos.length > 0) {
+        problemas.push(`missão ${missao.id}: conversa não cobra conceitos em afirmativas`);
+      }
+    } else {
+      if (!missao.proposta) problemas.push(`missão ${missao.id}: falta a proposta`);
+      if (missao.conceitos.length === 0) problemas.push(`missão ${missao.id}: falta um conceito`);
+    }
     for (const aula of missao.aulas ?? []) {
       if (!teoria.some((tema) => tema.id === aula)) {
         problemas.push(`missão ${missao.id}: aula inexistente "${aula}"`);

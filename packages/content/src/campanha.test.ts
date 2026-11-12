@@ -30,30 +30,37 @@ describe("campanha da hamburgueria jogada pelo motor", () => {
   let carteiraDoAvatar = 10_000_000; // R$ 100.000,00, fora do razão (ADR-0004)
   let participacaoDoAvatar = 0;
 
-  missoes.forEach((missao, indice) => {
-    // As missões de fechamento são do último dia do mês.
-    const fechamento = missao.operacoes.some(
-      (o) => o.tipo === "depreciacao" || o.tipo === "apuracao_icms",
-    );
-    for (const operacao of missao.operacoes) {
-      if (operacao.tipo === "subscricao") {
-        participacaoDoAvatar = operacao.participacoes[ACIONISTA_AVATAR] ?? 0;
-      }
-      if (operacao.tipo === "integralizacao") {
-        carteiraDoAvatar -= parteDoAcionista(operacao.valorCentavos, participacaoDoAvatar);
-      }
-      estado = aplicar(
-        estado,
-        paraOperacaoDoMotor(operacao, { mes }),
-        dia(fechamento ? 30 : indice + 1),
+  // As conversas com a contadora não têm operação e não ocupam um dia.
+  missoes
+    .filter((missao) => missao.operacoes.length > 0)
+    .forEach((missao, indice) => {
+      // As missões de fechamento são do último dia do mês.
+      const fechamento = missao.operacoes.some(
+        (o) => o.tipo === "depreciacao" || o.tipo === "apuracao_icms",
       );
-    }
-  });
+      for (const operacao of missao.operacoes) {
+        if (operacao.tipo === "subscricao") {
+          participacaoDoAvatar = operacao.participacoes[ACIONISTA_AVATAR] ?? 0;
+        }
+        if (operacao.tipo === "integralizacao") {
+          carteiraDoAvatar -= parteDoAcionista(operacao.valorCentavos, participacaoDoAvatar);
+        }
+        estado = aplicar(
+          estado,
+          paraOperacaoDoMotor(operacao, { mes }),
+          dia(fechamento ? 30 : indice + 1),
+        );
+      }
+    });
 
   const fimDoMes = dia(30);
 
   it("todas as operações das missões são aceitas pelo motor, na ordem da campanha", () => {
-    expect(missoes).toHaveLength(28);
+    expect(missoes.filter((m) => m.operacoes.length > 0)).toHaveLength(28);
+    expect(missoes.filter((m) => m.operacoes.length === 0).map((m) => m.id)).toEqual([
+      "m000-apresentacao",
+      "m000-para-que-serve",
+    ]);
     expect(missoes.reduce((soma, m) => soma + m.operacoes.length, 0)).toBe(30);
     expect(estado.lancamentos.length).toBeGreaterThan(40);
   });

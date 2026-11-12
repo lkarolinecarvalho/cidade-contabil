@@ -44,6 +44,13 @@ export const conceitoSchema = z.strictObject({
   definicao: texto,
 });
 
+/** Bloco de um quadro: um grupo (ex.: "Ativo") e o que há nele na empresa do jogo. */
+const blocoDoQuadro = z.strictObject({
+  titulo: texto,
+  legenda: texto,
+  itens: z.array(texto).min(1).max(4),
+});
+
 /** Tema de teoria do Escritório: pontos curtos, um exemplo da empresa e perguntas. */
 export const temaSchema = z.strictObject({
   id,
@@ -51,6 +58,13 @@ export const temaSchema = z.strictObject({
   resumo: texto,
   pontos: z.array(texto).min(2).max(4),
   exemplo: texto,
+  /** Quadro de dois lados que acompanha o exemplo, para o jogador ver os grupos na empresa. */
+  quadro: z
+    .strictObject({
+      esquerda: z.array(blocoDoQuadro).min(1).max(2),
+      direita: z.array(blocoDoQuadro).min(1).max(2),
+    })
+    .optional(),
   perguntas: z
     .array(z.strictObject({ enunciado: texto, gabarito: z.enum(["C", "E"]), explicacao: texto }))
     .min(1),
@@ -254,7 +268,8 @@ export const missaoSchema = z.strictObject({
   requisitos: z.array(id),
   /**
    * Temas de teoria apresentados antes da conversa, na primeira vez: a explicação de
-   * que o jogador vai precisar para esta missão.
+   * que o jogador vai precisar para esta missão. Numa missão sem operações (uma conversa
+   * com a contadora), os temas são a própria missão e vêm depois das falas.
    */
   aulas: z.array(id).min(1).optional(),
   /** Falas curtas, uma por vez. Os valores da operação ficam em `proposta`. */
@@ -262,11 +277,16 @@ export const missaoSchema = z.strictObject({
     .array(z.strictObject({ fala: z.enum(["npc", "jogador"]), texto }))
     .min(1)
     .max(3),
-  proposta,
-  /** Em ordem. Há operações que não geram lançamento (ex.: R-CSG-01). */
+  /** Obrigatória quando há operações. */
+  proposta: proposta.optional(),
+  /**
+   * Em ordem. Há operações que não geram lançamento (ex.: R-CSG-01). Vazio numa missão
+   * de conversa, que só apresenta teoria.
+   */
   operacoes: z.array(operacaoSchema),
   ajudaLancamento: z.enum(["auto", "pronto", "contas_sugeridas", "contas_e_valores", "livre"]),
-  conceitos: z.array(id).min(1),
+  /** Pelo menos um quando há operações. */
+  conceitos: z.array(id),
   recompensa: z.strictObject({ pontos: z.number().int().min(0) }),
 });
 

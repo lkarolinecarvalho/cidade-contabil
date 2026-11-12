@@ -108,7 +108,9 @@ describe("estado do jogo", () => {
   });
 
   it("a próxima missão e o nível acompanham o progresso", () => {
-    expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m001-constituicao");
+    // A campanha começa pelas conversas com a Marta; o primeiro lançamento vem depois.
+    expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m000-apresentacao");
+    expect(proximaMissao(jogarAte("m000-para-que-serve"), missoes)?.id).toBe("m001-constituicao");
     const noCapitulo2 = jogarAte("m003-equipamentos");
     expect(proximaMissao(noCapitulo2, missoes)?.id).toBe("m004-compra-avista");
     expect(nivelDoJogador(noCapitulo2, missoes)).toBe(2);
@@ -171,9 +173,25 @@ describe("andamento da missão", () => {
     expect(concluida.contabil).toEqual(jogarAte("m007-depreciacao").contabil);
   });
 
+  it("a conversa com a contadora não gasta ação nem mexe no razão, e vale pontos", () => {
+    const conversa = missao("m000-apresentacao");
+    expect(conversa.operacoes).toEqual([]);
+    const inicio = novoJogo();
+    const depois = concluirMissao(inicio, conversa);
+    expect(depois.contabil).toEqual(inicio.contabil);
+    expect(depois.acoesUsadasHoje).toBe(inicio.acoesUsadasHoje);
+    expect(depois.carteiraCentavos).toBe(inicio.carteiraCentavos);
+    expect(depois.pontos).toBe(conversa.recompensa.pontos);
+    expect(depois.missoesConcluidas).toEqual(["m000-apresentacao"]);
+    // Sem as conversas, o contrato social ainda não está disponível.
+    expect(() => executarProximaOperacao(inicio, missao("m001-constituicao"))).toThrow(
+      /anteriores/,
+    );
+  });
+
   it("respeita requisitos e não repete missão concluída", () => {
     const primeira = missao("m001-constituicao");
-    const estado = jogarMissaoInteira(novoJogo(), primeira);
+    const estado = jogarMissaoInteira(jogarAte("m000-para-que-serve"), primeira);
     expect(() => concluirMissao(estado, primeira)).toThrow(/já foi concluída/);
     expect(() => executarProximaOperacao(novoJogo(), missao("m002-compra-imovel"))).toThrow(
       /anteriores/,

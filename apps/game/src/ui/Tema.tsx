@@ -108,6 +108,27 @@ export function EstudoDoTema({ tema, sobretitulo, rotuloDoFim, aoConcluir, inici
     corpo = (
       <>
         <p className="tema-rotulo">Na Chapa da Praça</p>
+        {tema.quadro && (
+          <div className="tema-quadro">
+            {[tema.quadro.esquerda, tema.quadro.direita].map((lado, indice) => (
+              <div key={indice === 0 ? "esquerda" : "direita"}>
+                {lado.map((bloco) => (
+                  <section key={bloco.titulo}>
+                    <h4>
+                      {bloco.titulo}
+                      <small>{bloco.legenda}</small>
+                    </h4>
+                    <ul>
+                      {bloco.itens.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
         <p className="tema-ponto tema-exemplo">{tema.exemplo}</p>
       </>
     );

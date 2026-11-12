@@ -153,7 +153,8 @@ describe("títulos e vencimentos", () => {
 
 describe("dias e ações", () => {
   it("cada operação gasta uma ação; sem ações, só encerrando o dia", () => {
-    let estado = novoJogo();
+    // As conversas com a Marta não gastam ação.
+    let estado = jogarAte("m000-para-que-serve");
     expect(acoesRestantes(estado)).toBe(ACOES_POR_DIA);
     estado = executarProximaOperacao(estado, missao("m001-constituicao"));
     expect(acoesRestantes(estado)).toBe(ACOES_POR_DIA - 1);

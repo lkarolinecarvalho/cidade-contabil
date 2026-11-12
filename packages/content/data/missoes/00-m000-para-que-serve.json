@@ -1,0 +1,26 @@
+{
+  "id": "m000-para-que-serve",
+  "titulo": "Para que serve a Contabilidade",
+  "capitulo": 1,
+  "nivel": 1,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": ["m000-apresentacao"],
+  "aulas": ["tecnicas-contabeis", "para-decidir", "usuarios-da-informacao"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Que bom que você voltou! Você já sabe o que é o patrimônio e por que registramos tudo."
+    },
+    {
+      "fala": "npc",
+      "texto": "Agora vem a parte de que eu mais gosto: como a Contabilidade trabalha e a quem ela serve."
+    }
+  ],
+  "operacoes": [],
+  "ajudaLancamento": "auto",
+  "conceitos": [],
+  "recompensa": {
+    "pontos": 30
+  }
+}

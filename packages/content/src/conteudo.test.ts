@@ -64,7 +64,10 @@ describe("conteúdo do jogo", () => {
     for (const m of conteudo.missoes) {
       expect(m.dialogo.length, m.id).toBeLessThanOrEqual(3);
       for (const fala of m.dialogo) expect(fala.texto.length, m.id).toBeLessThanOrEqual(140);
-      expect(m.proposta.linhas.length, m.id).toBeGreaterThan(0);
+      if (m.operacoes.length > 0) {
+        expect(m.proposta?.linhas.length, m.id).toBeGreaterThan(0);
+        expect(m.conceitos.length, m.id).toBeGreaterThan(0);
+      }
     }
   });
 
@@ -109,9 +112,33 @@ describe("conteúdo do jogo", () => {
     }
   });
 
-  it("a primeira missão começa pelas aulas de base, e toda aula é um tema de teoria", () => {
-    expect(conteudo.missoes[0]?.aulas).toEqual(["o-patrimonio", "contas-debito-e-credito"]);
-    expect(conteudo.teoria[0]?.id).toBe("o-patrimonio");
+  it("a campanha começa por duas conversas com a Marta, sem operação nem lançamento", () => {
+    const [primeira, segunda, terceira] = conteudo.missoes;
+    expect(primeira?.id).toBe("m000-apresentacao");
+    expect(primeira?.dialogo[0]?.texto).toMatch(/^Olá! Eu sou a Marta/);
+    expect(primeira?.aulas).toEqual(["o-que-e-contabilidade", "o-patrimonio", "por-que-registrar"]);
+    expect(segunda?.aulas).toEqual([
+      "tecnicas-contabeis",
+      "para-decidir",
+      "usuarios-da-informacao",
+    ]);
+    for (const conversa of [primeira, segunda]) {
+      expect(conversa?.operacoes).toEqual([]);
+      expect(conversa?.estabelecimento).toBe("escritorio-contabil");
+      expect(conversa?.npc).toBe("marta-contadora");
+    }
+    // O primeiro lançamento só vem depois das duas conversas.
+    expect(terceira?.id).toBe("m001-constituicao");
+    expect(terceira?.requisitos).toEqual(["m000-para-que-serve"]);
+    // Os seis temas da apresentação abrem a lista de teoria, na ordem em que são dados.
+    expect(conteudo.teoria.slice(0, 6).map((t) => t.id)).toEqual([
+      ...(primeira?.aulas ?? []),
+      ...(segunda?.aulas ?? []),
+    ]);
+    expect(conteudo.teoria[1]?.quadro?.esquerda[0]?.titulo).toBe("Ativo");
+  });
+
+  it("toda aula é um tema de teoria, e nenhuma se repete", () => {
     const temas = new Set(conteudo.teoria.map((t) => t.id));
     const aulas = conteudo.missoes.flatMap((m) => m.aulas ?? []);
     expect(aulas.length).toBeGreaterThanOrEqual(5);
@@ -303,6 +330,17 @@ describe("conteúdo inválido é recusado", () => {
       }),
     );
     expect(problemas.join("\n")).toMatch(/aula inexistente "tema-fantasma"/);
+  });
+
+  it("conversa sem aulas, e missão com operação sem proposta", () => {
+    const problemas = problemasDe(
+      alterar((d) => {
+        delete missao(d, "m000-apresentacao").aulas;
+        delete missao(d, "m001-constituicao").proposta;
+      }),
+    ).join("\n");
+    expect(problemas).toMatch(/missão m000-apresentacao: conversa sem aulas/);
+    expect(problemas).toMatch(/missão m001-constituicao: falta a proposta/);
   });
 
   it("requisito inexistente e requisitos em ciclo", () => {

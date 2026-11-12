@@ -240,7 +240,8 @@ describe("painel de Missões e aviso do próximo destino", () => {
   it("acompanha o progresso: feitas, atual e em breve, com a conta por capítulo", () => {
     const estado = jogarAte("m004-compra-avista");
     const capitulos = campanhaPorCapitulo(estado.missoesConcluidas);
-    expect(capitulos[0]).toMatchObject({ concluidas: 6 });
+    // Duas conversas com a Marta e seis missões com operação.
+    expect(capitulos[0]).toMatchObject({ concluidas: 8 });
     expect(capitulos[1]?.concluidas).toBe(1);
     expect(capitulos[1]?.missoes.map((m) => m.situacao)).toEqual([
       "concluida",
@@ -254,6 +255,11 @@ describe("painel de Missões e aviso do próximo destino", () => {
 
   it("o aviso diz aonde ir, com a preposição certa", () => {
     const hoje = { ano: 1, mes: 1, dia: 3 };
+    // O primeiro destino do jogo é a Marta, no Escritório.
+    expect(proximoDestino(conteudo.missoes[0], hoje)).toEqual({
+      instrucao: "Vá ao Escritório Contábil",
+      missao: "Começando do zero",
+    });
     expect(proximoDestino(missao("m001-integralizacao"), hoje)).toEqual({
       instrucao: "Vá ao Banco",
       missao: "A primeira integralização",

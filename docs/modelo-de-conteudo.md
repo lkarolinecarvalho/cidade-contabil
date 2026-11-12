@@ -51,6 +51,15 @@ calculado pelo `ledger` a partir da operação (ADR-0005).
 }
 ```
 
+**Missão de conversa.** Com `"operacoes": []`, a missão é uma conversa com a contadora:
+primeiro as falas de `dialogo`, depois os temas de `aulas` (obrigatório), e nenhum
+lançamento. Nela não há `proposta` e `conceitos` fica vazio. Nas missões com operação,
+`aulas` é opcional e os temas aparecem antes da conversa, na primeira vez.
+
+Um tema de teoria pode ter um `quadro` de dois lados (`esquerda` e `direita`, com
+blocos de `titulo`, `legenda` e `itens`), mostrado junto do exemplo: é como o
+jogador vê, por exemplo, o Ativo de um lado e o Passivo e o PL do outro.
+
 Tipos de operação: `subscricao`, `integralizacao`, `deposito`, `compra_imobilizado`,
 `compra`, `venda`, `recebimento`, `pagamento`, `devolucao_compra`, `abatimento_compra`,
 `devolucao_venda`, `abatimento_venda`, `recebimento_consignacao`, `venda_consignada`,

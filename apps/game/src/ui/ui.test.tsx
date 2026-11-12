@@ -1,8 +1,10 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { conteudo } from "../state/store";
 import { Abertura, QUADROS } from "./Abertura";
 import { BottomSheet } from "./BottomSheet";
 import { Conversa, type Fala } from "./Conversa";
+import { FluxoDaMissao } from "./FluxoDaMissao";
 import { Hud } from "./Hud";
 import { EstudoDoTema } from "./Tema";
 
@@ -203,9 +205,42 @@ describe("EstudoDoTema", () => {
     expect(estudo(0)).toContain('aria-label="Passo 1 de 4"');
   });
 
+  it("o quadro aparece junto do exemplo, com os dois lados", () => {
+    const patrimonio = conteudo.teoria.find((t) => t.id === "o-patrimonio");
+    if (!patrimonio) throw new Error("tema ausente");
+    const noExemplo = renderToStaticMarkup(
+      <EstudoDoTema
+        tema={patrimonio}
+        rotuloDoFim="Fim"
+        aoConcluir={() => {}}
+        inicio={patrimonio.pontos.length}
+      />,
+    );
+    expect(noExemplo).toContain("tema-quadro");
+    expect(noExemplo).toContain("Ativo<small>o que a empresa tem</small>");
+    expect(noExemplo).toContain("Patrimônio Líquido<small>a parte dos sócios</small>");
+    const noPonto = renderToStaticMarkup(
+      <EstudoDoTema tema={patrimonio} rotuloDoFim="Fim" aoConcluir={() => {}} />,
+    );
+    expect(noPonto).not.toContain("tema-quadro");
+  });
+
   it("no fim, mostra o resultado e o botão que leva adiante", () => {
     const html = estudo(4);
     expect(html).toContain("Tema concluído!");
     expect(html).toContain("Ir para a missão");
+  });
+});
+
+describe("FluxoDaMissao numa conversa com a contadora", () => {
+  it("começa pela apresentação da Marta, sem proposta, efeito nem lançamento", () => {
+    const [conversa] = conteudo.missoes;
+    if (!conversa) throw new Error("campanha vazia");
+    const html = renderToStaticMarkup(<FluxoDaMissao missao={conversa} />);
+    expect(html).toContain("Começando do zero");
+    expect(html).toContain("Olá! Eu sou a Marta");
+    expect(html).not.toContain("Aceitar a proposta");
+    expect(html).not.toContain("Lançamento");
+    expect(html).not.toContain("Efeito");
   });
 });

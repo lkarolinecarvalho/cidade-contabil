@@ -11,12 +11,27 @@ congelado. A casa vende hambúrguer e refrigerante.
 
 | Cap. | Título | Onde | Operações | Conceitos principais | Nível |
 |---|---|---|---|---|---|
-| 1 | Abrindo as portas | Escritório, Banco, Imobiliária, Hamburgueria | Contrato social, duas integralizações, ponto comercial, mesas e balcão, chapa e freezer | Capital subscrito e a integralizar, entidade, imobilizado | 1 |
+| 1 | Abrindo as portas | Escritório, Banco, Imobiliária, Hamburgueria | Duas conversas com a Marta (sem lançamento); contrato social, duas integralizações, ponto comercial, mesas e balcão, chapa e freezer | Capital subscrito e a integralizar, entidade, imobilizado | 1 |
 | 2 | Primeira semana | Fornecedor, Hamburgueria | Refrigerante à vista com IPI; insumos a prazo (nota com quatro itens); inauguração | Custo de aquisição, ICMS, IPI no custo, insumos x mercadorias, receita, CMV e CPV | 2 |
 | 3 | Problemas de todo dia | Fornecedor, Banco | Devolução e abatimento de compra; compra com desconto na nota; pagamento antecipado; material de limpeza | Devolução, abatimento, desconto comercial e financeiro, material de consumo | 3 |
 | 4 | A casa cresce | Hamburgueria, Banco, Fornecedor | Encomenda a prazo com desconto; devolução e abatimento de venda; recebimento antecipado; consignação; salários; energia | Venda a prazo, deduções da receita, consignação, competência, despesas | 3–4 |
 | 5 | A fábrica | Fornecedor, Hamburgueria | Embalagens com IPI recuperável; produção; venda do congelado com IPI | Industrialização, IPI recuperável, IPI na venda, produtos acabados | 4 |
 | 6 | Fechando o mês | Escritório, Posto Fiscal | Depreciação; inventário do material de consumo; apuração do ICMS e do IPI | Depreciação, não cumulatividade, DRE, Balanço | 5 |
+
+## O começo: a Marta apresenta a Contabilidade
+
+O jogador não começa lançando. As duas primeiras missões são **conversas** com a Marta,
+no Escritório: ela se apresenta ("vamos começar do zero") e explica, um cartão por vez e
+com exemplos da própria casa, o que o iniciante precisa antes do primeiro fato:
+
+| Conversa | Explicações (temas de `teoria.json`) |
+|---|---|
+| Começando do zero | O que é Contabilidade (ciência social aplicada, objeto, finalidade); o que é patrimônio (Ativo, Passivo, PL e a equação, com quadro); por que registrar tudo |
+| Para que serve a Contabilidade | As técnicas contábeis; controlar não basta, é preciso decidir; quem usa a informação (usuários internos e externos) |
+
+Essas missões não têm operação: não gastam ação do dia, não mexem no razão e não entram
+no cenário dourado. Valem pontos, e os temas ficam para rever no Escritório, em Teoria.
+Quem já sabe pode pular as explicações.
 
 ## Consequências no mundo
 

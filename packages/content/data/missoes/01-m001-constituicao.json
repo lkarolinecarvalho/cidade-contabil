@@ -5,12 +5,12 @@
   "nivel": 1,
   "estabelecimento": "escritorio-contabil",
   "npc": "marta-contadora",
-  "requisitos": [],
-  "aulas": ["o-patrimonio", "contas-debito-e-credito"],
+  "requisitos": ["m000-para-que-serve"],
+  "aulas": ["contas-debito-e-credito"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Bem-vindo! Vamos abrir a Chapa da Praça. Você e o Sr. Osvaldo serão sócios numa sociedade limitada."
+      "texto": "Agora, mãos à obra: vamos abrir a Chapa da Praça. Você e o Sr. Osvaldo serão sócios numa sociedade limitada."
     },
     {
       "fala": "npc",

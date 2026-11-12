@@ -79,7 +79,12 @@ export function FluxoDaMissao({
       .filter((id) => jogoStore.getState().teoria[id] === undefined)
       .flatMap((id) => conteudo.teoria.filter((tema) => tema.id === id)),
   );
+  // Missão sem operação: uma conversa com a contadora. Primeiro as falas, depois as
+  // explicações, e nenhum lançamento.
+  const conversa = missao.operacoes.length === 0;
+  const [totalDeAulas] = useState(aulas.length);
   const [etapa, setEtapa] = useState<Etapa>(() => {
+    if (conversa) return "negociacao";
     if (feitas === 0) return aulas.length > 0 ? "aula" : "negociacao";
     return feitas < missao.operacoes.length ? "efeito" : "conclusao";
   });
@@ -148,6 +153,10 @@ export function FluxoDaMissao({
 
   const aposNegociacao = () => {
     setJaNegociou(true);
+    if (conversa) {
+      setEtapa(aulas.length > 0 ? "aula" : "conclusao");
+      return;
+    }
     // Fato sem lançamento: primeiro a decisão, depois as afirmativas (que dariam a resposta).
     irPara(temEfeito ? "efeito" : "lancamento");
   };
@@ -188,23 +197,40 @@ export function FluxoDaMissao({
         <>
           <p className="aula-chamada">
             <Retrato personagem="marta-contadora" nome="Marta" />
-            <span>
-              <strong>Antes de começar</strong>, uma explicação rápida da Marta
-              {aulas.length > 1 ? ` (faltam ${aulas.length}).` : "."}
-            </span>
+            {conversa ? (
+              <span>
+                <strong>A Marta explica</strong> · parte {totalDeAulas - aulas.length + 1} de{" "}
+                {totalDeAulas}
+              </span>
+            ) : (
+              <span>
+                <strong>Antes de começar</strong>, uma explicação rápida da Marta
+                {aulas.length > 1 ? ` (faltam ${aulas.length}).` : "."}
+              </span>
+            )}
           </p>
           <EstudoDoTema
             key={aulas[0].id}
             tema={aulas[0]}
-            rotuloDoFim={aulas.length > 1 ? "Próxima explicação ›" : "Ir para a missão ›"}
+            rotuloDoFim={
+              aulas.length > 1
+                ? "Próxima explicação ›"
+                : conversa
+                  ? "Encerrar a conversa ›"
+                  : "Ir para a missão ›"
+            }
             aoConcluir={() => {
               const restantes = aulas.slice(1);
               setAulas(restantes);
-              if (restantes.length === 0) setEtapa("negociacao");
+              if (restantes.length === 0) setEtapa(conversa ? "conclusao" : "negociacao");
             }}
           />
-          <button type="button" className="botao-secundario" onClick={() => setEtapa("negociacao")}>
-            Pular a explicação
+          <button
+            type="button"
+            className="botao-secundario"
+            onClick={() => setEtapa(conversa ? "conclusao" : "negociacao")}
+          >
+            {conversa ? "Já sei disso: pular as explicações" : "Pular a explicação"}
           </button>
         </>
       )}
@@ -218,11 +244,11 @@ export function FluxoDaMissao({
           acaoFinal={
             <>
               <IconeCerto />
-              {temEfeito ? "Aceitar a proposta" : "Responder"}
+              {conversa ? "Vamos lá!" : temEfeito ? "Aceitar a proposta" : "Responder"}
             </>
           }
           aoConcluir={aposNegociacao}
-          anexo={<CartaoDaProposta proposta={missao.proposta} />}
+          {...(missao.proposta ? { anexo: <CartaoDaProposta proposta={missao.proposta} /> } : {})}
         />
       )}
 
@@ -267,8 +293,12 @@ export function FluxoDaMissao({
       {etapa === "conclusao" && (
         <>
           <div className="resultado certo">
-            <strong>Missão cumprida!</strong>
-            <span>Os lançamentos já estão no razão da empresa.</span>
+            <strong>{conversa ? "Conversa concluída!" : "Missão cumprida!"}</strong>
+            <span>
+              {conversa
+                ? "Para rever essas explicações, volte ao Escritório e abra a Teoria."
+                : "Os lançamentos já estão no razão da empresa."}
+            </span>
           </div>
           {/* Fechamento do mês: a DRE fecha a missão. */}
           {missao.operacoes.some((o) => o.tipo === "apuracao_icms") && (
@@ -292,7 +322,7 @@ export function FluxoDaMissao({
             }}
           >
             <IconeCerto />
-            Concluir Missão
+            {conversa ? "Voltar ao mapa" : "Concluir Missão"}
           </button>
         </>
       )}
@@ -456,7 +486,7 @@ function EtapaDoLancamento({
     return (
       <section className="etapa">
         <h4>Faça o Lançamento</h4>
-        <CartaoDaProposta proposta={missao.proposta} />
+        {missao.proposta && <CartaoDaProposta proposta={missao.proposta} />}
         <p className="etapa-instrucao">Esse fato gera lançamento contábil?</p>
         <div className="julgar">
           <button type="button" className="neutro" onClick={() => conferir([])}>
@@ -477,7 +507,7 @@ function EtapaDoLancamento({
         Agora registre a operação. O total dos débitos tem de ser igual ao dos créditos, e os
         valores estão no cartão abaixo.
       </Dica>
-      <CartaoDaProposta proposta={missao.proposta} />
+      {missao.proposta && <CartaoDaProposta proposta={missao.proposta} />}
       <EditorDeLancamento
         ajuda={semLancamento ? "livre" : ajudaDaMissao(missao)}
         esperadas={esperadas}
