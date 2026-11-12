@@ -1,5 +1,5 @@
 import type { Enfeite } from "../arte/cenario";
-import type { Ponto } from "./mapa";
+import { type NaGrade, naTela, type Ponto } from "./mapa";
 
 export interface EnfeiteDoMapa {
   readonly tipo: Enfeite;
@@ -8,48 +8,59 @@ export interface EnfeiteDoMapa {
   readonly espelhado?: boolean;
 }
 
-const em = (tipo: Enfeite, x: number, y: number, espelhado = false): EnfeiteDoMapa => ({
+/** Enfeite posicionado na grade da planta (os da praça). */
+const g = (tipo: Enfeite, grade: NaGrade, espelhado = false): EnfeiteDoMapa => ({
+  tipo,
+  ponto: naTela(grade),
+  espelhado,
+});
+
+/** Enfeite posicionado direto na tela (a vizinhança, em volta). */
+const t = (tipo: Enfeite, x: number, y: number, espelhado = false): EnfeiteDoMapa => ({
   tipo,
   ponto: { x, y },
   espelhado,
 });
 
-/** Árvores, postes, bancos e canteiros do mapa. Ficam fora dos caminhos. */
+/** Fonte, postes, bancos, canteiros, árvores e as casas da vizinhança. */
 export const ENFEITES_DO_MAPA: readonly EnfeiteDoMapa[] = [
-  em("fonte", 195, 462),
-  // Em volta da praça e ao longo da avenida.
-  em("poste", 155, 414),
-  em("poste", 235, 414),
-  em("poste", 155, 512),
-  em("poste", 235, 512),
-  em("banco", 148, 378, true),
-  em("banco", 242, 378),
-  em("banco", 148, 566, true),
-  em("banco", 242, 566),
-  em("canteiro", 152, 346),
-  em("canteiro", 238, 346, true),
-  em("canteiro", 152, 606),
-  em("canteiro", 238, 606, true),
-  em("arvore", 132, 420),
-  em("arvore-alta", 260, 424),
-  em("arvore-alta", 134, 540),
-  em("arvore", 258, 536),
-  // Alto do mapa, entre o Escritório e o Banco.
-  em("barraca", 195, 252),
-  em("arvore", 158, 208),
-  em("arvore-alta", 232, 204),
-  em("arvore-alta", 14, 196),
-  em("arvore", 378, 200),
-  // Bordas.
-  em("arvore", 16, 356),
-  em("arvore-alta", 376, 352),
-  em("arvore-alta", 18, 566),
-  em("arvore", 374, 560),
-  em("arvore", 150, 748),
-  em("arvore-alta", 242, 752),
-  em("arvore-alta", 22, 742),
-  em("arvore", 368, 738),
-  em("arvore", 70, 790),
-  em("arvore-alta", 318, 794),
-  em("arvore", 195, 800),
+  // Praça: a fonte no meio, canteiros em volta dela, postes e bancos na borda.
+  g("fonte", [0, 0]),
+  g("canteiro", [-2.4, -2.4]),
+  g("canteiro", [2.4, 2.4], true),
+  g("canteiro", [2.4, -2.4], true),
+  g("canteiro", [-2.4, 2.4]),
+  g("poste", [7.5, -7.5]),
+  g("poste", [-7.5, 7.5]),
+  g("poste", [-7.5, -7.5]),
+  g("banco", [7.7, -2.5]),
+  g("banco", [7.7, 1.5]),
+  g("banco", [-2.5, 7.7], true),
+  g("banco", [1.5, 7.7], true),
+  g("arvore", [-7.5, -3.6]),
+  // Entre os edifícios.
+  g("arvore", [9.6, -9.6]),
+  g("arvore-alta", [-9.6, 9.6]),
+  t("barraca", 148, 312),
+  // Vizinhança: casas e árvores nas bordas do mapa.
+  t("casa-amarela", 92, 236),
+  t("casa-rosa", 18, 304),
+  t("casa-azul", 360, 262, true),
+  t("arvore", 190, 222),
+  t("arvore-alta", 286, 226),
+  t("arvore-alta", 14, 214),
+  t("arvore", 150, 268),
+  t("casa-azul", 36, 652),
+  t("casa-rosa", 344, 656, true),
+  t("casa-amarela", 290, 738),
+  t("arvore", 380, 648),
+  t("arvore-alta", 374, 592),
+  t("arvore", 262, 690),
+  t("arvore-alta", 120, 744),
+  t("arvore", 192, 724),
+  t("arvore-alta", 14, 560),
+  t("arvore", 230, 778),
+  t("arvore-alta", 350, 750),
+  t("arvore", 24, 792),
+  t("arvore", 96, 802),
 ];

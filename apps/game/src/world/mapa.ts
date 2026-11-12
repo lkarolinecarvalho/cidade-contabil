@@ -48,62 +48,74 @@ export function naTela([gx, gy]: NaGrade): Ponto {
 /** Base quadrada de cada edifício e altura da silhueta, em ladrilhos. */
 export const EDIFICIO = { lado: 6, altura: 6.5 } as const;
 /** Meio lado da praça, em ladrilhos. */
-export const RAIO_DA_PRACA = 3.5;
+export const RAIO_DA_PRACA = 8;
 /** Meio lado do anel por onde o avatar contorna a fonte. */
-const ANEL = 2.6;
+const ANEL = 5;
 /** Do centro do edifício até o ponto em que o avatar para, em ladrilhos. */
 const DISTANCIA_DA_PORTA = 4.3;
 
-function edificio(id: string, rotulo: string, grade: NaGrade, frente: Frente): Edificio {
-  const [gx, gy] = grade;
-  const porta: NaGrade =
-    frente === "direita" ? [gx + DISTANCIA_DA_PORTA, gy] : [gx, gy + DISTANCIA_DA_PORTA];
+/** O edifício é posicionado pela porta: o centro fica atrás dela, do lado oposto à fachada. */
+function edificio(id: string, rotulo: string, porta: NaGrade, frente: Frente): Edificio {
+  const [px, py] = porta;
+  const grade: NaGrade =
+    frente === "direita" ? [px - DISTANCIA_DA_PORTA, py] : [px, py - DISTANCIA_DA_PORTA];
   return { id, rotulo, grade, centro: naTela(grade), frente, porta: naTela(porta) };
 }
 
-/** Os 6 estabelecimentos do MVP (ADR-0008), em duas colunas viradas para o meio. */
+// Portas, na grade. Cada uma fica na ponta de um caminho que sai do anel da praça.
+const PORTA_DO_BANCO: NaGrade = [-ANEL, -12.5];
+const PORTA_DO_ESCRITORIO: NaGrade = [-9.2, 0];
+const PORTA_DO_POSTO: NaGrade = [0.5, -9.2];
+const PORTA_DA_IMOBILIARIA: NaGrade = [ANEL, 15];
+const PORTA_DO_FORNECEDOR: NaGrade = [15, ANEL];
+const PORTA_DA_LOJA: NaGrade = [20, 17];
+
+/**
+ * Os 6 estabelecimentos do MVP (ADR-0008), em volta da praça: três atrás dela, virados
+ * para a fonte, e três na frente, virados para o jogador.
+ */
 export const EDIFICIOS: readonly Edificio[] = [
-  edificio("escritorio-contabil", "Escritório Contábil", [-24, -14], "direita"),
-  edificio("banco", "Banco", [-14, -24], "esquerda"),
-  edificio("imobiliaria", "Imobiliária", [-6.9, 6.9], "direita"),
-  edificio("posto-fiscal", "Posto Fiscal", [6.9, -6.9], "esquerda"),
-  edificio("fornecedor", "Fornecedor", [14, 24], "direita"),
-  edificio("minha-loja", "Minha Loja", [24, 14], "esquerda"),
+  edificio("banco", "Banco", PORTA_DO_BANCO, "direita"),
+  edificio("escritorio-contabil", "Escritório Contábil", PORTA_DO_ESCRITORIO, "direita"),
+  edificio("posto-fiscal", "Posto Fiscal", PORTA_DO_POSTO, "esquerda"),
+  edificio("imobiliaria", "Imobiliária", PORTA_DA_IMOBILIARIA, "direita"),
+  edificio("fornecedor", "Fornecedor", PORTA_DO_FORNECEDOR, "esquerda"),
+  edificio("minha-loja", "Minha Loja", PORTA_DA_LOJA, "direita"),
 ];
 
-const gradeDaPorta = (e: Edificio): NaGrade =>
-  e.frente === "direita"
-    ? [e.grade[0] + DISTANCIA_DA_PORTA, e.grade[1]]
-    : [e.grade[0], e.grade[1] + DISTANCIA_DA_PORTA];
-
-function porId(id: string): Edificio {
-  const achado = EDIFICIOS.find((e) => e.id === id);
-  if (!achado) throw new Error(`Edifício não encontrado: ${id}`);
-  return achado;
-}
-
-// Cruzamentos: o de cima e o de baixo da avenida e os quatro cantos do anel da praça.
-const CRUZAMENTO_DE_CIMA: NaGrade = [-14, -14];
-const CRUZAMENTO_DE_BAIXO: NaGrade = [24, 24];
+// Os quatro cantos do anel da praça e os pontos em que os caminhos das portas chegam nele.
 const ANEL_CIMA: NaGrade = [-ANEL, -ANEL];
 const ANEL_DIREITA: NaGrade = [ANEL, -ANEL];
 const ANEL_BAIXO: NaGrade = [ANEL, ANEL];
 const ANEL_ESQUERDA: NaGrade = [-ANEL, ANEL];
+const CHEGADA_DO_ESCRITORIO: NaGrade = [-ANEL, PORTA_DO_ESCRITORIO[1]];
+const CHEGADA_DO_POSTO: NaGrade = [PORTA_DO_POSTO[0], -ANEL];
+/** Esquina da rua que desce do Fornecedor para a Minha Loja. */
+const ESQUINA_DA_LOJA: NaGrade = [PORTA_DA_LOJA[0], ANEL];
 
-/** Trechos de caminho por onde o avatar anda, na grade. */
+/** Trechos de caminho por onde o avatar anda, na grade. Todos seguem a grade. */
 export const TRECHOS: readonly (readonly [NaGrade, NaGrade])[] = [
-  [gradeDaPorta(porId("escritorio-contabil")), CRUZAMENTO_DE_CIMA],
-  [gradeDaPorta(porId("banco")), CRUZAMENTO_DE_CIMA],
-  [CRUZAMENTO_DE_CIMA, ANEL_CIMA],
-  [ANEL_CIMA, ANEL_DIREITA],
+  [PORTA_DO_BANCO, ANEL_CIMA],
+  [ANEL_CIMA, CHEGADA_DO_POSTO],
+  [CHEGADA_DO_POSTO, ANEL_DIREITA],
   [ANEL_DIREITA, ANEL_BAIXO],
   [ANEL_BAIXO, ANEL_ESQUERDA],
-  [ANEL_ESQUERDA, ANEL_CIMA],
-  [ANEL_ESQUERDA, gradeDaPorta(porId("imobiliaria"))],
-  [ANEL_DIREITA, gradeDaPorta(porId("posto-fiscal"))],
-  [ANEL_BAIXO, CRUZAMENTO_DE_BAIXO],
-  [CRUZAMENTO_DE_BAIXO, gradeDaPorta(porId("fornecedor"))],
-  [CRUZAMENTO_DE_BAIXO, gradeDaPorta(porId("minha-loja"))],
+  [ANEL_ESQUERDA, CHEGADA_DO_ESCRITORIO],
+  [CHEGADA_DO_ESCRITORIO, ANEL_CIMA],
+  [CHEGADA_DO_ESCRITORIO, PORTA_DO_ESCRITORIO],
+  [CHEGADA_DO_POSTO, PORTA_DO_POSTO],
+  [ANEL_BAIXO, PORTA_DA_IMOBILIARIA],
+  [ANEL_BAIXO, PORTA_DO_FORNECEDOR],
+  [PORTA_DO_FORNECEDOR, ESQUINA_DA_LOJA],
+  [ESQUINA_DA_LOJA, PORTA_DA_LOJA],
+];
+
+/** Ruas que saem do mapa, para a vizinhança. São só cenário: o avatar não anda nelas. */
+export const RUAS_DA_VIZINHANCA: readonly (readonly [NaGrade, NaGrade])[] = [
+  [PORTA_DO_BANCO, [-ANEL, -30]],
+  [PORTA_DA_LOJA, [PORTA_DA_LOJA[0], 40]],
+  [ESQUINA_DA_LOJA, [30, ANEL]],
+  [PORTA_DO_ESCRITORIO, [-30, PORTA_DO_ESCRITORIO[1]]],
 ];
 
 /** Os mesmos trechos, em coordenadas de tela. */
@@ -119,12 +131,15 @@ export function edificioPorId(id: string): Edificio | undefined {
   return EDIFICIOS.find((e) => e.id === id);
 }
 
+const DA_FRENTE_PARA_TRAS = [...EDIFICIOS].sort((a, b) => b.centro.y - a.centro.y);
+
 /** Edifício sob o ponto tocado, se houver: vale a silhueta do bloco em perspectiva. */
 export function edificioNoPonto(ponto: Ponto): Edificio | undefined {
   const meiaLargura = EDIFICIO.lado * LADRILHO;
   const meiaAltura = meiaLargura / 2;
   const alturaDaParede = EDIFICIO.altura * LADRILHO;
-  return EDIFICIOS.find((e) => {
+  // Onde as silhuetas se cruzam, vale o edifício da frente (o mais baixo na tela).
+  return DA_FRENTE_PARA_TRAS.find((e) => {
     const dx = Math.abs(ponto.x - e.centro.x);
     const dy = ponto.y - e.centro.y;
     // A silhueta é o losango da base arrastado para cima pela altura da parede.

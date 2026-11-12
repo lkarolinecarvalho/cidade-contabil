@@ -1,10 +1,9 @@
 import { carregarConteudoDoJogo } from "@cidade/content";
 import { describe, expect, it } from "vitest";
-import { desenharBoneco } from "./bonecos";
+import { desenharBoneco, desenharRetrato } from "./bonecos";
 import { desenharChao, desenharEnfeite, ENFEITES, type PlantaDoChao } from "./cenario";
 import { desenharEdificio, temDesenhoDeEdificio } from "./edificios";
 import { clarear, criarIso, escurecer } from "./iso";
-import { desenharRetrato } from "./personagens";
 import { paraDataUrl } from "./svg";
 
 const conteudo = carregarConteudoDoJogo();

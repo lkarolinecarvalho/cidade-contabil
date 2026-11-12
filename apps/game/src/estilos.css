@@ -94,7 +94,7 @@ button {
   pointer-events: auto;
 }
 
-/* HUD */
+/* HUD: dois painéis de papel creme, com contorno marrom e sombra. */
 .hud {
   display: flex;
   flex-direction: column;
@@ -108,12 +108,19 @@ button {
   gap: 6px;
 }
 
-.hud-perfil,
-.chip,
+.hud-painel,
 .atalhos button {
   background: var(--cartao);
   border: 2px solid var(--contorno);
   box-shadow: var(--sombra);
+}
+
+.hud-painel {
+  border-radius: 18px;
+  background: linear-gradient(#fffdf6, #fbefd2);
+  box-shadow:
+    var(--sombra),
+    0 8px 14px rgb(50 35 20 / 16%);
 }
 
 .hud-perfil {
@@ -121,9 +128,8 @@ button {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 12px 4px 4px;
-  border-radius: 999px;
+  gap: 7px;
+  padding: 6px 7px 6px 6px;
 }
 
 .retrato {
@@ -143,6 +149,13 @@ button {
   height: 100%;
 }
 
+.hud .retrato {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(#cdeeb9, #a9d98f);
+}
+
 .hud-perfil-texto {
   min-width: 0;
   flex: 1;
@@ -153,89 +166,131 @@ button {
 
 .hud-perfil-texto strong {
   overflow: hidden;
-  font-size: 0.875rem;
-  font-weight: 800;
+  font-size: 0.8125rem;
+  font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.hud-perfil-texto > span {
+.hud-nivel {
   font-size: 0.75rem;
+  font-weight: 800;
   color: var(--texto-suave);
 }
 
 .hud-barra {
   display: block;
-  height: 7px;
-  margin-top: 3px;
+  height: 11px;
+  margin-top: 4px;
   overflow: hidden;
   border-radius: 999px;
-  border: 1.5px solid var(--contorno);
-  background: var(--cartao-2);
+  border: 2px solid var(--contorno);
+  background: #efe2c0;
 }
 
 .hud-barra > span {
   display: block;
   height: 100%;
+  min-width: 6px;
   border-radius: 999px;
-  background: #6fae5a;
+  background: linear-gradient(#8fdc6a, #4fae3f);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 45%);
 }
 
-.hud-direita {
+.hud-marcadores {
+  flex: none;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   gap: 4px;
+  padding-left: 7px;
+  border-left: 2px solid var(--borda);
 }
 
-.chip {
+.hud-marcador {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 10px 2px 5px;
+  gap: 5px;
+  padding: 1px 7px 1px 3px;
   border-radius: 999px;
-  font-size: 0.8125rem;
+  border: 1.5px solid var(--borda);
+  background: #fff8e6;
+  font-size: 0.6875rem;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.chip-saldo {
+.hud-marcador .icone {
+  width: 1.45em;
+  height: 1.45em;
+}
+
+.hud-engrenagem {
+  flex: none;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  border: 2px solid var(--contorno);
+  background: linear-gradient(#6ea3f2, #3f72d6);
+  box-shadow:
+    var(--sombra),
+    inset 0 2px 0 rgb(255 255 255 / 35%);
+}
+
+.hud-engrenagem .icone {
+  width: 26px;
+  height: 26px;
+}
+
+.hud-saldos {
+  display: flex;
+  overflow: hidden;
+}
+
+.hud-saldo {
   flex: 1;
   min-width: 0;
-  padding: 4px 10px 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px 5px 8px;
 }
 
-.chip-saldo .icone {
-  width: 1.9em;
-  height: 1.9em;
+.hud-saldo .icone {
+  width: 30px;
+  height: 30px;
 }
 
-.chip-texto {
+.hud-saldo-texto {
   min-width: 0;
   display: flex;
   flex-direction: column;
   line-height: 1.15;
 }
 
-.chip-rotulo {
+.hud-saldo-rotulo {
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--texto-suave);
 }
 
-.chip-texto strong {
+.hud-saldo-texto strong {
   /* Encolhe em telas estreitas, para valores grandes continuarem cabendo. */
-  font-size: clamp(0.6875rem, 3.6cqw, 0.875rem);
-  font-weight: 800;
+  font-size: clamp(0.75rem, 3.9cqw, 0.9375rem);
+  font-weight: 900;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.chip-pessoal {
-  background: #fdeed3;
-}
-
-.chip-empresa {
-  background: #e7f3de;
+/* A empresa é outra entidade: metade com fundo próprio, separada por um traço. */
+.hud-saldo-empresa {
+  border-left: 2px solid var(--borda);
+  background: linear-gradient(#eef8e4, #dcefd0);
 }
 
 .carregando {
@@ -1049,19 +1104,6 @@ span.linha-valor {
 }
 
 /* Estudo: progresso por conceito e configurações */
-.hud-topo {
-  display: flex;
-  gap: 4px;
-}
-
-.hud-topo .chip:first-child {
-  flex: 1;
-}
-
-.chip-botao {
-  padding: 2px 5px;
-}
-
 .conceitos {
   display: flex;
   flex-direction: column;

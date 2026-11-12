@@ -1,5 +1,4 @@
-import { clarear, criarIso, escurecer, type Iso } from "./iso";
-import { svg } from "./svg";
+import { clarear, criarIso, escurecer, type Iso, svgIso } from "./iso";
 
 /**
  * Tamanho do desenho de cada edifício. A âncora é o centro da base (um quadrado de
@@ -134,8 +133,6 @@ function telhadoEmDegraus(i: Iso, z: number, cor: string, degraus: number, beira
   return desenho;
 }
 
-const sombra = (i: Iso) => i.sombra(0.5, 0.5, LADO + 0.4, LADO + 0.4, 0.2);
-
 // Todos os edifícios são desenhados com a fachada da porta na face X (x = 6).
 
 function escritorioContabil(i: Iso): string {
@@ -144,7 +141,6 @@ function escritorioContabil(i: Iso): string {
   const telhado = "#3f66c4";
   const listras = [azul, "#ffffff"] as const;
   return [
-    sombra(i),
     i.caixa(0, 0, 0, LADO, LADO, 2.9, azul),
     janela(i, "x", LADO, 0.6, 1, 1.2, 1.3),
     porta(i, "x", LADO, 2.45, 1.2, 2.1),
@@ -176,7 +172,6 @@ function banco(i: Iso): string {
     )
     .join("");
   return [
-    sombra(i),
     // Escadaria e base.
     i.caixa(LADO + 0.6, 1.9, 0, 0.6, 2.2, 0.25, "#e2d5b6"),
     i.caixa(-0.3, -0.3, 0, LADO + 0.9, LADO + 0.6, 0.5, "#ecdfc0"),
@@ -203,7 +198,6 @@ function imobiliaria(i: Iso): string {
   const telhado = "#ec5a4e";
   const listras = [telhado, "#ffffff"] as const;
   return [
-    sombra(i),
     i.caixa(0, 0, 0, LADO, LADO, 3.7, parede),
     i.caixa(-0.1, -0.1, 0, LADO + 0.2, LADO + 0.2, 0.5, "#e9a676"),
     janela(i, "x", LADO, 0.6, 1.1, 1.3, 1.4, VIDRO),
@@ -226,7 +220,6 @@ function postoFiscal(i: Iso): string {
   const azul = "#3f6fc9";
   const telhado = "#5f7fc0";
   return [
-    sombra(i),
     i.caixa(0, 0, 0, LADO, LADO, 4.3, parede),
     i.caixa(-0.1, -0.1, 0, LADO + 0.2, LADO + 0.2, 0.5, "#cfc4a8"),
     janela(i, "x", LADO, 0.6, 1.1, 1.2, 1.3, VIDRO),
@@ -260,7 +253,6 @@ function fornecedor(i: Iso): string {
   const parede = "#e0a968";
   const telhado = "#7f8aa3";
   return [
-    sombra(i),
     i.caixa(0, 0, 0, LADO, LADO, 3.7, parede),
     // Portão aberto do galpão, com a mercadoria lá dentro.
     naFace(i, "x", LADO, 0.9, 0, 4.2, 2.9, "#fff0cf"),
@@ -291,7 +283,6 @@ function minhaLoja(i: Iso): string {
     naFace(i, "x", LADO, inicio + 0.65, 0.8, 0.4, 0.9, "#62b34f") +
     naFace(i, "x", LADO, inicio + 1.1, 0.8, 0.35, 0.5, "#e9483f");
   return [
-    sombra(i),
     i.caixa(0, 0, 0, LADO, LADO, 3.8, parede),
     i.caixa(-0.1, -0.1, 0, LADO + 0.2, LADO + 0.2, 0.5, "#f0b27a"),
     vitrine(0.5),
@@ -331,7 +322,7 @@ export function desenharEdificio(id: string, frente: "direita" | "esquerda" = "d
     origem: { x: ancoraX, y: ancoraY - (LADO * UNIDADE) / 2 },
     espelhado: frente === "esquerda",
   });
-  return svg(largura, altura, desenho(iso));
+  return svgIso(largura, altura, desenho(iso));
 }
 
 export function temDesenhoDeEdificio(id: string): boolean {

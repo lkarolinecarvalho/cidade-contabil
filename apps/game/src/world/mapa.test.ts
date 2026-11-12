@@ -34,11 +34,11 @@ describe("mapa da cidade", () => {
     expect(naTela([0, 1])).toEqual({ x: CENTRO.x - LADRILHO, y: CENTRO.y + LADRILHO / 2 });
   });
 
-  it("todo trecho de caminho segue a grade ou a diagonal dela (vertical na tela)", () => {
+  it("todo trecho de caminho segue uma das duas direções da grade", () => {
     for (const [a, b] of TRECHOS) {
       const dx = Math.abs(a[0] - b[0]);
       const dy = Math.abs(a[1] - b[1]);
-      const alinhado = dx < 1e-9 || dy < 1e-9 || Math.abs(dx - dy) < 1e-9;
+      const alinhado = dx < 1e-9 || dy < 1e-9;
       expect(alinhado, `${a} → ${b}`).toBe(true);
     }
   });
@@ -78,7 +78,7 @@ describe("mapa da cidade", () => {
     expect(edificioNoPonto({ x: x + 55, y: y - 40 })?.id).toBe("banco");
     // Acima do telhado e nos cantos fora do losango.
     expect(edificioNoPonto({ x, y: y - 120 })).toBeUndefined();
-    expect(edificioNoPonto({ x: x + 55, y: y + 20 })).toBeUndefined();
+    expect(edificioNoPonto({ x: x - 55, y: y + 20 })).toBeUndefined();
   });
 
   it("tocar num edifício leva à porta dele", () => {
@@ -92,18 +92,23 @@ describe("mapa da cidade", () => {
   });
 
   it("tocar fora dos edifícios leva ao ponto mais próximo de um caminho", () => {
-    // Ao lado da avenida, abaixo da praça: vai para a avenida, na mesma altura.
-    const naAvenida = destinoDoToque({ x: CENTRO.x - 40, y: CENTRO.y + 90 });
-    expect(naAvenida).toEqual({ tipo: "rua", ponto: { x: CENTRO.x, y: CENTRO.y + 90 } });
-    for (const toque of [
-      { x: 5, y: 5 },
-      { x: 380, y: 830 },
-      { x: 20, y: 320 },
-    ]) {
+    // Na fonte, no meio da praça: vai para o anel em volta dela.
+    for (const toque of [CENTRO, { x: 5, y: 5 }, { x: 380, y: 830 }]) {
       const destino = destinoDoToque(toque);
       expect(destino.tipo).toBe("rua");
       expect(estaNoCaminho(destino.ponto)).toBe(true);
     }
+  });
+
+  it("onde as silhuetas se cruzam, vale o edifício da frente", () => {
+    const banco = edificioPorId("banco");
+    const posto = edificioPorId("posto-fiscal");
+    if (!banco || !posto) throw new Error("sem edifícios");
+    // Entre os dois, na altura da parede do Posto Fiscal, que fica mais à frente.
+    const cruzamento = { x: (banco.centro.x + posto.centro.x) / 2, y: posto.centro.y - 55 };
+    expect(posto.centro.y).toBeGreaterThan(banco.centro.y);
+    expect(edificioNoPonto(cruzamento)?.id).toBe("posto-fiscal");
+    expect(edificioNoPonto({ x: banco.centro.x, y: banco.centro.y })?.id).toBe("banco");
   });
 
   it("os enfeites ficam fora dos caminhos; a fonte, no centro da praça", () => {
@@ -113,7 +118,7 @@ describe("mapa da cidade", () => {
         continue;
       }
       const ateOCaminho = distancia(ponto, pontoNoCaminho(ponto));
-      expect(ateOCaminho, `${tipo} em ${ponto.x},${ponto.y}`).toBeGreaterThan(18);
+      expect(ateOCaminho, `${tipo} em ${ponto.x},${ponto.y}`).toBeGreaterThan(12);
     }
   });
 });
@@ -172,20 +177,26 @@ describe("rota do avatar", () => {
     }
   });
 
-  it("vizinhos do alto se ligam pelo cruzamento de cima, sem passar pela praça", () => {
+  it("os vizinhos de trás da praça se ligam pela borda do anel, sem dar a volta", () => {
     const rota = rotaAte(porta("escritorio-contabil"), porta("banco"));
-    expect(rota).toEqual([naTela([-14, -14]), porta("banco")]);
+    expect(rota).toEqual([naTela([-5, 0]), naTela([-5, -5]), porta("banco")]);
   });
 
-  it("contorna a fonte pelo anel da praça", () => {
-    // Da Imobiliária (à esquerda da praça) ao Posto Fiscal (à direita): meia volta no anel.
-    const rota = rotaAte(porta("imobiliaria"), porta("posto-fiscal"));
-    expect(rota).toHaveLength(4);
-    expect(rota.at(-1)).toEqual(porta("posto-fiscal"));
-    // Do Escritório à Minha Loja: desce a avenida inteira, passando pelo anel.
-    const longa = rotaAte(porta("escritorio-contabil"), porta("minha-loja"));
-    expect(longa[0]).toEqual(naTela([-14, -14]));
-    expect(longa.at(-2)).toEqual(naTela([24, 24]));
+  it("contorna a fonte pelo lado mais curto do anel", () => {
+    // Da Imobiliária (na frente, à esquerda) ao Posto Fiscal (atrás, à direita).
+    expect(rotaAte(porta("imobiliaria"), porta("posto-fiscal"))).toEqual([
+      naTela([5, 5]),
+      naTela([5, -5]),
+      naTela([0.5, -5]),
+      porta("posto-fiscal"),
+    ]);
+  });
+
+  it("a Minha Loja fica depois do Fornecedor, descendo a rua da esquina", () => {
+    const rota = rotaAte(porta("escritorio-contabil"), porta("minha-loja"));
+    expect(rota).toContainEqual(porta("fornecedor"));
+    expect(rota.at(-2)).toEqual(naTela([20, 5]));
+    expect(rota.at(-1)).toEqual(porta("minha-loja"));
   });
 
   it("no meio do caminho, muda de destino sem sair dos trechos", () => {

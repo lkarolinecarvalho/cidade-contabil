@@ -24,8 +24,9 @@ export interface DadosDoHud {
 }
 
 /**
- * Topo da tela. Mostra lado a lado, com rótulos e ícones diferentes, o dinheiro do
- * avatar e o da empresa: são patrimônios distintos (princípio da entidade).
+ * Topo da tela: um painel com o perfil, os pontos e a data, e outro com os dois saldos.
+ * O dinheiro do avatar e o da empresa aparecem lado a lado, com rótulos, ícones e
+ * fundos diferentes: são patrimônios distintos (princípio da entidade).
  */
 export function Hud({
   empresa,
@@ -41,11 +42,11 @@ export function Hud({
   return (
     <header className="hud">
       <div className="hud-linha">
-        <div className="hud-perfil">
+        <div className="hud-painel hud-perfil">
           <Retrato personagem="avatar" nome="Você" />
           <div className="hud-perfil-texto">
             <strong>{empresa}</strong>
-            <span>Nível {nivel}</span>
+            <span className="hud-nivel">Nível {nivel}</span>
             <span
               className="hud-barra"
               role="progressbar"
@@ -57,42 +58,40 @@ export function Hud({
               <span style={{ width: `${porcentagem}%` }} />
             </span>
           </div>
-        </div>
-        <div className="hud-direita">
-          <div className="hud-topo">
-            <span className="chip">
+          <div className="hud-marcadores">
+            <span className="hud-marcador">
               <IconeEstrela />
               {pontos} pts
             </span>
-            {aoAbrirConfiguracoes && (
-              <button
-                type="button"
-                className="chip chip-botao"
-                aria-label="Configurações"
-                onClick={aoAbrirConfiguracoes}
-              >
-                <IconeEngrenagem />
-              </button>
-            )}
+            <span className="hud-marcador">
+              <IconeCalendario />
+              Dia {data.dia} · Mês {data.mes}
+            </span>
           </div>
-          <span className="chip">
-            <IconeCalendario />
-            Dia {data.dia} · Mês {data.mes}
-          </span>
         </div>
+        {aoAbrirConfiguracoes && (
+          <button
+            type="button"
+            className="hud-engrenagem"
+            aria-label="Configurações"
+            onClick={aoAbrirConfiguracoes}
+          >
+            <IconeEngrenagem />
+          </button>
+        )}
       </div>
-      <div className="hud-linha">
-        <div className="chip chip-saldo chip-pessoal">
+      <div className="hud-painel hud-saldos">
+        <div className="hud-saldo hud-saldo-pessoal">
           <IconeCarteira />
-          <span className="chip-texto">
-            <span className="chip-rotulo">Sua carteira</span>
+          <span className="hud-saldo-texto">
+            <span className="hud-saldo-rotulo">Sua carteira</span>
             <strong>{formatarReais(carteiraCentavos)}</strong>
           </span>
         </div>
-        <div className="chip chip-saldo chip-empresa">
+        <div className="hud-saldo hud-saldo-empresa">
           <IconeMoeda />
-          <span className="chip-texto">
-            <span className="chip-rotulo">Caixa da empresa</span>
+          <span className="hud-saldo-texto">
+            <span className="hud-saldo-rotulo">Caixa da empresa</span>
             <strong>{formatarReais(disponibilidadesCentavos)}</strong>
           </span>
         </div>

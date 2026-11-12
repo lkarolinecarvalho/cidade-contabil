@@ -19,6 +19,7 @@ import {
   POSICAO_INICIAL,
   type Ponto,
   RAIO_DA_PRACA,
+  RUAS_DA_VIZINHANCA,
   rotaAte,
   TRECHOS,
 } from "./mapa";
@@ -28,8 +29,12 @@ const VELOCIDADE = 230;
 const FONTE = '"Nunito Variable", "Segoe UI", system-ui, sans-serif';
 const CONTORNO = 0x4a3728;
 
-/** Distância, na tela, do centro da base do edifício até a placa com o nome. */
-const ALTURA_DA_PLACA = 104;
+/** Onde fica o meio da placa, a partir do centro da base: para o lado da fachada e acima dela. */
+const PLACA = { lado: 30, altura: 52 } as const;
+/** Do centro da base até o balão de oferta, que flutua acima do telhado. */
+const ALTURA_DO_BALAO = 112;
+/** Inclinação da placa, acompanhando a fachada: sobe ou desce meio pixel por pixel. */
+const INCLINACAO = 0.5;
 
 const chaveDoEnfeite = (tipo: string, espelhado: boolean): string =>
   `enfeite:${tipo}${espelhado ? ":espelhado" : ""}`;
@@ -53,6 +58,8 @@ export class CenaCidade extends Phaser.Scene {
   private aCaminhoDe: Edificio | null = null;
   private readonly ofertas = new Map<string, Phaser.GameObjects.Container>();
   private readonly urls: string[] = [];
+  /** Pixels de textura por unidade do mundo, para os desenhos ficarem nítidos. */
+  private densidade = 1;
 
   constructor() {
     super("cidade");
@@ -61,6 +68,7 @@ export class CenaCidade extends Phaser.Scene {
   preload(): void {
     // Os SVG viram texturas já na densidade da tela, para ficarem nítidos.
     const escala = Math.max(1, Math.ceil(this.scale.gameSize.width / MUNDO.largura));
+    this.densidade = escala;
     const carregadas = new Set<string>();
     const carregar = (chave: string, desenho: string, largura: number, altura: number) => {
       const url = URL.createObjectURL(new Blob([desenho], { type: "image/svg+xml" }));
@@ -75,7 +83,7 @@ export class CenaCidade extends Phaser.Scene {
         altura: MUNDO.altura,
         unidade: LADRILHO,
         centro: CENTRO,
-        trechos: TRECHOS,
+        trechos: [...TRECHOS, ...RUAS_DA_VIZINHANCA],
         raioDaPraca: RAIO_DA_PRACA,
         edificios: EDIFICIOS.map((e) => e.grade),
         ladoDoEdificio: EDIFICIO.lado,
@@ -194,8 +202,62 @@ export class CenaCidade extends Phaser.Scene {
     for (const [id, indicador] of this.ofertas) indicador.setVisible(id === comOferta);
   }
 
+  /**
+   * Desenha a placa do edifício num canvas, já inclinada, e a registra como textura.
+   * A fachada virada para a direita sobe para a direita; a outra, desce.
+   */
+  private texturaDaPlaca({ id, rotulo, frente }: Edificio): string {
+    const chave = `placa:${id}`;
+    if (this.textures.exists(chave)) return chave;
+    const d = this.densidade;
+    // Nomes compridos quebram em duas linhas.
+    const linhas = rotulo.length > 12 ? rotulo.split(" ") : [rotulo];
+    const fonte = `800 11px ${FONTE}`;
+    const medida = document.createElement("canvas").getContext("2d");
+    if (medida) medida.font = fonte;
+    const larguraDoTexto = Math.max(...linhas.map((l) => medida?.measureText(l).width ?? 60));
+    const largura = Math.ceil(larguraDoTexto) + 14;
+    const altura = 7 + linhas.length * 12;
+    const inclinacao = frente === "direita" ? -INCLINACAO : INCLINACAO;
+    const folga = 4;
+    const alturaTotal = altura + largura * INCLINACAO + 2 * folga;
+
+    const tela = this.textures.createCanvas(
+      chave,
+      Math.ceil((largura + 2 * folga) * d),
+      Math.ceil(alturaTotal * d),
+    );
+    const ctx = tela?.getContext();
+    if (!tela || !ctx) return chave;
+    // O eixo x do desenho acompanha a fachada; o eixo y continua vertical.
+    const topo = inclinacao < 0 ? folga + largura * INCLINACAO : folga;
+    ctx.setTransform(d, inclinacao * d, 0, d, folga * d, topo * d);
+    const caixa = (x: number, y: number) => {
+      ctx.beginPath();
+      ctx.roundRect(x, y, largura, altura, 6);
+    };
+    caixa(1, 2.5);
+    ctx.fillStyle = "rgba(60, 35, 20, 0.35)";
+    ctx.fill();
+    caixa(0, 0);
+    ctx.fillStyle = "#fff6df";
+    ctx.fill();
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = "#4a3728";
+    ctx.stroke();
+    ctx.font = fonte;
+    ctx.fillStyle = "#3a2e1f";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    linhas.forEach((linha, k) => {
+      ctx.fillText(linha, largura / 2, 4 + 6 + k * 12);
+    });
+    tela.refresh();
+    return chave;
+  }
+
   private desenharEdificio(edificio: Edificio): void {
-    const { centro, porta, rotulo, id, frente } = edificio;
+    const { centro, porta, id, frente } = edificio;
     const d = DESENHO_DO_EDIFICIO;
     this.add
       .image(centro.x, centro.y, `edificio:${id}`)
@@ -203,33 +265,31 @@ export class CenaCidade extends Phaser.Scene {
       .setDisplaySize(d.largura, d.altura)
       .setDepth(centro.y);
 
-    // Placa com o nome: etiqueta creme no alto do edifício.
-    const texto = this.add
-      .text(0, 0, rotulo, {
-        fontFamily: FONTE,
-        fontSize: "12px",
-        fontStyle: "bold",
-        color: "#3a2e1f",
-      })
-      .setOrigin(0.5)
-      .setResolution(3);
-    const largura = texto.width + 16;
-    const placa = this.add.graphics();
-    placa.fillStyle(0x000000, 0.18).fillRoundedRect(-largura / 2 + 1, -9, largura, 22, 8);
-    placa.fillStyle(0xfff6df).fillRoundedRect(-largura / 2, -11, largura, 22, 8);
-    placa.lineStyle(1.6, CONTORNO).strokeRoundedRect(-largura / 2, -11, largura, 22, 8);
-    this.add.container(centro.x, centro.y - ALTURA_DA_PLACA, [placa, texto]).setDepth(900);
-
-    // NPC ao lado da porta, virado para a rua.
+    // Placa com o nome, inclinada como a fachada da porta.
     const sentido = frente === "direita" ? -1 : 1;
-    const npc = { x: porta.x + sentido * 27, y: porta.y + 8.5 };
+    // A placa só é desenhada depois que a fonte carrega, para o texto sair na fonte certa.
+    const colocarPlaca = () => {
+      if (!this.sys.isActive()) return;
+      this.add
+        .image(
+          centro.x - sentido * PLACA.lado,
+          centro.y - PLACA.altura,
+          this.texturaDaPlaca(edificio),
+        )
+        .setScale(1 / this.densidade)
+        .setDepth(900);
+    };
+    document.fonts.load(`800 12px ${FONTE}`).then(colocarPlaca, colocarPlaca);
+
+    // NPC ao lado da porta, encostado na parede e virado para a rua.
+    const npc = { x: porta.x + sentido * 32, y: porta.y + 6 };
     this.add
       .image(npc.x, npc.y, `npc:${id}`)
       .setOrigin(BONECO.ancoraX / BONECO.largura, BONECO.ancoraY / BONECO.altura)
       .setDisplaySize(BONECO.largura, BONECO.altura)
       .setDepth(npc.y);
 
-    // Indicador de oferta: balão com "!" acima do NPC.
+    // Indicador de oferta: balão com "!" acima do telhado.
     const balao = this.add.graphics();
     balao.fillStyle(0x000000, 0.18).fillCircle(1, 2, 12);
     balao.fillStyle(0xffffff).fillCircle(0, 0, 12);
@@ -245,7 +305,7 @@ export class CenaCidade extends Phaser.Scene {
       .setOrigin(0.5)
       .setResolution(3);
     const indicador = this.add
-      .container(npc.x, npc.y - BONECO.ancoraY - 16, [balao, sinal])
+      .container(centro.x, centro.y - ALTURA_DO_BALAO, [balao, sinal])
       .setDepth(950)
       .setVisible(false);
     this.tweens.add({

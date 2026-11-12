@@ -17,20 +17,22 @@ Toda a arte é **vetorial, desenhada em código** pelo próprio projeto, em
 
 O mapa usa **projeção isométrica com blocos** (estilo "voxel"): cada prédio, árvore e
 boneco é montado com caixas de três faces (topo claro, face esquerda na cor base, face
-direita mais escura). As primitivas ficam em `arte/iso.ts`.
+direita mais escura), com brilho nas quinas, paredes que escurecem perto do chão e
+sombra projetada no piso. As primitivas ficam em `arte/iso.ts`.
 
 | Elemento | Arquivo | Licença |
 |---|---|---|
 | Primitivas isométricas (caixa, faces, sombreamento) | `arte/iso.ts` | Código do próprio projeto |
 | Os 6 estabelecimentos em blocos, virados para a direita ou para a esquerda | `arte/edificios.ts` | Código do próprio projeto |
-| Bonecos do mapa (avatar e NPCs) | `arte/bonecos.ts` | Código do próprio projeto |
-| Retratos do avatar e dos NPCs (HUD e diálogos) | `arte/personagens.ts` | Código do próprio projeto |
-| Chão (gramado, ladrilhos, praça) e enfeites (árvores, postes, bancos, fonte, canteiros, barraca) | `arte/cenario.ts` | Código do próprio projeto |
+| Bonecos do mapa e retratos em blocos (avatar e NPCs) | `arte/bonecos.ts` | Código do próprio projeto |
+| Aparência de cada personagem (cores, cabelo, acessórios) | `arte/personagens.ts` | Código do próprio projeto |
+| Chão (gramado, ladrilhos, praça, sombras) e enfeites (árvores, postes, bancos, fonte, canteiros, barraca, casas da vizinhança) | `arte/cenario.ts` | Código do próprio projeto |
 | Ícones da interface | `ui/icones.tsx` | Código do próprio projeto |
 
-A planta do mapa (posição dos prédios, caminhos e enfeites) fica em
-`world/mapa.ts` e `world/enfeites.ts`. Os retratos do HUD e dos diálogos ainda são os
-desenhos de frente da v1, não em blocos.
+A planta do mapa fica em `world/mapa.ts` e `world/enfeites.ts`: uma praça com a fonte
+no centro, os 6 estabelecimentos em volta dela (três atrás, três na frente) e casas e
+ruas de vizinhança nas bordas, só como cenário. As placas com os nomes são desenhadas
+em canvas na cena (`world/CenaCidade.ts`), inclinadas como a fachada da porta.
 
 ## Assets de terceiros
 

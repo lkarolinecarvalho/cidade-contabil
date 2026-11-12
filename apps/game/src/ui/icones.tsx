@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { desenharRetrato } from "../arte/personagens";
+import { desenharRetrato } from "../arte/bonecos";
 import { paraDataUrl } from "../arte/svg";
 
 const TRACO = "#4a3728";

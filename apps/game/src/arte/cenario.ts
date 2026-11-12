@@ -1,5 +1,12 @@
-import { clarear, criarIso, escurecer, type Iso, type PontoDeTela } from "./iso";
-import { svg } from "./svg";
+import {
+  clarear,
+  criarIso,
+  DEFS_DO_ISO,
+  escurecer,
+  type Iso,
+  type PontoDeTela,
+  svgIso,
+} from "./iso";
 
 type NaGrade = readonly [gx: number, gy: number];
 
@@ -22,6 +29,10 @@ export interface PlantaDoChao {
 
 const MEIA_LARGURA_DO_CAMINHO = 1.5;
 const FOLGA_DA_CALCADA = 1;
+/** Meio lado do canteiro central da praça, em volta da fonte. */
+const MIOLO_DA_PRACA = 3.4;
+/** Deslocamento, na grade, da sombra projetada dos edifícios (para a direita da tela). */
+const SOMBRA_PROJETADA: NaGrade = [3, -1.6];
 
 /** Cantos, na grade, da faixa de caminho em volta de um trecho. */
 function faixa([a, b]: readonly [NaGrade, NaGrade], w: number): NaGrade[] {
@@ -79,23 +90,47 @@ export function desenharChao(p: PlantaDoChao): string {
     .map((e) => forma(quadrado(e, p.ladoDoEdificio / 2 + FOLGA_DA_CALCADA)))
     .join("");
   const praca = forma(quadrado([0, 0], p.raioDaPraca));
+  const miolo = forma(quadrado([0, 0], MIOLO_DA_PRACA));
   const piso = caminhos + calcadas + praca;
+  // Sombra projetada de cada edifício: a base arrastada para a direita da tela.
+  const sombras = p.edificios
+    .map(([gx, gy]) => {
+      const r = p.ladoDoEdificio / 2;
+      const [dx, dy] = SOMBRA_PROJETADA;
+      return forma([
+        [gx - r, gy + r],
+        [gx + r, gy + r],
+        [gx + r + dx, gy + r + dy],
+        [gx + r + dx, gy - r + dy],
+        [gx - r + dx, gy - r + dy],
+        [gx - r, gy - r],
+      ]);
+    })
+    .join("");
 
-  return svg(
-    p.largura,
-    p.altura,
-    `<defs>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${p.largura}" height="${p.altura}" viewBox="0 0 ${p.largura} ${p.altura}">
+    <defs>
+      ${DEFS_DO_ISO}
       ${padrao("grama", p, 2, "#86cf5c", "#7dc653")}
       ${padrao("ladrilho", p, 1, "#f7dca4", "#efcd8c")}
       ${padrao("ladrilho-da-praca", p, 1, "#fbd3bc", "#f5c0a4")}
+      <filter id="sombra-suave" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
+      <linearGradient id="luz-do-dia" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff6c8" stop-opacity="0.2"/>
+        <stop offset="0.55" stop-color="#fff6c8" stop-opacity="0"/>
+        <stop offset="1" stop-color="#4a2d5e" stop-opacity="0.12"/>
+      </linearGradient>
     </defs>
     <rect width="${p.largura}" height="${p.altura}" fill="url(#grama)"/>
     <g fill="#5fa53f" transform="translate(0 3.5)" stroke="#5fa53f" stroke-width="2" stroke-linejoin="round">${piso}</g>
     <g fill="#d9a968" transform="translate(0 2)">${piso}</g>
-    <g fill="url(#ladrilho)" stroke="#fbe7bd" stroke-width="1" stroke-linejoin="round">${piso}</g>
-    <g fill="url(#ladrilho)">${piso}</g>
-    <g fill="url(#ladrilho-da-praca)" stroke="#fde6d6" stroke-width="1.5" stroke-linejoin="round">${praca}</g>`,
-  );
+    <g fill="url(#ladrilho-da-praca)" stroke="#fde6d6" stroke-width="1.5" stroke-linejoin="round">${praca}</g>
+    <g fill="url(#ladrilho)" stroke="#fbe7bd" stroke-width="1" stroke-linejoin="round">${caminhos}${calcadas}</g>
+    <g fill="url(#ladrilho)">${caminhos}${calcadas}</g>
+    <g fill="url(#ladrilho-da-praca)" stroke="#fde6d6" stroke-width="1" stroke-linejoin="round">${miolo}</g>
+    <g fill="#3b2a4a" opacity="0.24" filter="url(#sombra-suave)">${sombras}</g>
+    <rect width="${p.largura}" height="${p.altura}" fill="url(#luz-do-dia)"/>
+  </svg>`;
 }
 
 export type Enfeite =
@@ -105,7 +140,10 @@ export type Enfeite =
   | "banco"
   | "fonte"
   | "canteiro"
-  | "barraca";
+  | "barraca"
+  | "casa-rosa"
+  | "casa-azul"
+  | "casa-amarela";
 
 interface DesenhoDoEnfeite {
   readonly largura: number;
@@ -220,6 +258,32 @@ function barraca(i: Iso): string {
   ].join("");
 }
 
+/** Casa da vizinhança: só cenário, sem porta para o jogador entrar. */
+function casa(parede: string, telhado: string): (i: Iso) => string {
+  const janela = (i: Iso, face: "x" | "y", inicio: number) => {
+    const desenhar = face === "x" ? i.faceX : i.faceY;
+    return (
+      desenhar(2, inicio - 0.12, 0.88, 1.14, 1.14, "#fff6e0") +
+      desenhar(2, inicio, 1, 0.9, 0.9, "#ffd564")
+    );
+  };
+  return (i) =>
+    [
+      i.sombra(-1.6, -1.6, 4.4, 4.4, 0.2),
+      i.caixa(-2, -2, 0, 4, 4, 2.6, parede),
+      janela(i, "x", -1.5),
+      i.faceX(2, 0.2, 0, 1, 1.7, "#fff6e0"),
+      i.faceX(2, 0.32, 0, 0.76, 1.55, "#9a5f38"),
+      janela(i, "y", -1.4),
+      janela(i, "y", 0.5),
+      i.caixa(-2.3, -2.3, 2.6, 4.6, 4.6, 0.45, telhado),
+      i.caixa(-1.5, -1.5, 3.05, 3, 3, 0.45, telhado),
+      i.caixa(-0.8, -0.8, 3.5, 1.6, 1.6, 0.4, telhado),
+    ].join("");
+}
+
+const CASA = { largura: 100, altura: 96, ancoraX: 50, ancoraY: 66, unidade: 10 } as const;
+
 /** Árvores, postes, bancos e demais enfeites: cada um é um desenho à parte no mapa. */
 export const ENFEITES: Readonly<Record<Enfeite, DesenhoDoEnfeite>> = {
   arvore: { largura: 56, altura: 76, ancoraX: 28, ancoraY: 60, unidade: 7, desenhar: arvore },
@@ -236,6 +300,9 @@ export const ENFEITES: Readonly<Record<Enfeite, DesenhoDoEnfeite>> = {
   fonte: { largura: 72, altura: 64, ancoraX: 36, ancoraY: 42, unidade: 6.5, desenhar: fonte },
   canteiro: { largura: 44, altura: 34, ancoraX: 22, ancoraY: 20, unidade: 6, desenhar: canteiro },
   barraca: { largura: 64, altura: 64, ancoraX: 32, ancoraY: 42, unidade: 7, desenhar: barraca },
+  "casa-rosa": { ...CASA, desenhar: casa("#ffc7c2", "#b56bb0") },
+  "casa-azul": { ...CASA, desenhar: casa("#cfe6ff", "#4f7fd0") },
+  "casa-amarela": { ...CASA, desenhar: casa("#ffe9a6", "#e2703a") },
 };
 
 export function desenharEnfeite(tipo: Enfeite, espelhado = false): string {
@@ -245,5 +312,5 @@ export function desenharEnfeite(tipo: Enfeite, espelhado = false): string {
     origem: { x: e.ancoraX, y: e.ancoraY },
     espelhado,
   });
-  return svg(e.largura, e.altura, e.desenhar(iso));
+  return svgIso(e.largura, e.altura, e.desenhar(iso));
 }

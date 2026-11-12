@@ -40,6 +40,16 @@ export function escurecer(cor: string, quanto: number): string {
 }
 
 const CLARO_DO_TOPO = 0.2;
+/** Tamanho mínimo, em pixels, para um bloco ganhar brilho e sombreamento. */
+const DETALHE_MINIMO = 5;
+
+/** Gradientes e filtros usados pelos blocos. Todo SVG com blocos precisa trazê-los. */
+export const DEFS_DO_ISO = `<linearGradient id="iso-oclusao" x1="0" y1="0" x2="0" y2="1"><stop offset="0.35" stop-color="#4a2d5e" stop-opacity="0"/><stop offset="1" stop-color="#4a2d5e" stop-opacity="0.26"/></linearGradient><filter id="iso-desfoque" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.3"/></filter>`;
+
+/** Documento SVG de um desenho em blocos, já com os gradientes e filtros. */
+export function svgIso(largura: number, altura: number, corpo: string, viewBox?: string): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${largura}" height="${altura}" viewBox="${viewBox ?? `0 0 ${largura} ${altura}`}"><defs>${DEFS_DO_ISO}</defs>${corpo}</svg>`;
+}
 const ESCURO_DA_DIREITA = 0.2;
 
 export interface Iso {
@@ -106,6 +116,25 @@ export function criarIso({ unidade: u, origem, espelhado = false }: OpcoesDoIso)
   const topo: Iso["topo"] = (x, y, z, a, b, cor) =>
     forma([ponto(x, y, z), ponto(x + a, y, z), ponto(x + a, y + b, z), ponto(x, y + b, z)], cor);
 
+  const xy = (p: PontoDeTela) => `${n(p.x)},${n(p.y)}`;
+  /** Acabamento do bloco: paredes mais escuras perto do chão e brilho nas quinas. */
+  const acabamento = (x: number, y: number, z: number, a: number, b: number, h: number) => {
+    const esquerda = ponto(x, y + b, z + h);
+    const frente = ponto(x + a, y + b, z + h);
+    const direita = ponto(x + a, y, z + h);
+    const pe = ponto(x + a, y + b, z);
+    let desenho = "";
+    if (h * u >= DETALHE_MINIMO) {
+      // As duas paredes juntas, do alto até o pé, escurecendo para baixo.
+      desenho += `<polygon points="${[esquerda, frente, direita, ponto(x + a, y, z), pe, ponto(x, y + b, z)].map(xy).join(" ")}" fill="url(#iso-oclusao)"/>`;
+      desenho += `<path d="M${xy(frente)} L${xy(pe)}" stroke="#fff" stroke-opacity="0.22" stroke-width="0.7" fill="none"/>`;
+    }
+    if ((a + b) * u >= DETALHE_MINIMO) {
+      desenho += `<path d="M${xy(esquerda)} L${xy(frente)} L${xy(direita)}" stroke="#fff" stroke-opacity="0.55" stroke-width="0.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/>`;
+    }
+    return desenho;
+  };
+
   return {
     ponto,
     faceX,
@@ -114,7 +143,8 @@ export function criarIso({ unidade: u, origem, espelhado = false }: OpcoesDoIso)
     caixa: (x, y, z, a, b, h, cor) =>
       faceY(y + b, x, z, a, h, cor) +
       faceX(x + a, y, z, b, h, cor) +
-      topo(x, y, z + h, a, b, clarear(cor, CLARO_DO_TOPO)),
+      topo(x, y, z + h, a, b, clarear(cor, CLARO_DO_TOPO)) +
+      acabamento(x, y, z, a, b, h),
     poligono: (pontos, cor) =>
       forma(
         pontos.map(([x, y, z]) => ponto(x, y, z)),
@@ -124,7 +154,7 @@ export function criarIso({ unidade: u, origem, espelhado = false }: OpcoesDoIso)
       forma(
         [ponto(x, y, 0), ponto(x + a, y, 0), ponto(x + a, y + b, 0), ponto(x, y + b, 0)],
         "#3b2a4a",
-        ` opacity="${opacidade}"`,
+        ` opacity="${opacidade}" filter="url(#iso-desfoque)"`,
       ),
   };
 }
