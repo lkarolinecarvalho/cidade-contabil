@@ -21,6 +21,7 @@ import { formatarReais } from "../texto/dinheiro";
 import { AfirmativasJulgadas, JulgarAfirmativas } from "./Afirmativas";
 import { Conversa } from "./Conversa";
 import { PainelDaDre } from "./Demonstracoes";
+import { Dica } from "./Dica";
 import { EditorDeLancamento } from "./EditorDeLancamento";
 import { IconeCerto, IconeEstrela } from "./icones";
 import { RegraCitada } from "./RegraCitada";
@@ -283,6 +284,9 @@ function EtapaDoEfeito({
   return (
     <section className="etapa">
       <h4>Efeito no Patrimônio</h4>
+      <Dica id="efeito">
+        Antes de lançar, pense no efeito da operação: o saldo de cada conta aumenta ou diminui?
+      </Dica>
       <p className="etapa-instrucao">Marque o que acontece com o saldo de cada conta.</p>
       <ul className="efeitos">
         {efeito.map((e) => {
@@ -429,6 +433,10 @@ function EtapaDoLancamento({
   return (
     <section className="etapa">
       <h4>Faça o Lançamento</h4>
+      <Dica id="lancamento">
+        Agora registre a operação. O total dos débitos tem de ser igual ao dos créditos, e os
+        valores estão no cartão abaixo.
+      </Dica>
       <CartaoDaProposta proposta={missao.proposta} />
       <EditorDeLancamento
         ajuda={semLancamento ? "livre" : ajudaDaMissao(missao)}

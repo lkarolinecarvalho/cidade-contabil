@@ -2169,3 +2169,183 @@ span.linha-valor {
     animation: none;
   }
 }
+
+/* Abertura: título e história, por cima do mapa fechado no ponto vago. */
+.abertura {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 18px);
+}
+
+.abertura-titulo {
+  justify-content: space-between;
+  background: linear-gradient(
+    rgb(251 243 222 / 96%) 0%,
+    rgb(251 243 222 / 86%) 26%,
+    rgb(251 243 222 / 0%) 46%,
+    rgb(251 243 222 / 0%) 70%,
+    rgb(251 243 222 / 90%) 88%
+  );
+}
+
+.abertura-marca {
+  margin-top: 26px;
+  text-align: center;
+  line-height: 1;
+  animation: decisao-entra 0.5s ease-out;
+}
+
+.abertura-marca p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.abertura-marca h1 {
+  margin: 2px 0 10px;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--contorno);
+  text-shadow: 0 3px 0 rgb(74 55 40 / 18%);
+}
+
+.abertura-marca span {
+  display: inline-block;
+  max-width: 16em;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--texto-suave);
+}
+
+.abertura-historia {
+  justify-content: flex-end;
+  background: linear-gradient(rgb(40 30 20 / 20%) 0%, rgb(40 30 20 / 55%) 100%);
+}
+
+.abertura-pular {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  right: 14px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--cartao);
+  border: 2px solid var(--contorno);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.abertura-quadro {
+  padding: 14px 16px 16px;
+  border-radius: 22px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  box-shadow:
+    0 5px 0 rgb(74 55 40 / 30%),
+    0 14px 28px rgb(40 30 20 / 34%);
+  text-align: center;
+  animation: balao-entra 0.3s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+
+.abertura-quadro p {
+  margin: 8px 0 0;
+  min-height: 3.9em;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.abertura-ilustracao {
+  display: grid;
+  place-items: center;
+  height: 170px;
+  border-radius: 16px;
+  background: linear-gradient(#dff0d0, #bfe3a8);
+}
+
+.abertura-desenho {
+  max-width: 78%;
+  max-height: 160px;
+}
+
+/* O desenho do terreno tem muito espaço vazio em cima: aproxima. */
+.abertura-terreno {
+  transform: scale(1.9) translateY(-13%);
+}
+
+.abertura-ilustracao {
+  overflow: hidden;
+}
+
+.abertura-dupla {
+  display: flex;
+  gap: 14px;
+}
+
+.abertura-retrato {
+  width: 104px;
+  height: 104px;
+  border-width: 3px;
+  background: #fdeed3;
+}
+
+.abertura .conversa-andamento {
+  margin: 10px 0 0;
+}
+
+.abertura-historia .conversa-voltar {
+  color: #fffaf0;
+}
+
+.abertura-historia .conversa-pontos i {
+  background: rgb(255 250 240 / 55%);
+}
+
+.abertura-historia .conversa-pontos i.lida {
+  background: #cfe9bf;
+}
+
+.abertura-historia .conversa-pontos i.atual {
+  background: #fffaf0;
+}
+
+/* Dica de primeira vez numa etapa da missão. */
+.dica {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #e9f1fb;
+  border: 1.5px solid #9db9df;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.dica span {
+  flex: 1;
+}
+
+.dica button {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1.5px solid #5f86bf;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abertura-marca,
+  .abertura-quadro {
+    animation: none;
+  }
+}

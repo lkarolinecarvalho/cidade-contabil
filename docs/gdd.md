@@ -106,6 +106,9 @@ O MVP cobre os níveis 1 a 4.
 
 ## 10. HUD (retrato)
 
+- **Abertura:** tela de título e a história em cinco quadros curtos (com "Pular"), por cima
+  do mapa fechado no ponto vago da praça. Ao terminar, a câmera se afasta até a cidade.
+- Dicas de primeira vez, de uma linha, nas etapas de efeito, afirmativas e lançamento.
 - Topo: uma barra com o retrato, o nível, o dinheiro da empresa e a data; tocar nela abre
   o resumo (carteira pessoal, Caixa e Bancos, pontos, botão do Balanço). A engrenagem
   fica ao lado.

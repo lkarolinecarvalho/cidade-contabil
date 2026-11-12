@@ -534,6 +534,14 @@ export function bancosDaEmpresa(contabil: EstadoContabil): Centavos {
   return saldoDaConta(contabil, contabil.planoDeContas.papeis.bancos);
 }
 
+/**
+ * Se a empresa já comprou o ponto da praça: há uma edificação no imobilizado. Antes
+ * disso, o lugar da hamburgueria no mapa é um terreno à venda.
+ */
+export function temPontoComercial(contabil: EstadoContabil): boolean {
+  return contabil.imobilizado.some((bem) => bem.classe === "edificacoes");
+}
+
 /** Caixa + Bancos da empresa, lidos do razão. */
 export function disponibilidadesDaEmpresa(contabil: EstadoContabil): Centavos {
   const { caixa, bancos } = contabil.planoDeContas.papeis;

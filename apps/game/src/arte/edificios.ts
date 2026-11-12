@@ -299,6 +299,36 @@ function minhaLoja(i: Iso): string {
   ].join("");
 }
 
+/** O ponto da hamburgueria antes da compra: terreno vazio, cercado, com placa de vende-se. */
+function terrenoVago(i: Iso): string {
+  const terra = "#d8b27a";
+  const mato = "#63b84a";
+  const cerca = "#b98a55";
+  const estaca = (x: number, y: number) => i.caixa(x, y, 0, 0.22, 0.22, 1.1, cerca);
+  // Cerca nos dois lados do fundo, desenhada antes do que fica na frente.
+  const fundo = [0.2, 1.6, 3, 4.4, 5.6].map((p) => estaca(p, 0.1) + estaca(0.1, p)).join("");
+  return [
+    i.topo(0, 0, 0.02, LADO, LADO, terra),
+    i.topo(0.6, 0.6, 0.03, 2.2, 1.6, clarear(terra, 0.14)),
+    i.topo(3.2, 3.4, 0.03, 1.8, 1.4, escurecer(terra, 0.08)),
+    fundo,
+    i.caixa(0.2, 0.15, 0.55, 5.6, 0.12, 0.16, cerca),
+    i.caixa(0.15, 0.2, 0.55, 0.12, 5.6, 0.16, cerca),
+    // Mato crescendo e um monte de tijolos esquecido.
+    i.caixa(1.1, 3.9, 0, 0.7, 0.7, 0.35, mato),
+    i.caixa(4.3, 1.2, 0, 0.9, 0.6, 0.3, mato),
+    i.caixa(2.4, 1.7, 0, 0.5, 0.5, 0.45, clarear(mato, 0.1)),
+    i.caixa(1.4, 1.5, 0, 1.2, 0.7, 0.35, "#c9694a"),
+    i.caixa(1.6, 1.6, 0.35, 0.8, 0.5, 0.3, "#d47a58"),
+    // Placa de "vende-se", virada para a rua.
+    i.caixa(5.1, 2.25, 0, 0.18, 0.18, 2.3, MADEIRA),
+    i.caixa(5.1, 3.55, 0, 0.18, 0.18, 2.3, MADEIRA),
+    i.caixa(5.05, 1.9, 1.5, 0.28, 2.2, 1.3, "#ffffff"),
+    i.faceX(5.33, 2.1, 2.2, 1.8, 0.42, "#e2483e"),
+    i.faceX(5.33, 2.35, 1.72, 1.3, 0.2, "#4a3728"),
+  ].join("");
+}
+
 const DESENHOS: Readonly<Record<string, (i: Iso) => string>> = {
   "escritorio-contabil": escritorioContabil,
   banco,
@@ -327,4 +357,37 @@ export function desenharEdificio(id: string, frente: "direita" | "esquerda" = "d
 
 export function temDesenhoDeEdificio(id: string): boolean {
   return id in DESENHOS;
+}
+
+/** O terreno vago da praça, no mesmo tamanho e com a mesma âncora dos edifícios. */
+export function desenharTerrenoVago(frente: "direita" | "esquerda" = "direita"): string {
+  const { largura, altura, ancoraX, ancoraY } = DESENHO_DO_EDIFICIO;
+  const iso = criarIso({
+    unidade: UNIDADE,
+    origem: { x: ancoraX, y: ancoraY - (LADO * UNIDADE) / 2 },
+    espelhado: frente === "esquerda",
+  });
+  return svgIso(largura, altura, terrenoVago(iso));
+}
+
+/** O hambúrguer da casa em blocos, para a abertura: pão, carne, queijo e alface. */
+export function desenharHamburguer(): string {
+  const i = criarIso({ unidade: 13, origem: { x: 80, y: 86 } });
+  return svgIso(
+    160,
+    150,
+    [
+      i.sombra(-2.2, -2.2, 4.9, 4.9, 0.2),
+      i.caixa(-2.2, -2.2, 0, 4.4, 4.4, 0.9, "#e2a45a"),
+      i.caixa(-2.35, -2.35, 0.9, 4.7, 4.7, 0.35, "#63b84a"),
+      i.caixa(-2.25, -2.25, 1.25, 4.5, 4.5, 0.8, "#8a5236"),
+      i.caixa(-2.4, -2.4, 2.05, 4.8, 4.8, 0.25, "#ffc93a"),
+      i.caixa(-2.2, -2.2, 2.3, 4.4, 4.4, 1.3, "#e9ac60"),
+      i.caixa(-1.5, -1.5, 3.6, 3, 3, 0.45, "#f0b970"),
+      // Gergelim.
+      i.caixa(-0.9, -0.2, 4.05, 0.3, 0.3, 0.12, "#fff3d6"),
+      i.caixa(0.3, -1, 4.05, 0.3, 0.3, 0.12, "#fff3d6"),
+      i.caixa(0.4, 0.5, 4.05, 0.3, 0.3, 0.12, "#fff3d6"),
+    ].join(""),
+  );
 }

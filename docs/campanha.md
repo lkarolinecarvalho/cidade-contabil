@@ -18,6 +18,15 @@ congelado. A casa vende hambúrguer e refrigerante.
 | 5 | A fábrica | Fornecedor, Hamburgueria | Embalagens com IPI recuperável; produção; venda do congelado com IPI | Industrialização, IPI recuperável, IPI na venda, produtos acabados | 4 |
 | 6 | Fechando o mês | Escritório, Posto Fiscal | Depreciação; inventário do material de consumo; apuração do ICMS e do IPI | Depreciação, não cumulatividade, DRE, Balanço | 5 |
 
+## Consequências no mundo
+
+| Quando | O que muda no mapa |
+|---|---|
+| Início | O lugar da hamburgueria é um terreno cercado, com placa de "Vende-se" |
+| Compra do ponto (capítulo 1) | A hamburgueria aparece no terreno, com a placa e a Bia na porta |
+
+As demais etapas (casa mobiliada, aberta, com clientes) ainda não têm versão própria no mapa.
+
 ## Como as missões são contadas
 
 - Cada conversa tem no máximo três falas curtas, uma por vez.

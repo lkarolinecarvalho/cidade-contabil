@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PONTOS_POR_AFIRMATIVA, type Resposta, resultadoDaResposta } from "../state/jogo";
 import { jogoStore, useJogo } from "../state/store";
 import { preencherAfirmativa } from "../texto/afirmativas";
+import { Dica } from "./Dica";
 import { RegraCitada } from "./RegraCitada";
 
 interface Props {
@@ -54,6 +55,12 @@ export function JulgarAfirmativas({ afirmativas, valores, aoContinuar, aoRespond
           {indice + 1} de {afirmativas.length}
         </small>
       </h4>
+      {indice === 0 && resultado === null && (
+        <Dica id="afirmativas">
+          Julgue como numa prova de Certo ou Errado. O conceito que você errar volta depois, na
+          Revisão do Escritório.
+        </Dica>
+      )}
       <p className="afirmativa">{texto.enunciado}</p>
       {resultado === null ? (
         <>

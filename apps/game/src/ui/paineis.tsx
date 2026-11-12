@@ -14,6 +14,7 @@ import {
   missaoDeFechamento,
   missaoDisponivelHoje,
   proximaMissao,
+  temPontoComercial,
 } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
@@ -181,7 +182,25 @@ export function PainelDoEstabelecimento({
 }) {
   const missao = useProximaMissao();
   const data = useJogo((jogo) => jogo.data);
+  const pontoComprado = useJogo((jogo) => temPontoComercial(jogo.contabil));
   const aqui = missao?.estabelecimento === estabelecimento;
+
+  // Antes da compra, o lugar da hamburgueria é só um terreno com placa de vende-se.
+  if (estabelecimento === "minha-loja" && !pontoComprado) {
+    return (
+      <div className="cartao">
+        <p className="painel-texto">
+          Este ponto, de frente para a praça, está <strong>à venda</strong>. É aqui que a Chapa da
+          Praça vai funcionar.
+        </p>
+        <p className="painel-nota">
+          {missao?.estabelecimento === "imobiliaria"
+            ? "Para comprá-lo, fale com o Rui, na Imobiliária."
+            : "Primeiro a empresa precisa existir e ter dinheiro em conta. Depois, o Rui, da Imobiliária, cuida da compra."}
+        </p>
+      </div>
+    );
+  }
 
   let principal: ReactNode;
   if (missao && aqui && !missaoDisponivelHoje(missao, data)) {

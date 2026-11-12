@@ -38,9 +38,19 @@ interface Acoes {
   pagarIcms(): void;
   pagarIpi(): void;
   reiniciar(): void;
+  /** A abertura terminou (ou foi pulada): o mapa pode ser mostrado inteiro. */
+  concluirAbertura(): void;
+  /** O jogador dispensou a dica de primeira vez de uma etapa. */
+  marcarDica(dica: string): void;
 }
 
-export type JogoStore = EstadoDoJogo & Acoes;
+/** O que a sessão lembra por fora do estado do jogo (não entra no salvamento da partida). */
+interface Sessao {
+  readonly aberturaVista: boolean;
+  readonly dicasVistas: readonly string[];
+}
+
+export type JogoStore = EstadoDoJogo & Sessao & Acoes;
 
 /**
  * Store do jogo. É "vanilla" para o Phaser poder ler e assinar sem React;
@@ -48,6 +58,14 @@ export type JogoStore = EstadoDoJogo & Acoes;
  */
 export const jogoStore = createStore<JogoStore>()((set, get) => ({
   ...novoJogo(),
+  aberturaVista: false,
+  dicasVistas: [],
+  concluirAbertura() {
+    set({ aberturaVista: true });
+  },
+  marcarDica(dica) {
+    if (!get().dicasVistas.includes(dica)) set({ dicasVistas: [...get().dicasVistas, dica] });
+  },
   executarProximaOperacao(missao, opcoes) {
     set(executarProximaOperacao(get(), missao, opcoes));
   },

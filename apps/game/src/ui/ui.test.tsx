@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { Abertura, QUADROS } from "./Abertura";
 import { BottomSheet } from "./BottomSheet";
 import { Conversa, type Fala } from "./Conversa";
 import { Hud } from "./Hud";
@@ -136,5 +137,34 @@ describe("BottomSheet", () => {
     expect(html).toContain("Missões");
     expect(html).toContain("conteúdo do painel");
     expect(html).toContain('aria-label="Fechar"');
+  });
+});
+
+describe("Abertura", () => {
+  const abertura = (inicio: number | null) =>
+    renderToStaticMarkup(<Abertura aoTerminar={() => {}} inicio={inicio} />);
+
+  it("começa pela tela de título, sem a história", () => {
+    const html = abertura(null);
+    expect(html).toContain("Contábil");
+    expect(html).toContain("Começar");
+    expect(html).not.toContain("Pular");
+  });
+
+  it("conta a história um quadro por vez, sempre com a opção de pular", () => {
+    expect(QUADROS.length).toBeGreaterThanOrEqual(4);
+    const html = abertura(0);
+    expect(html).toContain(QUADROS[0]?.texto ?? "");
+    expect(html).not.toContain(QUADROS[1]?.texto ?? "");
+    expect(html).toContain("Pular");
+    expect(html).toContain("Continuar");
+    expect(html).toContain(`aria-label="Quadro 1 de ${QUADROS.length}"`);
+    for (const quadro of QUADROS) expect(quadro.texto.length).toBeLessThanOrEqual(100);
+  });
+
+  it("no último quadro, o botão abre a cidade", () => {
+    const html = abertura(QUADROS.length - 1);
+    expect(html).toContain("Abrir a cidade");
+    expect(html).toContain("Voltar");
   });
 });

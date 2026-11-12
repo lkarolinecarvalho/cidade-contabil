@@ -15,6 +15,7 @@ import {
   novoJogo,
   operacoesExecutadas,
   proximaMissao,
+  temPontoComercial,
 } from "./jogo";
 
 const { missoes } = carregarConteudoDoJogo();
@@ -114,6 +115,12 @@ describe("estado do jogo", () => {
     const fim = jogarAte("m007-apuracao-icms");
     expect(proximaMissao(fim, missoes)).toBeUndefined();
     expect(nivelDoJogador(fim, missoes)).toBe(5);
+  });
+
+  it("o ponto da praça só é da empresa depois da compra do imóvel", () => {
+    expect(temPontoComercial(novoJogo().contabil)).toBe(false);
+    expect(temPontoComercial(jogarAte("m001-integralizacao").contabil)).toBe(false);
+    expect(temPontoComercial(jogarAte("m002-compra-imovel").contabil)).toBe(true);
   });
 
   it("a empresa do jogo é a hamburgueria: o hambúrguer baixa os insumos da receita", () => {

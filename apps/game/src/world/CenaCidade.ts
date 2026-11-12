@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { BONECO, desenharBoneco } from "../arte/bonecos";
 import { desenharChao, desenharEnfeite, ENFEITES } from "../arte/cenario";
-import { DESENHO_DO_EDIFICIO, desenharEdificio } from "../arte/edificios";
+import { DESENHO_DO_EDIFICIO, desenharEdificio, desenharTerrenoVago } from "../arte/edificios";
 import { bus } from "../bus";
-import { proximaMissao } from "../state/jogo";
+import { proximaMissao, temPontoComercial } from "../state/jogo";
 import { conteudo, jogoStore } from "../state/store";
 import { ENFEITES_DO_MAPA } from "./enfeites";
 import {
@@ -39,6 +39,12 @@ const INCLINACAO = 0.5;
 const chaveDoEnfeite = (tipo: string, espelhado: boolean): string =>
   `enfeite:${tipo}${espelhado ? ":espelhado" : ""}`;
 
+/** O estabelecimento que começa como terreno à venda, até a empresa comprar o ponto. */
+const PONTO_DA_EMPRESA = "minha-loja";
+/** Na abertura, a câmera fica fechada no ponto vago; depois se afasta até o mapa inteiro. */
+const ZOOM_DA_ABERTURA = 2.3;
+const DURACAO_DA_ABERTURA = 1600;
+
 /** NPC que fica na porta de cada estabelecimento: o primeiro que atende lá. */
 function npcDe(estabelecimento: string): string {
   return conteudo.npcs.find((n) => n.estabelecimento === estabelecimento)?.id ?? "";
@@ -58,6 +64,13 @@ export class CenaCidade extends Phaser.Scene {
   private aCaminhoDe: Edificio | null = null;
   private readonly ofertas = new Map<string, Phaser.GameObjects.Container>();
   private readonly urls: string[] = [];
+  /** O que aparece no ponto da empresa depois da compra, e o que aparece antes. */
+  private readonly doPonto: Phaser.GameObjects.Image[] = [];
+  private readonly doTerreno: Phaser.GameObjects.Image[] = [];
+  private pontoComprado = false;
+  /** Enquanto a abertura não termina, a câmera fica fechada no ponto vago. */
+  private emAbertura = false;
+  private painelAberto = false;
   /** Pixels de textura por unidade do mundo, para os desenhos ficarem nítidos. */
   private densidade = 1;
 
@@ -107,6 +120,15 @@ export class CenaCidade extends Phaser.Scene {
       const { largura, altura } = ENFEITES[tipo];
       carregar(chave, desenharEnfeite(tipo, espelhado), largura, altura);
     }
+    const ponto = EDIFICIOS.find((e) => e.id === PONTO_DA_EMPRESA);
+    if (ponto) {
+      carregar(
+        "terreno-vago",
+        desenharTerrenoVago(ponto.frente),
+        DESENHO_DO_EDIFICIO.largura,
+        DESENHO_DO_EDIFICIO.altura,
+      );
+    }
     for (const lado of ["direita", "esquerda"] as const) {
       carregar(`avatar:${lado}`, desenharBoneco("avatar", lado), BONECO.largura, BONECO.altura);
     }
@@ -136,8 +158,10 @@ export class CenaCidade extends Phaser.Scene {
       .setDisplaySize(BONECO.largura, BONECO.altura);
     this.avatar.setDepth(this.posicao.y);
 
+    this.emAbertura = !jogoStore.getState().aberturaVista;
     this.enquadrar();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.enquadrar, this);
+    this.input.enabled = !this.emAbertura;
 
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (ponteiro: Phaser.Input.Pointer) => {
       const toque = this.cameras.main.getWorldPoint(ponteiro.x, ponteiro.y);
@@ -146,11 +170,17 @@ export class CenaCidade extends Phaser.Scene {
 
     // Com um painel aberto, os toques são da UI: o mundo para de recebê-los.
     const cancelarPainel = bus.ouvir("painel:mudou", ({ aberto }) => {
-      this.input.enabled = !aberto;
+      this.painelAberto = aberto;
+      this.input.enabled = !aberto && !this.emAbertura;
     });
-    // O indicador de oferta acompanha o progresso guardado na store.
+    // O indicador de oferta e o ponto da empresa acompanham o que está guardado na store.
     this.atualizarOfertas();
-    const cancelarStore = jogoStore.subscribe(() => this.atualizarOfertas());
+    this.atualizarPonto(false);
+    const cancelarStore = jogoStore.subscribe((estado) => {
+      this.atualizarOfertas();
+      this.atualizarPonto(true);
+      if (this.emAbertura && estado.aberturaVista) this.abrirACidade();
+    });
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       cancelarPainel();
@@ -175,12 +205,68 @@ export class CenaCidade extends Phaser.Scene {
     if (this.rota.length === 0) this.chegar();
   }
 
-  /** Mostra o mundo inteiro na largura do canvas, centralizado. */
-  private enquadrar(): void {
+  /** Zoom em que o mundo inteiro cabe no canvas. */
+  private zoomDoMapa(): number {
     const { width, height } = this.scale.gameSize;
+    return Math.min(width / MUNDO.largura, height / MUNDO.altura);
+  }
+
+  /**
+   * Mostra o mundo inteiro, centralizado. Durante a abertura, a câmera fica fechada no
+   * ponto vago da praça.
+   */
+  private enquadrar(): void {
     const camera = this.cameras.main;
-    camera.setZoom(Math.min(width / MUNDO.largura, height / MUNDO.altura));
+    const ponto = EDIFICIOS.find((e) => e.id === PONTO_DA_EMPRESA);
+    if (this.emAbertura && ponto) {
+      camera.setZoom(this.zoomDoMapa() * ZOOM_DA_ABERTURA);
+      camera.centerOn(ponto.centro.x, ponto.centro.y - 28);
+      return;
+    }
+    camera.setZoom(this.zoomDoMapa());
     camera.centerOn(MUNDO.largura / 2, MUNDO.altura / 2);
+  }
+
+  /** Fim da abertura: a câmera se afasta do ponto vago até mostrar a cidade inteira. */
+  private abrirACidade(): void {
+    this.emAbertura = false;
+    const camera = this.cameras.main;
+    camera.zoomTo(this.zoomDoMapa(), DURACAO_DA_ABERTURA, "Sine.easeInOut", true);
+    camera.pan(
+      MUNDO.largura / 2,
+      MUNDO.altura / 2,
+      DURACAO_DA_ABERTURA,
+      "Sine.easeInOut",
+      true,
+      (_camera: Phaser.Cameras.Scene2D.Camera, progresso: number) => {
+        if (progresso < 1) return;
+        // Garante o enquadramento exato e devolve os toques ao mapa.
+        this.enquadrar();
+        this.input.enabled = !this.painelAberto;
+      },
+    );
+  }
+
+  /** Antes da compra, o ponto da empresa é um terreno à venda; depois, a hamburgueria. */
+  private atualizarPonto(animar: boolean): void {
+    const comprado = temPontoComercial(jogoStore.getState().contabil);
+    const mudou = comprado !== this.pontoComprado;
+    this.pontoComprado = comprado;
+    for (const objeto of this.doPonto) objeto.setVisible(comprado);
+    for (const objeto of this.doTerreno) objeto.setVisible(!comprado);
+    if (!animar || !mudou || !comprado) return;
+    // A hamburgueria "brota" no terreno quando o ponto é comprado.
+    for (const objeto of this.doPonto) {
+      const escala = { x: objeto.scaleX, y: objeto.scaleY };
+      objeto.setScale(escala.x * 0.6, escala.y * 0.2);
+      this.tweens.add({
+        targets: objeto,
+        scaleX: escala.x,
+        scaleY: escala.y,
+        duration: 520,
+        ease: "Back.easeOut",
+      });
+    }
   }
 
   private irPara(destino: Destino): void {
@@ -206,8 +292,7 @@ export class CenaCidade extends Phaser.Scene {
    * Desenha a placa do edifício num canvas, já inclinada, e a registra como textura.
    * A fachada virada para a direita sobe para a direita; a outra, desce.
    */
-  private texturaDaPlaca({ id, rotulo, frente }: Edificio): string {
-    const chave = `placa:${id}`;
+  private texturaDaPlaca(chave: string, rotulo: string, frente: Edificio["frente"]): string {
     if (this.textures.exists(chave)) return chave;
     const d = this.densidade;
     // Nomes compridos quebram em duas linhas.
@@ -257,37 +342,54 @@ export class CenaCidade extends Phaser.Scene {
   }
 
   private desenharEdificio(edificio: Edificio): void {
-    const { centro, porta, id, frente } = edificio;
+    const { centro, porta, id, frente, rotulo } = edificio;
     const d = DESENHO_DO_EDIFICIO;
-    this.add
-      .image(centro.x, centro.y, `edificio:${id}`)
-      .setOrigin(d.ancoraX / d.largura, d.ancoraY / d.altura)
-      .setDisplaySize(d.largura, d.altura)
-      .setDepth(centro.y);
+    const ehOPonto = id === PONTO_DA_EMPRESA;
+    const imagemNoLote = (textura: string) =>
+      this.add
+        .image(centro.x, centro.y, textura)
+        .setOrigin(d.ancoraX / d.largura, d.ancoraY / d.altura)
+        .setDisplaySize(d.largura, d.altura)
+        .setDepth(centro.y);
+    const predio = imagemNoLote(`edificio:${id}`);
+    if (ehOPonto) {
+      this.doPonto.push(predio);
+      this.doTerreno.push(imagemNoLote("terreno-vago"));
+    }
 
     // Placa com o nome, inclinada como a fachada da porta.
     const sentido = frente === "direita" ? -1 : 1;
     // A placa só é desenhada depois que a fonte carrega, para o texto sair na fonte certa.
-    const colocarPlaca = () => {
+    const colocarPlacas = () => {
       if (!this.sys.isActive()) return;
-      this.add
-        .image(
-          centro.x - sentido * PLACA.lado,
-          centro.y - PLACA.altura,
-          this.texturaDaPlaca(edificio),
-        )
-        .setScale(1 / this.densidade)
-        .setDepth(900);
+      const placa = (chave: string, texto: string, altura: number) =>
+        this.add
+          .image(
+            centro.x - sentido * PLACA.lado,
+            centro.y - altura,
+            this.texturaDaPlaca(chave, texto, frente),
+          )
+          .setScale(1 / this.densidade)
+          .setDepth(900);
+      const doPredio = placa(`placa:${id}`, rotulo, PLACA.altura);
+      if (ehOPonto) {
+        this.doPonto.push(doPredio);
+        // No terreno não há telhado: a placa fica mais baixa.
+        this.doTerreno.push(placa("placa:terreno-vago", "Vende-se", PLACA.altura - 22));
+        this.atualizarPonto(false);
+      }
     };
-    document.fonts.load(`800 12px ${FONTE}`).then(colocarPlaca, colocarPlaca);
+    document.fonts.load(`800 12px ${FONTE}`).then(colocarPlacas, colocarPlacas);
 
     // NPC ao lado da porta, encostado na parede e virado para a rua.
     const npc = { x: porta.x + sentido * 32, y: porta.y + 6 };
-    this.add
+    const boneco = this.add
       .image(npc.x, npc.y, `npc:${id}`)
       .setOrigin(BONECO.ancoraX / BONECO.largura, BONECO.ancoraY / BONECO.altura)
       .setDisplaySize(BONECO.largura, BONECO.altura)
       .setDepth(npc.y);
+    // Ninguém atende num terreno vazio.
+    if (ehOPonto) this.doPonto.push(boneco);
 
     // Indicador de oferta: balão com "!" acima do telhado.
     const balao = this.add.graphics();

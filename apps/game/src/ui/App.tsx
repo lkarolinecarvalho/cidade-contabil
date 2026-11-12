@@ -1,8 +1,9 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { bus } from "../bus";
 import { titulosEmAlerta } from "../state/calendario";
-import { bancosDaEmpresa, caixaDaEmpresa, nivelDoJogador } from "../state/jogo";
-import { conteudo, useJogo } from "../state/store";
+import { bancosDaEmpresa, caixaDaEmpresa, nivelDoJogador, temPontoComercial } from "../state/jogo";
+import { conteudo, jogoStore, useJogo } from "../state/store";
+import { Abertura } from "./Abertura";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
 import {
@@ -23,6 +24,9 @@ import {
   PainelDoEscritorio,
   PainelDoEstabelecimento,
 } from "./paineis";
+
+/** Estabelecimento que começa como terreno à venda (ver `temPontoComercial`). */
+const PONTO_DA_EMPRESA = "minha-loja";
 
 /** Nome da empresa do jogador na campanha (docs/campanha.md). */
 const EMPRESA = "Chapa da Praça";
@@ -83,8 +87,10 @@ const ATALHOS: Readonly<Record<PainelFixo, DefinicaoDoAtalho>> = {
   },
 };
 
-function tituloDo(painel: Painel): string {
+function tituloDo(painel: Painel, pontoComprado: boolean): string {
   if (painel.tipo === "atalho") return ATALHOS[painel.atalho].titulo;
+  // Antes da compra, o lugar da hamburgueria é um terreno à venda.
+  if (painel.estabelecimento === PONTO_DA_EMPRESA && !pontoComprado) return "Ponto à venda";
   const estabelecimento = conteudo.estabelecimentos.find((e) => e.id === painel.estabelecimento);
   return estabelecimento?.nome ?? painel.estabelecimento;
 }
@@ -115,6 +121,8 @@ export function App() {
   const nivel = useJogo((jogo) => nivelDoJogador(jogo, conteudo.missoes));
   const concluidas = useJogo((jogo) => jogo.missoesConcluidas.length);
   const alertas = useJogo((jogo) => titulosEmAlerta(jogo.titulos, jogo.data).length);
+  const pontoComprado = useJogo((jogo) => temPontoComercial(jogo.contabil));
+  const aberturaVista = useJogo((jogo) => jogo.aberturaVista);
 
   useEffect(() => {
     const cancelarPronto = bus.ouvir("mundo:pronto", () => setMundoPronto(true));
@@ -135,6 +143,15 @@ export function App() {
   }, [painel]);
 
   const fechar = useCallback(() => setPainel(null), []);
+
+  // Abertura: só ela aparece, por cima do mapa fechado no ponto vago.
+  if (!aberturaVista) {
+    return mundoPronto ? (
+      <Abertura aoTerminar={() => jogoStore.getState().concluirAbertura()} />
+    ) : (
+      <p className="carregando">Carregando a cidade…</p>
+    );
+  }
 
   return (
     <>
@@ -169,7 +186,7 @@ export function App() {
       </nav>
       <BottomSheet
         aberto={painel !== null}
-        titulo={painel ? tituloDo(painel) : ""}
+        titulo={painel ? tituloDo(painel, pontoComprado) : ""}
         icone={painel ? iconeDo(painel) : null}
         // O estabelecimento abre no meio da tela: é uma conversa, não uma consulta.
         centralizado={painel?.tipo === "estabelecimento"}
