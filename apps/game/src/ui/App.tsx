@@ -167,6 +167,8 @@ export function App() {
         aberto={painel !== null}
         titulo={painel ? tituloDo(painel) : ""}
         icone={painel ? iconeDo(painel) : null}
+        // O estabelecimento abre no meio da tela: é uma conversa, não uma consulta.
+        centralizado={painel?.tipo === "estabelecimento"}
         aoFechar={fechar}
       >
         {painel && conteudoDo(painel)}

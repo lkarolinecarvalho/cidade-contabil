@@ -115,6 +115,16 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
+  it("centralizado, vira uma caixa no meio da tela", () => {
+    const html = renderToStaticMarkup(
+      <BottomSheet aberto centralizado titulo="Banco" aoFechar={() => {}}>
+        <p>conversa</p>
+      </BottomSheet>,
+    );
+    expect(html).toContain("folha-no-centro");
+    expect(folha(true)).not.toContain("folha-no-centro");
+  });
+
   it("fechado, não renderiza nada", () => {
     expect(folha(false)).toBe("");
   });

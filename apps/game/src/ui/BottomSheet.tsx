@@ -5,12 +5,24 @@ interface Props {
   readonly titulo: string;
   /** Ícone ao lado do título, na faixa do cabeçalho. */
   readonly icone?: ReactNode;
+  /** Abre como caixa no meio da tela, em vez de subir da base. */
+  readonly centralizado?: boolean;
   readonly aoFechar: () => void;
   readonly children: ReactNode;
 }
 
-/** Folha que sobe da base da tela, sobre o mapa. Base de todos os painéis do jogo. */
-export function BottomSheet({ aberto, titulo, icone, aoFechar, children }: Props) {
+/**
+ * Base de todos os painéis do jogo, sobre o mapa. Por padrão é uma folha que sobe da
+ * base da tela; `centralizado` a transforma numa caixa no meio (conversas e missões).
+ */
+export function BottomSheet({
+  aberto,
+  titulo,
+  icone,
+  centralizado = false,
+  aoFechar,
+  children,
+}: Props) {
   const idDoTitulo = useId();
 
   useEffect(() => {
@@ -24,7 +36,7 @@ export function BottomSheet({ aberto, titulo, icone, aoFechar, children }: Props
 
   if (!aberto) return null;
   return (
-    <div className="folha-fundo">
+    <div className={centralizado ? "folha-fundo folha-no-centro" : "folha-fundo"}>
       <button type="button" className="folha-veu" aria-label="Fechar painel" onClick={aoFechar} />
       <section className="folha" role="dialog" aria-modal="true" aria-labelledby={idDoTitulo}>
         <header className="folha-cabecalho">
