@@ -4,7 +4,7 @@ import { conteudo } from "../state/store";
 import { Abertura, QUADROS } from "./Abertura";
 import { BottomSheet } from "./BottomSheet";
 import { Conversa, type Fala } from "./Conversa";
-import { FluxoDaMissao } from "./FluxoDaMissao";
+import { CartaoDaProposta, FluxoDaMissao, LINHAS_DA_NOTA_ABERTA } from "./FluxoDaMissao";
 import { Hud } from "./Hud";
 import { EstudoDoTema } from "./Tema";
 
@@ -242,5 +242,34 @@ describe("FluxoDaMissao numa conversa com a contadora", () => {
     expect(html).not.toContain("Aceitar a proposta");
     expect(html).not.toContain("Lançamento");
     expect(html).not.toContain("Efeito");
+  });
+});
+
+describe("CartaoDaProposta", () => {
+  const nota = (linhas: number) => ({
+    titulo: "Nota fiscal",
+    linhas: Array.from({ length: linhas }, (_, i) => `Linha ${i + 1}`),
+  });
+
+  it("na etapa do lançamento, a nota longa começa recolhida e pode ser aberta", () => {
+    const html = renderToStaticMarkup(
+      <CartaoDaProposta proposta={nota(LINHAS_DA_NOTA_ABERTA + 1)} recolhivel />,
+    );
+    expect(html).toContain("<details");
+    expect(html).not.toContain("<details open");
+    expect(html).toContain("ver a nota");
+    // As linhas continuam no cartão: abrir é só um toque.
+    expect(html).toContain("Linha 5");
+  });
+
+  it("a nota curta e a nota da conversa aparecem inteiras", () => {
+    const curta = renderToStaticMarkup(
+      <CartaoDaProposta proposta={nota(LINHAS_DA_NOTA_ABERTA)} recolhivel />,
+    );
+    const naConversa = renderToStaticMarkup(<CartaoDaProposta proposta={nota(10)} />);
+    for (const html of [curta, naConversa]) {
+      expect(html).not.toContain("<details");
+      expect(html).toContain("Linha 1");
+    }
   });
 });

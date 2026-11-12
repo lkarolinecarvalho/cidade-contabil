@@ -512,15 +512,40 @@ function EtapaDoEfeito({
 
 /** Passo "Faça o Lançamento": o jogador monta, o motor confere, e o erro vira prévia. */
 /** Cartão com os dados da operação: a "nota" que o jogador consulta para lançar. */
-function CartaoDaProposta({ proposta }: { readonly proposta: Proposta }) {
+/** A partir de quantas linhas a nota aparece recolhida na etapa do lançamento. */
+export const LINHAS_DA_NOTA_ABERTA = 4;
+
+export function CartaoDaProposta({
+  proposta,
+  recolhivel = false,
+}: {
+  readonly proposta: Proposta;
+  /** Na etapa do lançamento, a nota longa começa fechada, para o editor caber na tela. */
+  readonly recolhivel?: boolean;
+}) {
+  const linhas = (
+    <ul>
+      {proposta.linhas.map((linha) => (
+        <li key={linha}>{linha}</li>
+      ))}
+    </ul>
+  );
+  if (recolhivel && proposta.linhas.length > LINHAS_DA_NOTA_ABERTA) {
+    return (
+      <details className="proposta proposta-recolhivel">
+        <summary>
+          <strong>{proposta.titulo}</strong>
+          <span className="proposta-abrir">ver a nota</span>
+          <span className="proposta-fechar">recolher</span>
+        </summary>
+        {linhas}
+      </details>
+    );
+  }
   return (
     <aside className="proposta" aria-label={proposta.titulo}>
       <strong>{proposta.titulo}</strong>
-      <ul>
-        {proposta.linhas.map((linha) => (
-          <li key={linha}>{linha}</li>
-        ))}
-      </ul>
+      {linhas}
     </aside>
   );
 }
@@ -580,7 +605,7 @@ function EtapaDoLancamento({
     return (
       <section className="etapa">
         <h4>Faça o Lançamento</h4>
-        {missao.proposta && <CartaoDaProposta proposta={missao.proposta} />}
+        {missao.proposta && <CartaoDaProposta proposta={missao.proposta} recolhivel />}
         <p className="etapa-instrucao">Esse fato gera lançamento contábil?</p>
         <div className="julgar">
           <button type="button" className="neutro" onClick={() => conferir([])}>
@@ -601,7 +626,7 @@ function EtapaDoLancamento({
         Agora registre a operação. O total dos débitos tem de ser igual ao dos créditos, e os
         valores estão no cartão abaixo.
       </Dica>
-      {missao.proposta && <CartaoDaProposta proposta={missao.proposta} />}
+      {missao.proposta && <CartaoDaProposta proposta={missao.proposta} recolhivel />}
       <EditorDeLancamento
         ajuda={semLancamento ? "livre" : ajudaDaMissao(missao)}
         esperadas={esperadas}

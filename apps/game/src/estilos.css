@@ -805,6 +805,47 @@ button {
   border-top: 1px dotted var(--borda);
 }
 
+/* Nota longa na etapa do lançamento: fechada até o jogador tocar. */
+.proposta-recolhivel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.proposta-recolhivel summary::-webkit-details-marker {
+  display: none;
+}
+
+.proposta-recolhivel summary strong {
+  margin-bottom: 0;
+}
+
+.proposta-recolhivel summary span {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--borda);
+  background: var(--cartao);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.proposta-recolhivel .proposta-fechar,
+.proposta-recolhivel[open] .proposta-abrir {
+  display: none;
+}
+
+.proposta-recolhivel[open] .proposta-fechar {
+  display: inline;
+}
+
+.proposta-recolhivel[open] ul {
+  margin-top: 6px;
+}
+
 .etapa > .proposta {
   margin: 0 0 10px;
   animation: none;
