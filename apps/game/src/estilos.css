@@ -810,6 +810,130 @@ button {
   animation: none;
 }
 
+/* Conclusão da missão: o que mudou nos saldos e a comparação entre duas notas. */
+.consequencia,
+.comparacao {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fffdf5;
+  border: 1.5px solid var(--borda);
+}
+
+.consequencia h4,
+.comparacao h4 {
+  margin: 0 0 6px;
+  font-size: 0.9375rem;
+  font-weight: 900;
+}
+
+.comparacao h4 small {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.consequencia ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.consequencia li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 0.875rem;
+}
+
+.consequencia li + li {
+  border-top: 1px dotted var(--borda);
+}
+
+.consequencia-conta {
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.consequencia-conta em {
+  display: block;
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.consequencia-saldos {
+  flex: none;
+  text-align: right;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.consequencia-saldos small {
+  display: block;
+  font-size: 0.6875rem;
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.consequencia-saldos b.sobe {
+  color: var(--verde);
+}
+
+.consequencia-saldos b.desce {
+  color: #b4472e;
+}
+
+.comparacao table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.comparacao th,
+.comparacao td {
+  padding: 4px 3px;
+  text-align: right;
+  vertical-align: top;
+  border-top: 1px dotted var(--borda);
+  font-variant-numeric: tabular-nums;
+}
+
+.comparacao thead th {
+  border-top: 0;
+  font-weight: 900;
+  width: 31%;
+}
+
+.comparacao tbody th {
+  text-align: left;
+  font-weight: 700;
+}
+
+.comparacao tr.mudou td {
+  font-weight: 900;
+  background: #fdf1c9;
+}
+
+.comparacao-porque {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.regra.nota-didatica {
+  padding: 6px 8px 6px 10px;
+  border-left-color: #5b7fc4;
+  border-radius: 0 8px 8px 0;
+  background: #eef4fb;
+}
+
 .recompensa {
   display: flex;
   align-items: center;

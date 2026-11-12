@@ -1,6 +1,7 @@
 import { type Missao, type Proposta, paraOperacaoDoMotor } from "@cidade/content";
 import {
   ErroDeOperacao,
+  type EstadoContabil,
   type Lancamento,
   type Operacao,
   type Partida,
@@ -8,6 +9,7 @@ import {
 } from "@cidade/ledger";
 import { useMemo, useState } from "react";
 import { selecionarAfirmativas } from "../orquestrador/afirmativas";
+import { compararCompras, oQueMudou } from "../orquestrador/consequencia";
 import { type Direcao, efeitoDosLancamentos } from "../orquestrador/efeito";
 import {
   ajudaDaMissao,
@@ -82,6 +84,9 @@ export function FluxoDaMissao({
   // Missão sem operação: uma conversa com a contadora. Primeiro as falas, depois as
   // explicações, e nenhum lançamento.
   const conversa = missao.operacoes.length === 0;
+  // O razão como estava ao abrir a missão, para mostrar a consequência no fim. Se a
+  // missão foi reaberta com operações já gravadas, o "antes" se perdeu: nada é mostrado.
+  const [contabilNoInicio] = useState(() => (feitas === 0 ? jogoStore.getState().contabil : null));
   const [totalDeAulas] = useState(aulas.length);
   const [etapa, setEtapa] = useState<Etapa>(() => {
     if (conversa) return "negociacao";
@@ -300,6 +305,8 @@ export function FluxoDaMissao({
                 : "Os lançamentos já estão no razão da empresa."}
             </span>
           </div>
+          {!conversa && contabilNoInicio && <Consequencia antes={contabilNoInicio} />}
+          {missao.comparacao && <ComparacaoDeNotas missao={missao} />}
           {/* Fechamento do mês: a DRE fecha a missão. */}
           {missao.operacoes.some((o) => o.tipo === "apuracao_icms") && (
             <div className="painel-secao">
@@ -327,6 +334,93 @@ export function FluxoDaMissao({
         </>
       )}
     </article>
+  );
+}
+
+/** "O que mudou": o saldo de cada conta antes e depois da missão. */
+function Consequencia({ antes }: { readonly antes: EstadoContabil }) {
+  const depois = useJogo((jogo) => jogo.contabil);
+  const mudancas = useMemo(() => oQueMudou(antes, depois), [antes, depois]);
+  if (mudancas.length === 0) {
+    return (
+      <p className="painel-nota">
+        Nenhum saldo mudou: esse fato não entra na contabilidade da empresa.
+      </p>
+    );
+  }
+  return (
+    <section className="consequencia" aria-label="O que mudou na empresa">
+      <h4>O que mudou na empresa</h4>
+      <ul>
+        {mudancas.map((m) => (
+          <li key={m.conta}>
+            <span className="consequencia-conta">
+              {m.nome}
+              <em>{m.classificacao}</em>
+            </span>
+            <span className="consequencia-saldos">
+              <small>{formatarReais(m.antesCentavos)}</small>
+              <b className={m.depoisCentavos > m.antesCentavos ? "sobe" : "desce"}>
+                {m.depoisCentavos > m.antesCentavos ? "▲" : "▼"} {formatarReais(m.depoisCentavos)}
+              </b>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="painel-nota">
+        Para ver todos os saldos, abra o Escritório e toque em Consulta.
+      </p>
+    </section>
+  );
+}
+
+/** Duas notas parecidas, lado a lado, com o que muda no tratamento de cada uma. */
+function ComparacaoDeNotas({ missao }: { readonly missao: Missao }) {
+  const contabil = useJogo((jogo) => jogo.contabil);
+  const data = useJogo((jogo) => jogo.data);
+  const { comparacao } = missao;
+  const linhas = useMemo(() => {
+    const outra = conteudo.missoes.find((m) => m.id === comparacao?.com);
+    const [la] = outra?.operacoes ?? [];
+    const [aqui] = missao.operacoes;
+    if (la?.tipo !== "compra" || aqui?.tipo !== "compra") return [];
+    const paraOMotor = (operacao: typeof la) => {
+      const convertida = paraOperacaoDoMotor(operacao, { mes: data, meioEscolhido: "bancos" });
+      return convertida.tipo === "compra" ? convertida : null;
+    };
+    const [compraLa, compraAqui] = [paraOMotor(la), paraOMotor(aqui)];
+    if (!compraLa || !compraAqui) return [];
+    return compararCompras(contabil, compraLa, compraAqui, formatarReais);
+  }, [missao, comparacao, contabil, data]);
+  if (!comparacao || linhas.length === 0) return null;
+  return (
+    <section className="comparacao" aria-label={comparacao.titulo}>
+      <h4>
+        <small>Compare</small>
+        {comparacao.titulo}
+      </h4>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th>{comparacao.la}</th>
+            <th>{comparacao.aqui}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {linhas.map((linha) => (
+            <tr key={linha.rotulo} className={linha.mudou ? "mudou" : undefined}>
+              <th>{linha.rotulo}</th>
+              <td>{linha.la}</td>
+              <td>{linha.aqui}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="comparacao-porque">
+        <strong>Por que mudou?</strong> {comparacao.porque}
+      </p>
+    </section>
   );
 }
 
