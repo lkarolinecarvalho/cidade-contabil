@@ -20,6 +20,8 @@ const ROTULO_DO_GRUPO: Readonly<Record<GrupoConta, string>> = {
   deducao_receita: "Dedução da receita",
   custo: "Custo",
   despesa_operacional: "Despesa",
+  receita_financeira: "Receita financeira",
+  despesa_financeira: "Despesa financeira",
 };
 
 export function rotuloDoGrupo(grupo: GrupoConta): string {

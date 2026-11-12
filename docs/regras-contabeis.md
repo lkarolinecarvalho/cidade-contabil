@@ -1,4 +1,4 @@
-# Regras contábeis e tributárias — v1
+# Regras contábeis e tributárias — v2
 
 **Fonte da verdade** do motor (`packages/ledger`). Cada regra tem um ID, que deve ser
 citado no código e nos testes. Caso não coberto aqui = perguntar antes de implementar.
@@ -41,7 +41,7 @@ não levar a simplificação para a prova.
 - **R-CAP-05** — A parcela de cada acionista é proporcional à sua participação; o motor
   registra a integralização total e a UI mostra a parte do avatar e a do NPC.
 
-## 4. Plano de contas (v1)
+## 4. Plano de contas
 
 | Código | Conta | Grupo | Natureza |
 |---|---|---|---|
@@ -50,6 +50,10 @@ não levar a simplificação para a prova.
 | 1.1.3 | Clientes | Ativo Circulante | Devedora |
 | 1.1.4 | Estoque de Mercadorias | Ativo Circulante | Devedora |
 | 1.1.5 | ICMS a Recuperar | Ativo Circulante | Devedora |
+| 1.1.6 | Estoque de Insumos | Ativo Circulante | Devedora |
+| 1.1.7 | Produtos Acabados | Ativo Circulante | Devedora |
+| 1.1.8 | Material de Consumo | Ativo Circulante | Devedora |
+| 1.1.9 | IPI a Recuperar | Ativo Circulante | Devedora |
 | 1.2.3.1 | Terrenos | ANC — Imobilizado | Devedora |
 | 1.2.3.2 | Edificações | ANC — Imobilizado | Devedora |
 | 1.2.3.3 | Móveis e Utensílios | ANC — Imobilizado | Devedora |
@@ -62,6 +66,7 @@ não levar a simplificação para a prova.
 | 2.1.3 | PIS a Recolher | Passivo Circulante | Credora |
 | 2.1.4 | COFINS a Recolher | Passivo Circulante | Credora |
 | 2.1.5 | Salários a Pagar | Passivo Circulante | Credora |
+| 2.1.6 | IPI a Recolher | Passivo Circulante | Credora |
 | 2.3.1 | Capital Social Subscrito | Patrimônio Líquido | Credora |
 | 2.3.2 | (−) Capital a Integralizar | Patrimônio Líquido (redutora) | Devedora |
 | 2.3.3 | Lucros ou Prejuízos Acumulados | Patrimônio Líquido | Credora |
@@ -69,10 +74,17 @@ não levar a simplificação para a prova.
 | 3.2.1 | ICMS sobre Vendas | Resultado — Dedução da receita | Devedora |
 | 3.2.2 | PIS sobre Faturamento | Resultado — Dedução da receita | Devedora |
 | 3.2.3 | COFINS sobre Faturamento | Resultado — Dedução da receita | Devedora |
+| 3.2.4 | Devoluções de Vendas | Resultado — Dedução da receita | Devedora |
+| 3.2.5 | Abatimentos sobre Vendas | Resultado — Dedução da receita | Devedora |
+| 3.2.6 | Descontos Incondicionais Concedidos | Resultado — Dedução da receita | Devedora |
+| 3.3.1 | Descontos Financeiros Obtidos | Resultado — Receita financeira | Credora |
 | 4.1.1 | Custo das Mercadorias Vendidas (CMV) | Resultado — Custo | Devedora |
+| 4.1.2 | Custo dos Produtos Vendidos (CPV) | Resultado — Custo | Devedora |
 | 4.2.1 | Despesas com Salários | Resultado — Despesa operacional | Devedora |
 | 4.2.2 | Despesa com Energia Elétrica | Resultado — Despesa operacional | Devedora |
 | 4.2.3 | Despesa de Depreciação | Resultado — Despesa operacional | Devedora |
+| 4.2.4 | Despesa com Material de Consumo | Resultado — Despesa operacional | Devedora |
+| 4.3.1 | Descontos Financeiros Concedidos | Resultado — Despesa financeira | Devedora |
 
 O plano de contas é dado (config), não código fixo, para poder crescer.
 
@@ -208,9 +220,149 @@ capítulos 1–3 não têm operações com mercadorias.
 
 ## 14. Regras faltantes (a escrever)
 
-Casos que o jogo vai ter, mas que ainda não têm regra. Até a regra ser escrita aqui, o
+Casos que o jogo pode ter, mas que ainda não têm regra. Até a regra ser escrita aqui, o
 motor recusa a operação (`caso_nao_coberto`).
 
-1. **Compra ou venda com mais de um produto** — falta definir como ratear frete, IPI e
-   ICMS entre os produtos da nota (custo de aquisição por produto) e como arredondar
-   cada linha. Hoje `compra` e `venda` aceitam exatamente um produto.
+1. Devolução de compra a prazo que já foi paga, e de venda a prazo que já foi recebida.
+2. Abatimento sobre mercadoria que já saiu do estoque.
+3. Venda direta de insumo ou de material de consumo.
+4. Lotes em consignação do mesmo produto com preços diferentes.
+
+## 15. Itens de estoque e a receita do lanche
+
+A empresa do jogo é uma hamburgueria. O catálogo de itens é dado (config), como o
+plano de contas.
+
+- **R-INS-01** — O estoque tem seis itens, cada um com sua ficha e seu custo médio
+  (R-EST-02): pão, carne, queijo e alface (**insumos**); refrigerante (**mercadoria
+  para revenda**); material de limpeza (**material de consumo**). No arco da fábrica
+  entram a embalagem (insumo) e o hambúrguer congelado (produto acabado).
+- **R-INS-02** — Insumos e mercadorias ficam em contas separadas do Ativo Circulante:
+  `Estoque de Insumos` e `Estoque de Mercadorias`. A compra de insumo segue as regras
+  da compra de mercadoria (R-COM-01 a R-COM-04), inclusive o crédito de ICMS.
+  Base: CPC 16 (R1), itens 6 e 9 a 11; LC 87/96, arts. 19 e 20.
+- **R-INS-03** — 📘 SIMPLIFICAÇÃO: receita fixa. Cada hambúrguer vendido consome 1 pão,
+  1 carne, 1 queijo e 1 porção de alface. Na venda, o motor baixa cada insumo pelo
+  custo médio (R-EST-03) e leva a soma a `Custo dos Produtos Vendidos (CPV)`. Mão de
+  obra, energia e demais gastos do preparo não entram no custo: são despesas do período.
+- **R-INS-04** — Venda de hambúrguer é bloqueada se faltar qualquer insumo da receita.
+
+O refrigerante vendido vai a `CMV`; o hambúrguer e o hambúrguer congelado vão a `CPV`.
+
+## 16. Nota com mais de um item
+
+- **R-NOT-01** — Cada item da nota é uma linha com quantidade e valor próprios. ICMS,
+  IPI, PIS e COFINS são calculados por linha e arredondados por linha (R-GER-02).
+- **R-NOT-02** — O frete cobrado na nota é rateado entre as linhas na proporção do
+  valor dos produtos de cada uma. Cada parcela é arredondada meio para cima; a
+  diferença de centavos vai para a linha de maior valor.
+- **R-NOT-03** — O lançamento é um só: um débito por conta de estoque (somando os itens
+  da mesma conta), um débito de ICMS a Recuperar pelo total e um crédito pelo total da
+  nota.
+
+## 17. Devoluções e abatimentos
+
+Devoluções e abatimentos referem-se sempre a uma nota identificada.
+
+- **R-DVC-01** — Devolução de compra. Sai do estoque pelo **custo com que aquela
+  compra entrou** (não pelo custo médio do dia), estorna o ICMS a Recuperar (e o IPI a
+  Recuperar, se houver) da parte devolvida e reduz Fornecedores. Se a compra foi à
+  vista, o fornecedor devolve o dinheiro (débito em Caixa ou Bancos). Devolução de
+  compra a prazo já paga fica fora desta versão.
+  Base: CPC 16 (R1), item 11; LC 87/96, arts. 19 e 20.
+- **R-ABC-01** — 📘 SIMPLIFICAÇÃO: abatimento sobre compras. Redução de preço concedida
+  depois da nota, sem devolução. Reduz o custo do estoque e a dívida, sem mudar a
+  quantidade. O abatimento não ajusta o ICMS da nota.
+  `D Fornecedores / C Estoque`. Base: CPC 16 (R1), item 11.
+- **R-DVV-01** — Devolução de venda. Só vale para o que volta ao estoque: o
+  refrigerante e o hambúrguer congelado; lanche preparado não é devolvido. Registra
+  `Devoluções de Vendas` (dedução da receita bruta) contra Clientes ou Caixa, estorna o
+  ICMS, o PIS, a COFINS e o IPI da parte devolvida e devolve a mercadoria ao estoque
+  pelo **custo com que saiu**, estornando o CMV ou o CPV.
+  Base: Lei 6.404/76, art. 187, I; DL 1.598/77, art. 12, §1º, I; Lei 9.718/98, art. 3º,
+  §2º, I.
+- **R-ABV-01** — 📘 SIMPLIFICAÇÃO: abatimento sobre vendas. Redução de preço concedida
+  depois da venda, sem devolução. É dedução da receita bruta e não ajusta tributos nem
+  estoque. `D Abatimentos sobre Vendas / C Clientes|Caixa`.
+  Base: Lei 6.404/76, art. 187, I.
+
+## 18. Descontos
+
+- **R-DSC-01** — Desconto comercial (incondicional) na compra. Vem na própria nota e
+  não é registrado: a compra entra pelo valor líquido, e o ICMS incide sobre o líquido.
+  Base: CPC 16 (R1), item 11; LC 87/96, art. 13, §1º, II, "a".
+- **R-DSC-02** — 📘 SIMPLIFICAÇÃO: desconto financeiro obtido, por pagar o fornecedor
+  antes do vencimento. É receita financeira e não altera o custo do estoque.
+  `D Fornecedores / C Bancos|Caixa / C Descontos Financeiros Obtidos`.
+  Base: Lei 6.404/76, art. 187, III.
+- **R-DSC-03** — Desconto incondicional concedido. Vem na nota de venda. A receita
+  bruta é registrada cheia e o desconto aparece como dedução; ICMS, PIS e COFINS
+  incidem sobre o valor líquido.
+  `D Clientes|Caixa (líquido) / D Descontos Incondicionais Concedidos / C Receita Bruta`.
+  Base: DL 1.598/77, art. 12, §1º, II; LC 87/96, art. 13, §1º, II, "a"; Lei 9.718/98,
+  art. 3º, §2º, I.
+- **R-DSC-04** — 📘 SIMPLIFICAÇÃO: desconto financeiro concedido, por receber do
+  cliente antes do vencimento. É despesa financeira.
+  `D Bancos|Caixa / D Descontos Financeiros Concedidos / C Clientes`.
+  Base: Lei 6.404/76, art. 187, III.
+
+## 19. Consignação
+
+A hamburgueria é a consignatária: recebe a mercadoria e só paga o que vender.
+
+- **R-CSG-01** — Mercadoria recebida em consignação não é ativo da empresa, que não
+  tem o controle dela. Não há lançamento; a quantidade fica num controle à parte.
+  Base: CPC 47, itens B77 e B78; CPC 00 (R2), definição de ativo.
+- **R-CSG-02** — Na venda de um item consignado, a empresa registra, na mesma data, a
+  compra a prazo das unidades vendidas (R-COM-03) e a venda normal, com CMV.
+- **R-CSG-03** — A devolução ao consignante das unidades não vendidas não gera
+  lançamento.
+- **R-CSG-04** — 📘 SIMPLIFICAÇÃO: o ICMS só aparece na compra efetiva e na venda. Na
+  vida real, a remessa em consignação já tem nota com imposto destacado.
+
+O registro da consignação em contas de compensação é cobrado só como teoria.
+
+## 20. Material de consumo
+
+- **R-MCO-01** — Material de limpeza comprado entra em `Material de Consumo` (Ativo
+  Circulante) pelo valor total da nota: não há crédito de ICMS em material de uso e
+  consumo. Base: LC 87/96, art. 33, I (redação da LC 171/2019).
+- **R-MCO-02** — No último dia do mês, o inventário informa a quantidade que sobrou. O
+  que saiu é o consumo, baixado pelo custo médio:
+  `D Despesa com Material de Consumo / C Material de Consumo`.
+
+## 21. IPI na fábrica e produção
+
+A regra geral da revenda continua sendo a R-IPI-01 (o IPI integra o custo).
+
+- **R-IPI-03** — A hamburgueria em si não é contribuinte do IPI: o preparo de alimentos
+  em lanchonete, para venda direta ao consumidor, não é industrialização. A venda de
+  lanche preparado nunca tem IPI. Base: RIPI (Decreto 7.212/2010), art. 5º, I.
+- **R-IPI-04** — Nas compras para a fábrica de hambúrguer congelado, o IPI é
+  recuperável: `D Estoque / D ICMS a Recuperar / D IPI a Recuperar / C Fornecedores`.
+  Só a embalagem do congelado é comprada com IPI recuperável.
+  Base: RIPI, arts. 4º e 226.
+- **R-IPI-05** — Na venda do congelado, o IPI é cobrado por fora e não é receita:
+  `D Clientes (total da nota) / C Receita Bruta (produtos) / C IPI a Recolher (IPI)`.
+  ICMS, PIS e COFINS incidem sobre o valor dos produtos.
+  Base: RIPI, art. 190; CPC 47, item 47.
+- **R-IPI-06** — Apuração mensal do IPI, igual à do ICMS (R-ICMS-06):
+  `D IPI a Recolher / C IPI a Recuperar` pelo menor dos dois saldos. O saldo devedor é
+  pago; o saldo credor permanece em IPI a Recuperar.
+- **R-IPI-07** — 📘 SIMPLIFICAÇÃO: as alíquotas de IPI são didáticas e vêm na operação
+  (R-IPI-02). Na TIPI, preparações de carne bovina têm alíquota zero.
+- **R-PRD-01** — 📘 SIMPLIFICAÇÃO: receita do congelado. Cada unidade consome 1 carne e
+  1 embalagem. A operação "produzir" transfere o custo dos insumos para `Produtos
+  Acabados`; a venda baixa `Produtos Acabados` contra CPV. Mão de obra e gastos gerais
+  de fabricação não entram no custo.
+
+## 22. Mudanças ainda não aplicadas
+
+Decididas, mas ainda não refletidas nas seções acima nem no jogo:
+
+1. **Tipo societário.** A empresa passa a ser sociedade limitada (Código Civil, arts.
+   1.052 e 1.055), com o avatar (90% das quotas) e o Sr. Osvaldo (10%). O capital
+   autorizado e as demais figuras da S.A. saem das operações e ficam só na teoria. A
+   seção 3 será reescrita junto com a nova campanha.
+2. **Regime tributário.** O Lucro Presumido é mantido como simplificação didática; uma
+   hamburgueria desse porte estaria, na vida real, no Simples Nacional.

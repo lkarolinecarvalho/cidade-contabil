@@ -72,8 +72,17 @@ export function verificarInvariantes(estado: EstadoContabil): void {
     expect(saldo.valorCentavos).toBeGreaterThanOrEqual(0);
     valorEmEstoque += saldo.valorCentavos;
   }
-  const contaEstoque = b.linhas.find((l) => l.conta === estado.planoDeContas.papeis.estoque);
-  expect(contaEstoque?.saldoDevedorCentavos).toBe(valorEmEstoque);
+  const { papeis } = estado.planoDeContas;
+  const contasDeEstoque = [
+    papeis.estoque,
+    papeis.estoqueInsumos,
+    papeis.produtosAcabados,
+    papeis.materialDeConsumo,
+  ];
+  const saldoDasContas = b.linhas
+    .filter((l) => contasDeEstoque.includes(l.conta))
+    .reduce((s, l) => s + l.saldoDevedorCentavos, 0);
+  expect(saldoDasContas).toBe(valorEmEstoque);
 }
 
 /** Aplica a operação, checa os invariantes e devolve os lançamentos como linhas legíveis. */

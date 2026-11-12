@@ -1,13 +1,26 @@
+import { type Calculo, credito, debito, type Rascunho, rascunho } from "./calculo";
+import { CATALOGO_VAZIO, type Catalogo } from "./catalogo";
+import {
+  calcularAbatimentoDeCompra,
+  calcularAbatimentoDeVenda,
+  calcularCompra,
+  calcularDevolucaoDeCompra,
+  calcularDevolucaoDeConsignacao,
+  calcularDevolucaoDeVenda,
+  calcularInventarioDeConsumo,
+  calcularProducao,
+  calcularRecebimentoEmConsignacao,
+  calcularVenda,
+  calcularVendaConsignada,
+} from "./comercial";
 import { compararDatas, compararMeses, type DataJogo, exigirDataValida, mesmoMes } from "./data";
 import {
-  aplicarAliquota,
   type Centavos,
   exigirInteiroNaoNegativo,
   exigirInteiroPositivo,
   multiplicarEDividir,
 } from "./dinheiro";
 import { ErroDeOperacao } from "./erros";
-import { ESTOQUE_VAZIO, entradaNoEstoque, saidaDoEstoque } from "./estoque";
 import { PARAMETROS_PADRAO, type Parametros } from "./parametros";
 import {
   type ClasseDepreciavel,
@@ -19,21 +32,19 @@ import {
 import { acumularMovimentos, type Movimentos, saldoCredor, saldoDevedor } from "./razao";
 import type { IdRegra } from "./regras";
 import type {
-  Bem,
   EstadoContabil,
-  ItemMercadoria,
   Lancamento,
   MeioDePagamento,
   Operacao,
   Partida,
   Previsao,
-  SaldoDeEstoque,
-  ValoresCalculados,
 } from "./tipos";
 
 export interface ParametrosDaEmpresa {
   readonly parametros?: Parametros;
   readonly planoDeContas?: PlanoDeContas;
+  /** Itens e receitas da empresa. Sem catálogo, todo item é mercadoria para revenda. */
+  readonly catalogo?: Catalogo;
 }
 
 /** Cria a empresa com o razão vazio. A carteira pessoal do avatar fica fora (R-ENT-01). */
@@ -45,41 +56,10 @@ export function criarEmpresa(opcoes: ParametrosDaEmpresa = {}): EstadoContabil {
     lancamentos: [],
     estoque: {},
     imobilizado: [],
+    catalogo: opcoes.catalogo ?? CATALOGO_VAZIO,
+    notas: {},
+    consignado: {},
   };
-}
-
-interface Rascunho {
-  readonly historico: string;
-  readonly regras: readonly IdRegra[];
-  readonly partidas: readonly Partida[];
-}
-
-interface Calculo {
-  readonly rascunhos: readonly Rascunho[];
-  readonly estoque: Readonly<Record<string, SaldoDeEstoque>>;
-  readonly imobilizado: readonly Bem[];
-  readonly valores: ValoresCalculados;
-}
-
-const debito = (conta: CodigoConta, valorCentavos: Centavos): Partida => ({
-  conta,
-  lado: "D",
-  valorCentavos,
-});
-
-const credito = (conta: CodigoConta, valorCentavos: Centavos): Partida => ({
-  conta,
-  lado: "C",
-  valorCentavos,
-});
-
-/** Monta um lançamento, descartando partidas de valor zero (ex.: ICMS com alíquota 0). */
-function rascunho(
-  historico: string,
-  regras: readonly IdRegra[],
-  partidas: readonly Partida[],
-): Rascunho {
-  return { historico, regras, partidas: partidas.filter((p) => p.valorCentavos !== 0) };
 }
 
 const CLASSES_DEPRECIAVEIS: readonly ClasseDepreciavel[] = [
@@ -87,24 +67,6 @@ const CLASSES_DEPRECIAVEIS: readonly ClasseDepreciavel[] = [
   "moveis_utensilios",
   "equipamentos",
 ];
-
-/** As regras não definem o rateio de frete e tributos entre produtos: o motor não inventa. */
-function itemUnico(itens: readonly ItemMercadoria[], operacao: string): ItemMercadoria {
-  const [item, ...outros] = itens;
-  if (!item || outros.length > 0) {
-    throw new ErroDeOperacao(
-      "caso_nao_coberto",
-      `A ${operacao} deve ter exatamente um produto: as regras não cobrem o rateio entre produtos.`,
-    );
-  }
-  exigirInteiroPositivo(item.quantidade, "Quantidade");
-  exigirInteiroPositivo(item.precoUnitarioCentavos, "Preço unitário");
-  return item;
-}
-
-function exigirPrazoValido(dias: number): void {
-  exigirInteiroPositivo(dias, "Prazo em dias");
-}
 
 function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): Calculo {
   const { papeis } = estado.planoDeContas;
@@ -218,124 +180,38 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
       };
     }
 
-    case "compra": {
-      const item = itemUnico(operacao.itens, "compra");
-      exigirInteiroNaoNegativo(operacao.ipiAliquota, "Alíquota do IPI");
-      exigirInteiroNaoNegativo(operacao.freteCentavos, "Frete");
-      if (operacao.condicao.tipo === "prazo") exigirPrazoValido(operacao.condicao.dias);
+    case "compra":
+      return calcularCompra(estado, operacao);
 
-      const produtos = item.quantidade * item.precoUnitarioCentavos;
-      // R-IPI-01, R-IPI-02: o IPI vem na oferta e integra o custo (comerciante não recupera).
-      const ipi = aplicarAliquota(produtos, operacao.ipiAliquota);
-      // R-FRE-01: o frete cobrado na nota integra o total, o custo e a base do ICMS.
-      const totalNota = produtos + ipi + operacao.freteCentavos;
-      // R-ICMS-02, R-ICMS-03: ICMS por dentro; base = produtos + frete, sem o IPI.
-      const icms = aplicarAliquota(produtos + operacao.freteCentavos, parametros.icmsAliquota);
-      // R-COM-01: custo = produtos + IPI + frete − ICMS recuperável.
-      const custo = totalNota - icms;
-      // R-COM-02: à vista credita Caixa ou Bancos; a prazo credita Fornecedores.
-      const contrapartida =
-        operacao.condicao.tipo === "avista"
-          ? contaDoMeio(operacao.condicao.meio)
-          : papeis.fornecedores;
-      const regras: IdRegra[] = [
-        "R-COM-01",
-        "R-COM-02",
-        "R-COM-03",
-        "R-COM-04",
-        "R-ICMS-02",
-        "R-ICMS-03",
-        "R-ICMS-04",
-      ];
-      if (ipi > 0) regras.push("R-IPI-01");
-      if (operacao.freteCentavos > 0) regras.push("R-FRE-01");
-      return {
-        imobilizado: estado.imobilizado,
-        // R-EST-01, R-EST-02: a entrada atualiza quantidade e valor na hora.
-        estoque: {
-          ...estado.estoque,
-          [item.produto]: entradaNoEstoque(
-            estado.estoque[item.produto] ?? ESTOQUE_VAZIO,
-            item.quantidade,
-            custo,
-          ),
-        },
-        valores: { totalNota, ipi, icms, custoEstoque: custo },
-        rascunhos: [
-          // R-COM-03, R-ICMS-04
-          rascunho(
-            operacao.condicao.tipo === "avista"
-              ? "Compra de mercadorias à vista"
-              : "Compra de mercadorias a prazo",
-            regras,
-            [
-              debito(papeis.estoque, custo),
-              debito(papeis.icmsARecuperar, icms),
-              credito(contrapartida, totalNota),
-            ],
-          ),
-        ],
-      };
-    }
+    case "venda":
+      return calcularVenda(estado, operacao);
 
-    case "venda": {
-      const item = itemUnico(operacao.itens, "venda");
-      if (operacao.condicao.tipo === "prazo") exigirPrazoValido(operacao.condicao.dias);
+    case "devolucao_compra":
+      return calcularDevolucaoDeCompra(estado, operacao, movimentos);
 
-      const receita = item.quantidade * item.precoUnitarioCentavos;
-      // R-ICMS-02: ICMS por dentro, sobre o valor da operação.
-      const icms = aplicarAliquota(receita, parametros.icmsAliquota);
-      // R-PC-02: base do PIS/COFINS = receita bruta − ICMS destacado.
-      const basePisCofins = receita - icms;
-      // R-PC-01: regime cumulativo.
-      const pis = aplicarAliquota(basePisCofins, parametros.pisAliquota);
-      const cofins = aplicarAliquota(basePisCofins, parametros.cofinsAliquota);
-      // R-EST-03, R-EST-04
-      const saida = saidaDoEstoque(estado.estoque[item.produto] ?? ESTOQUE_VAZIO, item.quantidade);
-      const aVista = operacao.condicao.tipo === "avista";
-      return {
-        imobilizado: estado.imobilizado,
-        estoque: { ...estado.estoque, [item.produto]: saida.saldo },
-        valores: { receitaBruta: receita, icms, pis, cofins, cmv: saida.cmvCentavos },
-        rascunhos: [
-          // R-VEN-01; R-GER-03: a receita é reconhecida na venda, recebida ou não.
-          rascunho(
-            aVista ? "Venda de mercadorias à vista" : "Venda de mercadorias a prazo",
-            ["R-VEN-01", "R-GER-03"],
-            [
-              debito(aVista ? papeis.caixa : papeis.clientes, receita),
-              credito(papeis.receitaBruta, receita),
-            ],
-          ),
-          // R-ICMS-05
-          rascunho(
-            "ICMS sobre a venda",
-            ["R-ICMS-05", "R-ICMS-02", "R-VEN-02"],
-            [debito(papeis.icmsSobreVendas, icms), credito(papeis.icmsARecolher, icms)],
-          ),
-          // R-PC-03
-          rascunho(
-            "PIS sobre a venda",
-            ["R-PC-03", "R-PC-01", "R-PC-02", "R-VEN-02"],
-            [debito(papeis.pisSobreFaturamento, pis), credito(papeis.pisARecolher, pis)],
-          ),
-          rascunho(
-            "COFINS sobre a venda",
-            ["R-PC-03", "R-PC-01", "R-PC-02", "R-VEN-02"],
-            [
-              debito(papeis.cofinsSobreFaturamento, cofins),
-              credito(papeis.cofinsARecolher, cofins),
-            ],
-          ),
-          // R-VEN-02
-          rascunho(
-            "Custo das mercadorias vendidas",
-            ["R-VEN-02", "R-EST-03", "R-COM-04"],
-            [debito(papeis.cmv, saida.cmvCentavos), credito(papeis.estoque, saida.cmvCentavos)],
-          ),
-        ],
-      };
-    }
+    case "abatimento_compra":
+      return calcularAbatimentoDeCompra(estado, operacao, movimentos);
+
+    case "devolucao_venda":
+      return calcularDevolucaoDeVenda(estado, operacao, movimentos);
+
+    case "abatimento_venda":
+      return calcularAbatimentoDeVenda(estado, operacao, movimentos);
+
+    case "recebimento_consignacao":
+      return calcularRecebimentoEmConsignacao(estado, operacao);
+
+    case "venda_consignada":
+      return calcularVendaConsignada(estado, operacao);
+
+    case "devolucao_consignacao":
+      return calcularDevolucaoDeConsignacao(estado, operacao);
+
+    case "inventario_consumo":
+      return calcularInventarioDeConsumo(estado, operacao);
+
+    case "producao":
+      return calcularProducao(estado, operacao);
 
     case "recebimento": {
       exigirInteiroPositivo(operacao.valorCentavos, "Valor recebido");
@@ -346,15 +222,25 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
           "R-VEN-03",
         );
       }
+      const concedido = operacao.descontoFinanceiroCentavos ?? 0;
+      exigirInteiroNaoNegativo(concedido, "Desconto financeiro");
+      if (concedido >= operacao.valorCentavos) {
+        throw new ErroDeOperacao(
+          "valor_invalido",
+          "O desconto financeiro deve ser menor que o valor do título.",
+          "R-DSC-04",
+        );
+      }
       return {
         ...semMudanca,
         rascunhos: [
-          // R-VEN-03
+          // R-VEN-03; R-DSC-04 📘: o desconto por receber antes é despesa financeira.
           rascunho(
             "Recebimento de cliente",
-            ["R-VEN-03"],
+            concedido > 0 ? ["R-VEN-03", "R-DSC-04"] : ["R-VEN-03"],
             [
-              debito(contaDoMeio(operacao.meio), operacao.valorCentavos),
+              debito(contaDoMeio(operacao.meio), operacao.valorCentavos - concedido),
+              debito(papeis.descontosFinanceirosConcedidos, concedido),
               credito(papeis.clientes, operacao.valorCentavos),
             ],
           ),
@@ -381,6 +267,11 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
           historico: "Pagamento do ICMS no Posto Fiscal",
           regras: ["R-ICMS-06"],
         },
+        ipi: {
+          conta: papeis.ipiARecolher,
+          historico: "Pagamento do IPI",
+          regras: ["R-IPI-06"],
+        },
       } as const satisfies Record<
         string,
         { conta: CodigoConta; historico: string; regras: IdRegra[] }
@@ -390,7 +281,7 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
       if (!obrigacao) {
         throw new ErroDeOperacao(
           "caso_nao_coberto",
-          "Só é possível pagar fornecedores, salários e ICMS nesta versão.",
+          "Só é possível pagar fornecedores, salários, ICMS e IPI nesta versão.",
           "R-PC-04",
         );
       }
@@ -401,14 +292,36 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
           obrigacao.regras[0],
         );
       }
+      const obtido = operacao.descontoFinanceiroCentavos ?? 0;
+      exigirInteiroNaoNegativo(obtido, "Desconto financeiro");
+      if (obtido > 0 && operacao.obrigacao !== "fornecedores") {
+        throw new ErroDeOperacao(
+          "caso_nao_coberto",
+          "As regras só cobrem desconto financeiro no pagamento a fornecedor.",
+          "R-DSC-02",
+        );
+      }
+      if (obtido >= operacao.valorCentavos) {
+        throw new ErroDeOperacao(
+          "valor_invalido",
+          "O desconto financeiro deve ser menor que o valor do título.",
+          "R-DSC-02",
+        );
+      }
       return {
         ...semMudanca,
         rascunhos: [
-          // R-DES-05 (fornecedor), R-DES-02 (salários), R-ICMS-06 (ICMS)
-          rascunho(obrigacao.historico, obrigacao.regras, [
-            debito(obrigacao.conta, operacao.valorCentavos),
-            credito(contaDoMeio(operacao.meio), operacao.valorCentavos),
-          ]),
+          // R-DES-05 (fornecedor), R-DES-02 (salários), R-ICMS-06 (ICMS), R-IPI-06 (IPI).
+          // R-DSC-02 📘: o desconto por pagar antes é receita financeira.
+          rascunho(
+            obrigacao.historico,
+            obtido > 0 ? [...obrigacao.regras, "R-DSC-02"] : obrigacao.regras,
+            [
+              debito(obrigacao.conta, operacao.valorCentavos),
+              credito(contaDoMeio(operacao.meio), operacao.valorCentavos - obtido),
+              credito(papeis.descontosFinanceirosObtidos, obtido),
+            ],
+          ),
         ],
       };
     }
@@ -534,6 +447,37 @@ function calcular(estado: EstadoContabil, operacao: Operacao, data: DataJogo): C
       };
     }
 
+    case "apuracao_ipi": {
+      if (!mesmoMes(operacao.mes, data)) {
+        throw new ErroDeOperacao(
+          "valor_invalido",
+          "A apuração do IPI deve ser feita dentro do próprio mês.",
+          "R-IPI-06",
+        );
+      }
+      // R-IPI-06: igual à do ICMS. Compensa min(a recolher, a recuperar).
+      const compensar = Math.min(
+        Math.max(saldoCredor(movimentos, papeis.ipiARecolher), 0),
+        Math.max(saldoDevedor(movimentos, papeis.ipiARecuperar), 0),
+      );
+      return {
+        ...semMudanca,
+        rascunhos:
+          compensar === 0
+            ? []
+            : [
+                rascunho(
+                  "Apuração do IPI do mês",
+                  ["R-IPI-06"],
+                  [
+                    debito(papeis.ipiARecolher, compensar),
+                    credito(papeis.ipiARecuperar, compensar),
+                  ],
+                ),
+              ],
+      };
+    }
+
     case "encerramento": {
       // R-DEM-04: zera as contas de resultado contra Lucros ou Prejuízos Acumulados.
       const partidas: Partida[] = [];
@@ -604,6 +548,8 @@ export function preverLancamentos(
     lancamentos: [...estado.lancamentos, ...lancamentos],
     estoque: calculo.estoque,
     imobilizado: calculo.imobilizado,
+    notas: calculo.notas ?? estado.notas,
+    consignado: calculo.consignado ?? estado.consignado,
   };
 
   const { papeis } = estado.planoDeContas;
@@ -637,4 +583,9 @@ export function depreciarMes(_estado: EstadoContabil, mes: { ano: number; mes: n
 /** Operação de apuração do ICMS do mês (R-ICMS-06). Os valores são calculados ao aplicar. */
 export function apurarIcms(_estado: EstadoContabil, mes: { ano: number; mes: number }): Operacao {
   return { tipo: "apuracao_icms", mes: { ano: mes.ano, mes: mes.mes } };
+}
+
+/** Operação de apuração do IPI do mês (R-IPI-06). Os valores são calculados ao aplicar. */
+export function apurarIpi(_estado: EstadoContabil, mes: { ano: number; mes: number }): Operacao {
+  return { tipo: "apuracao_ipi", mes: { ano: mes.ano, mes: mes.mes } };
 }

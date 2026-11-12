@@ -120,9 +120,12 @@ describe("2. entidade", () => {
   it("R-ENT-01: a carteira pessoal não é conta do plano nem parte do estado contábil", () => {
     expect(PLANO_DE_CONTAS_V1.contas.some((c) => /carteira|pessoal/i.test(c.nome))).toBe(false);
     expect(Object.keys(criarEmpresa()).sort()).toEqual([
+      "catalogo",
+      "consignado",
       "estoque",
       "imobilizado",
       "lancamentos",
+      "notas",
       "parametros",
       "planoDeContas",
       "versaoSchema",
@@ -1012,24 +1015,6 @@ describe("bloqueios do motor fora das regras numeradas", () => {
       ),
     );
     expect(erro.codigo).toBe("saldo_insuficiente");
-  });
-
-  it("compra ou venda com mais de um produto é recusada: o rateio não está nas regras", () => {
-    const item = { produto: "a", quantidade: 1, precoUnitarioCentavos: 100 };
-    const erro = erroDe(() =>
-      preverLancamentos(
-        empresaComBanco(),
-        {
-          tipo: "compra",
-          itens: [item, { ...item, produto: "b" }],
-          ipiAliquota: 0,
-          freteCentavos: 0,
-          condicao: { tipo: "prazo", dias: 30 },
-        },
-        dia(2),
-      ),
-    );
-    expect(erro.codigo).toBe("caso_nao_coberto");
   });
 
   it("a data de uma operação não pode ser anterior ao último lançamento", () => {

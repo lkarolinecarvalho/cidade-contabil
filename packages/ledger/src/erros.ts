@@ -9,6 +9,8 @@ export type CodigoErro =
   | "saldo_insuficiente"
   /** Pagamento, recebimento ou integralização acima do saldo da conta baixada. */
   | "excede_saldo"
+  /** Nota não encontrada, ou devolução acima do que a nota tem. */
+  | "nota_invalida"
   /** Operação repetida no mesmo mês (ex.: depreciação). */
   | "operacao_repetida"
   /** Caso que `docs/regras-contabeis.md` não cobre: o motor não inventa regra. */

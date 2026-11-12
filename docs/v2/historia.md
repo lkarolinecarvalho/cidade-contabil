@@ -1,8 +1,9 @@
 # História e estrutura do jogo — v2 (proposta aprovada, a detalhar)
 
-> Este documento registra a direção nova do jogo. Ele ainda **não** substitui
-> `gdd.md`, `campanha.md` nem os cenários dourados: isso acontece quando as regras de
-> [regras-em-validacao.md](regras-em-validacao.md) forem validadas.
+> Este documento registra a direção nova do jogo. As regras novas já foram validadas
+> e estão em [regras-contabeis.md](../regras-contabeis.md), seções 15 a 22. Ele ainda
+> **não** substitui `gdd.md`, `campanha.md` nem os cenários dourados: isso acontece na
+> reescrita da campanha.
 
 ## Decisões já tomadas
 
@@ -11,7 +12,9 @@
 3. Existe um **arco industrial** (hambúrguer congelado) para treinar o IPI recuperável.
 4. A empresa começa como **sociedade limitada**. S.A. e os demais tipos societários
    ficam na teoria, como comparação.
-5. Os cenários dourados serão **reescritos** depois que as regras forem validadas.
+5. Os cenários dourados serão **reescritos** junto com a nova campanha.
+6. O regime tributário continua sendo o **Lucro Presumido**, como simplificação.
+7. O refrigerante vendido vai a **CMV**; o hambúrguer e o congelado vão a **CPV**.
 
 ## O negócio
 
@@ -83,7 +86,7 @@ Ao entrar, o jogador escolhe uma de quatro portas. Cada uma abre uma tela curta.
 
 ## Ordem de trabalho
 
-1. Validar as regras novas.
+1. ~~Validar as regras novas~~ (feito) e implementá-las no motor (feito).
 2. Reescrever os cenários dourados e a campanha com os valores.
 3. Trocar o conteúdo (produtos, missões, diálogos) e adaptar o motor.
 4. Construir o Escritório com as quatro portas. A Consulta, a Teoria e a Revisão não

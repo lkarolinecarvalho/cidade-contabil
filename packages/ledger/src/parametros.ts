@@ -35,4 +35,17 @@ export const NOTAS_DIDATICAS = {
     "Nesta versão, os encargos sobre a folha (INSS patronal, FGTS etc.) e as retenções não são calculados.",
   "R-DEP-02": "Nesta versão, o valor residual dos bens é zero.",
   "R-DEP-03": "Nesta versão, o bem deprecia por mês completo a partir do mês em que entra em uso.",
+  "R-INS-03":
+    "Nesta versão, o custo do lanche é só o dos insumos de uma receita fixa. Numa empresa real, mão de obra e gastos do preparo entram no custo de produção (Contabilidade de Custos).",
+  "R-ABC-01": "Nesta versão, o abatimento sobre compras não ajusta o ICMS da nota.",
+  "R-DSC-02":
+    "Nesta versão, o desconto por pagar antes do vencimento é receita financeira, como as bancas costumam cobrar. Pelo CPC 16, descontos reduzem o custo de aquisição.",
+  "R-DSC-04": "Nesta versão, o desconto por receber antes do vencimento é despesa financeira.",
+  "R-ABV-01": "Nesta versão, o abatimento sobre vendas não ajusta os tributos nem o estoque.",
+  "R-CSG-04":
+    "Nesta versão, o ICMS só aparece na compra efetiva e na venda. Na vida real, a remessa em consignação já tem nota com imposto destacado.",
+  "R-IPI-07":
+    "As alíquotas de IPI do jogo são didáticas. Na TIPI, preparações de carne bovina têm alíquota zero.",
+  "R-PRD-01":
+    "Nesta versão, o custo do produto fabricado é só o dos insumos da receita. Mão de obra e gastos gerais de fabricação ficam como despesa do período.",
 } as const;

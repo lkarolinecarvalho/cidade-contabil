@@ -23,6 +23,11 @@ export interface DRE {
   readonly lucroBrutoCentavos: Centavos;
   readonly despesasOperacionais: readonly LinhaDeDemonstracao[];
   readonly totalDespesasOperacionaisCentavos: Centavos;
+  /** R-DSC-02, R-DSC-04: descontos financeiros obtidos e concedidos. */
+  readonly receitasFinanceiras: readonly LinhaDeDemonstracao[];
+  readonly despesasFinanceiras: readonly LinhaDeDemonstracao[];
+  /** Receitas financeiras − despesas financeiras. */
+  readonly resultadoFinanceiroCentavos: Centavos;
   /** Positivo = lucro; negativo = prejuízo. */
   readonly resultadoCentavos: Centavos;
 }
@@ -46,7 +51,8 @@ export function dreDosLancamentos(
   );
   const doGrupo = (grupo: GrupoConta): LinhaDeDemonstracao[] =>
     plano.contas
-      .filter((c) => c.grupo === grupo)
+      // As contas de uso eventual só aparecem quando têm movimento no período.
+      .filter((c) => c.grupo === grupo && (!c.eventual || movimentos.has(c.codigo)))
       .map((c) => ({
         conta: c.codigo,
         nome: c.nome,
@@ -60,6 +66,9 @@ export function dreDosLancamentos(
   const deducoes = doGrupo("deducao_receita");
   const custos = doGrupo("custo");
   const despesasOperacionais = doGrupo("despesa_operacional");
+  const receitasFinanceiras = doGrupo("receita_financeira");
+  const despesasFinanceiras = doGrupo("despesa_financeira");
+  const resultadoFinanceiroCentavos = total(receitasFinanceiras) - total(despesasFinanceiras);
   const receitaLiquidaCentavos = total(receitaBruta) - total(deducoes);
   const lucroBrutoCentavos = receitaLiquidaCentavos - total(custos);
   return {
@@ -73,7 +82,11 @@ export function dreDosLancamentos(
     lucroBrutoCentavos,
     despesasOperacionais,
     totalDespesasOperacionaisCentavos: total(despesasOperacionais),
-    resultadoCentavos: lucroBrutoCentavos - total(despesasOperacionais),
+    receitasFinanceiras,
+    despesasFinanceiras,
+    resultadoFinanceiroCentavos,
+    resultadoCentavos:
+      lucroBrutoCentavos - total(despesasOperacionais) + resultadoFinanceiroCentavos,
   };
 }
 
@@ -125,8 +138,12 @@ export function balancoDosLancamentos(
     valorCentavos,
   });
 
+  // As contas de uso eventual só aparecem depois do primeiro movimento.
+  const mostrar = (c: { eventual: boolean; codigo: CodigoConta }) =>
+    !c.eventual || movimentos.has(c.codigo);
+
   const circulante = plano.contas
-    .filter((c) => c.grupo === "ativo_circulante")
+    .filter((c) => c.grupo === "ativo_circulante" && mostrar(c))
     .map((c) => linha(c.codigo, c.nome, saldoDevedor(movimentos, c.codigo)));
 
   const imobilizado = plano.contas
@@ -144,7 +161,7 @@ export function balancoDosLancamentos(
     });
 
   const passivoCirculante = plano.contas
-    .filter((c) => c.grupo === "passivo_circulante")
+    .filter((c) => c.grupo === "passivo_circulante" && mostrar(c))
     .map((c) => linha(c.codigo, c.nome, saldoCredor(movimentos, c.codigo)));
 
   const contasDoPl = plano.contas

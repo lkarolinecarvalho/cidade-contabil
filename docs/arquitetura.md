@@ -59,7 +59,15 @@ balancete(estado, ate?): Balancete
 dre(estado, periodo): DRE
 balanco(estado, data): BalancoPatrimonial
 apurarIcms(estado, mes): Operacao
+apurarIpi(estado, mes): Operacao
 ```
+
+- `criarEmpresa({ catalogo })` recebe o catálogo de itens (insumo, mercadoria, material
+  de consumo, produto acabado) e as receitas. `CATALOGO_DA_HAMBURGUERIA` é o do jogo;
+  sem catálogo, todo item é mercadoria para revenda.
+- Compras e vendas aceitam vários itens e um identificador de `nota`. Devoluções e
+  abatimentos referem-se a essa nota, e o estado guarda as notas em `estado.notas`.
+- A mercadoria recebida em consignação fica em `estado.consignado`, fora do razão.
 
 - `data` é `{ ano, mes, dia }` do calendário do jogo; `periodo` é `{ de, ate }`, inclusivo.
 - `valores` traz os números calculados (total da nota, ICMS, custo, CMV...) para os

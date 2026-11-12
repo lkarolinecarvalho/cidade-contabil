@@ -2,6 +2,14 @@
 // O orquestrador e a UI só falam com o ledger por esta API (docs/arquitetura.md).
 
 export {
+  CATALOGO_DA_HAMBURGUERIA,
+  CATALOGO_VAZIO,
+  type Catalogo,
+  type IngredienteDaReceita,
+  type TipoDeItem,
+  tipoDoItem,
+} from "./catalogo";
+export {
   compararLancamento,
   type LinhaComparada,
   type LinhaFaltante,
@@ -24,6 +32,7 @@ export { type CodigoErro, ErroDeOperacao } from "./erros";
 export {
   aplicar,
   apurarIcms,
+  apurarIpi,
   criarEmpresa,
   depreciarMes,
   type ParametrosDaEmpresa,
@@ -54,15 +63,19 @@ export type {
   CondicaoDeCompra,
   CondicaoDeVenda,
   EstadoContabil,
+  ItemDevolvido,
   ItemImobilizado,
   ItemMercadoria,
   Lado,
   Lancamento,
+  LinhaDeNota,
   MeioDePagamento,
+  NotaRegistrada,
   ObrigacaoPagavel,
   Operacao,
   Partida,
   Previsao,
+  SaldoConsignado,
   SaldoDeEstoque,
   TipoOperacao,
   ValoresCalculados,
