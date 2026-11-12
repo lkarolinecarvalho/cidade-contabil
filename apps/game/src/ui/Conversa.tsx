@@ -40,21 +40,21 @@ export function Conversa({ falas, npc, acaoFinal, aoConcluir, inicio = 0 }: Prop
             personagem={doJogador ? "avatar" : npc.id}
             nome={doJogador ? "Você" : npc.nome}
           />
-          <strong>{doJogador ? "Você" : npc.nome}</strong>
-          {!doJogador && <span>{npc.papel}</span>}
+          <span>
+            <strong>{doJogador ? "Você" : npc.nome}</strong>
+            {!doJogador && ` · ${npc.papel}`}
+          </span>
         </div>
-        <div className="conversa-falas">
-          <button
-            type="button"
-            className="balao"
-            key={indice}
-            onClick={avancar}
-            disabled={ultima}
-            aria-live="polite"
-          >
-            {fala.texto}
-          </button>
-        </div>
+        <button
+          type="button"
+          className="balao"
+          key={indice}
+          onClick={avancar}
+          disabled={ultima}
+          aria-live="polite"
+        >
+          {fala.texto}
+        </button>
       </div>
 
       {falas.length > 1 && (

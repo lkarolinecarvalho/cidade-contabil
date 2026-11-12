@@ -134,13 +134,15 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
 
   return (
     <article className="painel-missao">
-      <p className="painel-sobretitulo">
-        Capítulo {missao.capitulo}
-        {missao.operacoes.length > 1 && etapa !== "negociacao" && etapa !== "conclusao"
-          ? ` · Operação ${Math.min(feitas + 1, missao.operacoes.length)} de ${missao.operacoes.length}`
-          : ""}
-      </p>
-      <h3>{missao.titulo}</h3>
+      <h3 className="missao-cabecalho">
+        <span>
+          Capítulo {missao.capitulo}
+          {missao.operacoes.length > 1 && etapa !== "negociacao" && etapa !== "conclusao"
+            ? ` · Operação ${Math.min(feitas + 1, missao.operacoes.length)} de ${missao.operacoes.length}`
+            : ""}
+        </span>{" "}
+        · {missao.titulo}
+      </h3>
       <Passos etapa={etapa} temEfeito={temEfeito} />
 
       {etapa === "negociacao" && (

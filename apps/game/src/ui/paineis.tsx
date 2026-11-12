@@ -170,7 +170,8 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
     );
   } else if (missao && aqui) {
     // A chave recomeça o ciclo quando a missão muda.
-    principal = <FluxoDaMissao key={missao.id} missao={missao} />;
+    // Durante a missão, só ela aparece: os outros serviços voltam quando ela termina.
+    return <FluxoDaMissao key={missao.id} missao={missao} />;
   } else {
     principal = (
       <div className="cartao">
