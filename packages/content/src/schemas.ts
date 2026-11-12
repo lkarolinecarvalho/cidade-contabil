@@ -252,6 +252,11 @@ export const missaoSchema = z.strictObject({
   npc: id,
   /** Missões que precisam estar concluídas antes. */
   requisitos: z.array(id),
+  /**
+   * Temas de teoria apresentados antes da conversa, na primeira vez: a explicação de
+   * que o jogador vai precisar para esta missão.
+   */
+  aulas: z.array(id).min(1).optional(),
   /** Falas curtas, uma por vez. Os valores da operação ficam em `proposta`. */
   dialogo: z
     .array(z.strictObject({ fala: z.enum(["npc", "jogador"]), texto }))

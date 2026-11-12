@@ -223,6 +223,11 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
     if (!idsDeNpcs.has(missao.npc)) {
       problemas.push(`missão ${missao.id}: npc inexistente "${missao.npc}"`);
     }
+    for (const aula of missao.aulas ?? []) {
+      if (!teoria.some((tema) => tema.id === aula)) {
+        problemas.push(`missão ${missao.id}: aula inexistente "${aula}"`);
+      }
+    }
     for (const requisito of missao.requisitos) {
       if (!idsDeMissoes.has(requisito)) {
         problemas.push(`missão ${missao.id}: requisito inexistente "${requisito}"`);

@@ -2349,3 +2349,69 @@ span.linha-valor {
     animation: none;
   }
 }
+
+/* Botão de ouvir o texto em voz alta. */
+.ouvir {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--cartao);
+  border: 1.5px solid var(--borda);
+  color: var(--verde);
+}
+
+.ouvir svg {
+  width: 17px;
+  height: 17px;
+}
+
+.conversa-quem .ouvir {
+  margin-left: auto;
+}
+
+.abertura-quadro .ouvir {
+  margin-top: 4px;
+}
+
+/* Tema de teoria: título com o botão de ouvir ao lado. */
+.tema-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.folha-conteudo .tema-cabecalho h3 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.tema-cabecalho h3 small {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+/* Aula antes da missão: a Marta explica o que o jogador vai precisar. */
+.aula-chamada {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.aula-chamada .retrato {
+  width: 40px;
+  height: 40px;
+  background: #fdeed3;
+}

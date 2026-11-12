@@ -6,6 +6,7 @@
   "estabelecimento": "fornecedor",
   "npc": "joao-fornecedor",
   "requisitos": ["m003-equipamentos"],
+  "aulas": ["impostos-na-nota"],
   "dialogo": [
     {
       "fala": "npc",

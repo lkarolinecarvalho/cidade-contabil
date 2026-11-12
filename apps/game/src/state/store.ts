@@ -1,6 +1,7 @@
 import { type Afirmativa, carregarConteudoDoJogo, type Missao } from "@cidade/content";
 import { useStore } from "zustand";
 import { createStore } from "zustand/vanilla";
+import { definirSom } from "../som/sons";
 import {
   concluirMissao,
   definirModoBanca,
@@ -42,12 +43,15 @@ interface Acoes {
   concluirAbertura(): void;
   /** O jogador dispensou a dica de primeira vez de uma etapa. */
   marcarDica(dica: string): void;
+  definirSom(ligado: boolean): void;
 }
 
 /** O que a sessão lembra por fora do estado do jogo (não entra no salvamento da partida). */
 interface Sessao {
   readonly aberturaVista: boolean;
   readonly dicasVistas: readonly string[];
+  /** Efeitos sonoros ligados. */
+  readonly somLigado: boolean;
 }
 
 export type JogoStore = EstadoDoJogo & Sessao & Acoes;
@@ -60,6 +64,11 @@ export const jogoStore = createStore<JogoStore>()((set, get) => ({
   ...novoJogo(),
   aberturaVista: false,
   dicasVistas: [],
+  somLigado: true,
+  definirSom(ligado) {
+    definirSom(ligado);
+    set({ somLigado: ligado });
+  },
   concluirAbertura() {
     set({ aberturaVista: true });
   },

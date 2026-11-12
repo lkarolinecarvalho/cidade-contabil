@@ -4,6 +4,7 @@ import { Abertura, QUADROS } from "./Abertura";
 import { BottomSheet } from "./BottomSheet";
 import { Conversa, type Fala } from "./Conversa";
 import { Hud } from "./Hud";
+import { EstudoDoTema } from "./Tema";
 
 describe("Hud", () => {
   const hud = (abertoDeInicio: boolean) =>
@@ -166,5 +167,45 @@ describe("Abertura", () => {
     const html = abertura(QUADROS.length - 1);
     expect(html).toContain("Abrir a cidade");
     expect(html).toContain("Voltar");
+  });
+});
+
+describe("EstudoDoTema", () => {
+  const tema = {
+    id: "t",
+    titulo: "Um tema",
+    resumo: "Resumo.",
+    pontos: ["Primeiro ponto.", "Segundo ponto."],
+    exemplo: "Um exemplo da casa.",
+    perguntas: [{ enunciado: "Uma pergunta.", gabarito: "C" as const, explicacao: "Porque sim." }],
+  };
+  const estudo = (inicio: number) =>
+    renderToStaticMarkup(
+      <EstudoDoTema
+        tema={tema}
+        sobretitulo="Aula"
+        rotuloDoFim="Ir para a missão"
+        aoConcluir={() => {}}
+        inicio={inicio}
+      />,
+    );
+
+  it("mostra um ponto por vez, depois o exemplo e por fim a pergunta", () => {
+    expect(estudo(0)).toContain("Primeiro ponto.");
+    expect(estudo(0)).not.toContain("Segundo ponto.");
+    expect(estudo(0)).toContain("Ponto 1 de 2");
+    expect(estudo(2)).toContain("Um exemplo da casa.");
+    const pergunta = estudo(3);
+    expect(pergunta).toContain("Uma pergunta.");
+    expect(pergunta).toContain("Certo");
+    // Enquanto não responde, não há botão de continuar.
+    expect(pergunta).not.toContain("Concluir");
+    expect(estudo(0)).toContain('aria-label="Passo 1 de 4"');
+  });
+
+  it("no fim, mostra o resultado e o botão que leva adiante", () => {
+    const html = estudo(4);
+    expect(html).toContain("Tema concluído!");
+    expect(html).toContain("Ir para a missão");
   });
 });

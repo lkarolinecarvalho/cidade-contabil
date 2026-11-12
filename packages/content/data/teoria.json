@@ -1,5 +1,123 @@
 [
   {
+    "id": "o-patrimonio",
+    "titulo": "O que a empresa tem e o que ela deve",
+    "resumo": "Começando do zero: as três partes do patrimônio.",
+    "pontos": [
+      "Toda empresa tem coisas: dinheiro, mercadoria, a chapa, o que os clientes ainda vão pagar. A contabilidade chama tudo isso de Ativo.",
+      "Toda empresa também deve: ao fornecedor, aos funcionários, ao governo. Essas dívidas são o Passivo.",
+      "Tire as dívidas do que a empresa tem. O que sobra é dos donos, e se chama Patrimônio Líquido.",
+      "Por isso a conta sempre fecha: o que a empresa tem (Ativo) é igual ao que deve (Passivo) mais o que é dos donos (Patrimônio Líquido)."
+    ],
+    "exemplo": "Se a casa tem R$ 100,00 no banco e deve R$ 30,00 ao fornecedor, os R$ 70,00 que sobram são dos sócios: 100 = 30 + 70.",
+    "perguntas": [
+      {
+        "enunciado": "O dinheiro que a empresa tem no banco faz parte do Ativo.",
+        "gabarito": "C",
+        "explicacao": "O Ativo reúne tudo o que a empresa tem: dinheiro, estoque, equipamentos e valores a receber."
+      },
+      {
+        "enunciado": "A dívida da empresa com um fornecedor é registrada no Ativo.",
+        "gabarito": "E",
+        "explicacao": "Dívida é obrigação: fica no Passivo. O Ativo é o que a empresa tem, não o que ela deve."
+      }
+    ]
+  },
+  {
+    "id": "contas-debito-e-credito",
+    "titulo": "As contas e os seus dois lados",
+    "resumo": "O que é uma conta, e o que são débito e crédito.",
+    "pontos": [
+      "Para não misturar tudo, cada coisa tem a sua gaveta, chamada conta: uma para o dinheiro em caixa, outra para o banco, outra para o estoque.",
+      "Toda conta tem dois lados. O esquerdo se chama débito e o direito, crédito. São só os nomes dos lados: não querem dizer bom nem ruim.",
+      "As contas do que a empresa tem (Ativo) crescem do lado do débito. As das dívidas e as dos donos crescem do lado do crédito.",
+      "Para diminuir o saldo, usa-se o lado contrário ao que faz a conta crescer."
+    ],
+    "exemplo": "Entraram R$ 80.000,00 na conta do banco. Bancos é uma conta do Ativo, então aumenta a débito: debita-se Bancos em R$ 80.000,00.",
+    "perguntas": [
+      {
+        "enunciado": "Debitar uma conta significa sempre diminuir o saldo dela.",
+        "gabarito": "E",
+        "explicacao": "Depende da conta. No Ativo, o débito aumenta o saldo; no Passivo e no Patrimônio Líquido, diminui."
+      },
+      {
+        "enunciado": "Uma conta do Ativo, como Caixa, aumenta a débito.",
+        "gabarito": "C",
+        "explicacao": "As contas do Ativo têm natureza devedora: aumentam a débito e diminuem a crédito."
+      }
+    ]
+  },
+  {
+    "id": "o-lancamento",
+    "titulo": "O lançamento e as partidas dobradas",
+    "resumo": "Como um fato vira registro, sempre em duas contas ou mais.",
+    "pontos": [
+      "Lançamento é o registro de um fato: o que aconteceu, em quais contas e por quanto.",
+      "Todo fato mexe em pelo menos duas contas: o que sai de um lugar vai para outro.",
+      "Por isso o total debitado é sempre igual ao total creditado. É o método das partidas dobradas."
+    ],
+    "exemplo": "A casa compra uma chapa de R$ 12.000,00 pelo banco. Entra a chapa (débito em Equipamentos) e sai o dinheiro (crédito em Bancos).",
+    "perguntas": [
+      {
+        "enunciado": "Em todo lançamento, a soma dos débitos é igual à soma dos créditos.",
+        "gabarito": "C",
+        "explicacao": "É a regra das partidas dobradas: não existe débito sem crédito de mesmo valor."
+      },
+      {
+        "enunciado": "Um fato contábil pode ser registrado mexendo em uma única conta.",
+        "gabarito": "E",
+        "explicacao": "Todo lançamento tem pelo menos uma conta debitada e uma creditada."
+      }
+    ]
+  },
+  {
+    "id": "impostos-na-nota",
+    "titulo": "Os impostos dentro da nota",
+    "resumo": "ICMS por dentro, IPI por fora, e o que volta como crédito.",
+    "pontos": [
+      "O ICMS é cobrado por dentro: ele já faz parte do preço que aparece na nota.",
+      "Quem compra para revender ou para produzir recupera o ICMS: ele vira um crédito, em ICMS a Recuperar, e fica fora do custo.",
+      "O IPI é cobrado por fora: é somado ao preço. Quem só revende não o recupera, e ele entra no custo da mercadoria."
+    ],
+    "exemplo": "Numa nota de R$ 1.000,00 com ICMS de 18%, R$ 180,00 são imposto que volta como crédito e R$ 820,00 são o custo da mercadoria.",
+    "perguntas": [
+      {
+        "enunciado": "O ICMS que o comerciante recupera na compra de mercadorias para revenda faz parte do custo do estoque.",
+        "gabarito": "E",
+        "explicacao": "O imposto recuperável não é custo: vai para ICMS a Recuperar, no Ativo."
+      },
+      {
+        "enunciado": "O IPI é cobrado por fora: é somado ao valor dos produtos na nota.",
+        "gabarito": "C",
+        "explicacao": "O total da nota é o valor dos produtos mais o IPI. Já o ICMS está dentro do valor dos produtos."
+      }
+    ]
+  },
+  {
+    "id": "receita-custo-e-lucro",
+    "titulo": "Receita, custo, despesa e lucro",
+    "resumo": "De onde vem o resultado da empresa.",
+    "pontos": [
+      "Receita é o que a empresa ganha quando vende.",
+      "Custo é o que ela gastou com aquilo que vendeu: no hambúrguer, o pão, a carne, o queijo e a alface.",
+      "Despesa é o gasto para manter a casa funcionando, como os salários e a conta de luz.",
+      "Receita menos custos e despesas dá o resultado: lucro, se sobrar; prejuízo, se faltar."
+    ],
+    "exemplo": "Um hambúrguer vendido a R$ 20,00 que consumiu R$ 5,33 de insumos deixa R$ 14,67, antes dos impostos e das despesas.",
+    "perguntas": [
+      {
+        "enunciado": "Comprar mercadoria para o estoque já é uma despesa da empresa.",
+        "gabarito": "E",
+        "explicacao": "Na compra, o dinheiro vira estoque: um ativo é trocado por outro. O custo só aparece quando a mercadoria é vendida."
+      },
+      {
+        "enunciado": "O custo do que foi vendido vai ao resultado junto com a receita da venda.",
+        "gabarito": "C",
+        "explicacao": "Receita e custo andam juntos: os dois são reconhecidos no momento da venda."
+      }
+    ]
+  },
+  {
     "id": "objeto-e-objetivo",
     "titulo": "Objeto, objetivo e campo de aplicação",
     "resumo": "O que a Contabilidade estuda, para que serve e onde se aplica.",

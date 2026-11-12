@@ -15,6 +15,7 @@ import {
   conferirLancamento,
   linhasEsperadas,
 } from "../orquestrador/lancamento";
+import { tocar } from "../som/sons";
 import { acoesRestantes, operacoesExecutadas, type Resposta } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
@@ -23,10 +24,11 @@ import { Conversa } from "./Conversa";
 import { PainelDaDre } from "./Demonstracoes";
 import { Dica } from "./Dica";
 import { EditorDeLancamento } from "./EditorDeLancamento";
-import { IconeCerto, IconeEstrela } from "./icones";
+import { IconeCerto, IconeEstrela, Retrato } from "./icones";
 import { RegraCitada } from "./RegraCitada";
+import { EstudoDoTema } from "./Tema";
 
-type Etapa = "negociacao" | "efeito" | "afirmativas" | "lancamento" | "conclusao";
+type Etapa = "aula" | "negociacao" | "efeito" | "afirmativas" | "lancamento" | "conclusao";
 
 function Passos({ etapa, temEfeito }: { readonly etapa: Etapa; readonly temEfeito: boolean }) {
   const passos: readonly (readonly [Etapa, string])[] = [
@@ -34,7 +36,7 @@ function Passos({ etapa, temEfeito }: { readonly etapa: Etapa; readonly temEfeit
     ["afirmativas", "Afirmativas"],
     ["lancamento", "Lançamento"],
   ];
-  if (etapa === "negociacao" || etapa === "conclusao") return null;
+  if (etapa === "aula" || etapa === "negociacao" || etapa === "conclusao") return null;
   return (
     <ol className="passos">
       {passos.map(([id, nome], indice) => (
@@ -71,8 +73,14 @@ export function FluxoDaMissao({
     selecionarAfirmativas(missao, conteudo.afirmativas, jogoStore.getState()),
   );
   const [afirmativasFeitas, setAfirmativasFeitas] = useState(feitas > 0);
+  // Aulas desta missão que o jogador ainda não viu: a explicação vem antes da conversa.
+  const [aulas, setAulas] = useState(() =>
+    (missao.aulas ?? [])
+      .filter((id) => jogoStore.getState().teoria[id] === undefined)
+      .flatMap((id) => conteudo.teoria.filter((tema) => tema.id === id)),
+  );
   const [etapa, setEtapa] = useState<Etapa>(() => {
-    if (feitas === 0) return "negociacao";
+    if (feitas === 0) return aulas.length > 0 ? "aula" : "negociacao";
     return feitas < missao.operacoes.length ? "efeito" : "conclusao";
   });
   // Etapas por onde o jogador passou nesta operação, para o botão "Voltar".
@@ -176,6 +184,31 @@ export function FluxoDaMissao({
         </button>
       )}
 
+      {etapa === "aula" && aulas[0] && (
+        <>
+          <p className="aula-chamada">
+            <Retrato personagem="marta-contadora" nome="Marta" />
+            <span>
+              <strong>Antes de começar</strong>, uma explicação rápida da Marta
+              {aulas.length > 1 ? ` (faltam ${aulas.length}).` : "."}
+            </span>
+          </p>
+          <EstudoDoTema
+            key={aulas[0].id}
+            tema={aulas[0]}
+            rotuloDoFim={aulas.length > 1 ? "Próxima explicação ›" : "Ir para a missão ›"}
+            aoConcluir={() => {
+              const restantes = aulas.slice(1);
+              setAulas(restantes);
+              if (restantes.length === 0) setEtapa("negociacao");
+            }}
+          />
+          <button type="button" className="botao-secundario" onClick={() => setEtapa("negociacao")}>
+            Pular a explicação
+          </button>
+        </>
+      )}
+
       {etapa === "negociacao" && (
         <Conversa
           // Ao voltar, a conversa reabre na última fala, com o cartão da proposta.
@@ -254,6 +287,7 @@ export function FluxoDaMissao({
             className="botao-principal"
             onClick={() => {
               jogoStore.getState().concluirMissao(missao);
+              tocar("missao");
               aoConcluir?.();
             }}
           >
@@ -340,7 +374,10 @@ function EtapaDoEfeito({
           type="button"
           className="botao-principal"
           disabled={!completo}
-          onClick={() => setConferido(true)}
+          onClick={() => {
+            setConferido(true);
+            tocar(acertos === efeito.length ? "acerto" : "erro");
+          }}
         >
           Conferir
         </button>
@@ -384,8 +421,11 @@ function EtapaDoLancamento({
   const [conferencia, setConferencia] = useState<Conferencia | null>(null);
   const [verResposta, setVerResposta] = useState(false);
 
-  const conferir = (informado: readonly Partida[]) =>
-    setConferencia(conferirLancamento(contabil, operacao, informado, data));
+  const conferir = (informado: readonly Partida[]) => {
+    const resultado = conferirLancamento(contabil, operacao, informado, data);
+    tocar(resultado.comparacao.correto ? "acerto" : "erro");
+    setConferencia(resultado);
+  };
 
   if (conferencia?.comparacao.correto || verResposta) {
     return (

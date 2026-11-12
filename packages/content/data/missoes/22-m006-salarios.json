@@ -6,6 +6,7 @@
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
   "requisitos": ["m009-devolver-consignado"],
+  "aulas": ["regimes-contabeis"],
   "dialogo": [
     {
       "fala": "npc",

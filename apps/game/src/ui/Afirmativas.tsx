@@ -1,6 +1,7 @@
 import type { Afirmativa } from "@cidade/content";
 import type { ValoresCalculados } from "@cidade/ledger";
 import { useState } from "react";
+import { tocar } from "../som/sons";
 import { PONTOS_POR_AFIRMATIVA, type Resposta, resultadoDaResposta } from "../state/jogo";
 import { jogoStore, useJogo } from "../state/store";
 import { preencherAfirmativa } from "../texto/afirmativas";
@@ -32,6 +33,8 @@ export function JulgarAfirmativas({ afirmativas, valores, aoContinuar, aoRespond
   const responder = (escolha: Resposta) => {
     setResposta(escolha);
     jogoStore.getState().registrarResposta(afirmativa, escolha);
+    const acertou = resultadoDaResposta(afirmativa, escolha) === "acerto";
+    if (escolha !== null) tocar(acertou ? "acerto" : "erro");
     aoResponder?.(afirmativa, escolha);
   };
   const avancar = () => {

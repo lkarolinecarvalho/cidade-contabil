@@ -6,6 +6,7 @@
   "estabelecimento": "banco",
   "npc": "helena-gerente",
   "requisitos": ["m001-constituicao"],
+  "aulas": ["o-lancamento"],
   "dialogo": [
     {
       "fala": "npc",

@@ -6,6 +6,7 @@
   "estabelecimento": "minha-loja",
   "npc": "lurdes-cliente",
   "requisitos": ["m004-compra-prazo"],
+  "aulas": ["receita-custo-e-lucro"],
   "dialogo": [
     {
       "fala": "npc",

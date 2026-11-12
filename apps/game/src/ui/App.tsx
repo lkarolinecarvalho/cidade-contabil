@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { bus } from "../bus";
+import { tocar } from "../som/sons";
 import { titulosEmAlerta } from "../state/calendario";
 import { bancosDaEmpresa, caixaDaEmpresa, nivelDoJogador, temPontoComercial } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
@@ -141,6 +142,15 @@ export function App() {
   useEffect(() => {
     bus.emitir("painel:mudou", { aberto: painel !== null });
   }, [painel]);
+
+  // Um clique discreto em todo botão da interface.
+  useEffect(() => {
+    const aoClicar = (evento: MouseEvent) => {
+      if (evento.target instanceof Element && evento.target.closest("button")) tocar("toque");
+    };
+    document.addEventListener("click", aoClicar);
+    return () => document.removeEventListener("click", aoClicar);
+  }, []);
 
   const fechar = useCallback(() => setPainel(null), []);
 

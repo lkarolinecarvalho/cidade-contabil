@@ -2,6 +2,7 @@ import { type ReactNode, useState } from "react";
 import { desenharRetrato } from "../arte/bonecos";
 import { desenharEdificio, desenharHamburguer, desenharTerrenoVago } from "../arte/edificios";
 import { paraDataUrl } from "../arte/svg";
+import { Ouvir } from "./Tema";
 
 interface Quadro {
   readonly texto: string;
@@ -86,6 +87,7 @@ export function Abertura({
       <div className="abertura-quadro" key={indice}>
         <div className="abertura-ilustracao">{quadro.ilustracao()}</div>
         <p aria-live="polite">{quadro.texto}</p>
+        <Ouvir texto={quadro.texto} />
       </div>
       <div className="conversa-andamento">
         {indice > 0 ? (

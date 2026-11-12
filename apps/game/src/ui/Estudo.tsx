@@ -148,32 +148,55 @@ export function PainelDeProgresso() {
   );
 }
 
-/** Configurações: o modo banca. */
+/** Configurações: o som e o modo banca. */
 export function PainelDeConfiguracoes() {
   const modoBanca = useJogo((jogo) => jogo.modoBanca);
+  const somLigado = useJogo((jogo) => jogo.somLigado);
   return (
-    <div className="cartao">
-      <h3>Modo banca</h3>
-      <p className="painel-texto">
-        No estilo CEBRASPE: cada acerto vale <strong>+1</strong>, cada erro vale <strong>−1</strong>{" "}
-        e a resposta em branco vale <strong>0</strong>. Aparece a opção “Deixar em branco”.
-      </p>
-      <button
-        type="button"
-        className="interruptor"
-        role="switch"
-        aria-checked={modoBanca}
-        onClick={() => jogoStore.getState().definirModoBanca(!modoBanca)}
-      >
-        <span className="interruptor-trilho">
-          <span />
-        </span>
-        Modo banca {modoBanca ? "ligado" : "desligado"}
-      </button>
-      <p className="painel-nota">
-        O modo banca não muda a repetição espaçada: em branco conta como “não sei” e o conceito
-        volta para a primeira caixa.
-      </p>
-    </div>
+    <>
+      <div className="cartao">
+        <h3>Som</h3>
+        <button
+          type="button"
+          className="interruptor"
+          role="switch"
+          aria-checked={somLigado}
+          onClick={() => jogoStore.getState().definirSom(!somLigado)}
+        >
+          <span className="interruptor-trilho">
+            <span />
+          </span>
+          Efeitos sonoros {somLigado ? "ligados" : "desligados"}
+        </button>
+        <p className="painel-nota">
+          Para ouvir um texto em voz alta, toque no alto-falante ao lado dele. A voz é a do seu
+          aparelho.
+        </p>
+      </div>
+      <div className="painel-secao cartao">
+        <h3>Modo banca</h3>
+        <p className="painel-texto">
+          No estilo CEBRASPE: cada acerto vale <strong>+1</strong>, cada erro vale{" "}
+          <strong>−1</strong> e a resposta em branco vale <strong>0</strong>. Aparece a opção
+          “Deixar em branco”.
+        </p>
+        <button
+          type="button"
+          className="interruptor"
+          role="switch"
+          aria-checked={modoBanca}
+          onClick={() => jogoStore.getState().definirModoBanca(!modoBanca)}
+        >
+          <span className="interruptor-trilho">
+            <span />
+          </span>
+          Modo banca {modoBanca ? "ligado" : "desligado"}
+        </button>
+        <p className="painel-nota">
+          O modo banca não muda a repetição espaçada: em branco conta como “não sei” e o conceito
+          volta para a primeira caixa.
+        </p>
+      </div>
+    </>
   );
 }

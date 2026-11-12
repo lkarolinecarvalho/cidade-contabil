@@ -1,5 +1,5 @@
 import type { Tema } from "@cidade/content";
-import { type ReactNode, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { contasComMovimento, diario, planoPorGrupo, razaoDaConta } from "../orquestrador/consulta";
 import {
   linhasDaDreEmbaralhadas,
@@ -8,12 +8,13 @@ import {
   rodadasDeClassificacao,
   rodadasDeNatureza,
 } from "../orquestrador/desafios";
+import { tocar } from "../som/sons";
 import { conceitoVencido } from "../state/estudo";
-import { PONTOS_POR_AFIRMATIVA } from "../state/jogo";
-import { conteudo, jogoStore, useJogo } from "../state/store";
+import { conteudo, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
 import { PainelDaDre, PainelDoBalanco } from "./Demonstracoes";
 import { PainelDeRevisao } from "./Estudo";
+import { EstudoDoTema } from "./Tema";
 
 type Porta = "consulta" | "teoria" | "revisao" | "desafios";
 
@@ -300,7 +301,19 @@ function Razao() {
 function Teoria({ aoVoltar }: { readonly aoVoltar: () => void }) {
   const estudados = useJogo((jogo) => jogo.teoria);
   const [tema, setTema] = useState<Tema | null>(null);
-  if (tema) return <CartaoDoTema key={tema.id} tema={tema} aoVoltar={() => setTema(null)} />;
+  if (tema) {
+    return (
+      <>
+        <Voltar para="Teoria" aoVoltar={() => setTema(null)} />
+        <EstudoDoTema
+          key={tema.id}
+          tema={tema}
+          rotuloDoFim="Voltar aos temas"
+          aoConcluir={() => setTema(null)}
+        />
+      </>
+    );
+  }
   return (
     <>
       <Voltar para="Escritório" aoVoltar={aoVoltar} />
@@ -322,124 +335,6 @@ function Teoria({ aoVoltar }: { readonly aoVoltar: () => void }) {
           );
         })}
       </ul>
-    </>
-  );
-}
-
-/** Um tema, um passo por vez: os pontos, o exemplo e as perguntas. */
-function CartaoDoTema({ tema, aoVoltar }: { readonly tema: Tema; readonly aoVoltar: () => void }) {
-  // Passos: cada ponto, depois o exemplo, depois cada pergunta, e o fecho.
-  const [passo, setPasso] = useState(0);
-  const [respostas, setRespostas] = useState<readonly ("C" | "E")[]>([]);
-  const noExemplo = passo === tema.pontos.length;
-  const indiceDaPergunta = passo - tema.pontos.length - 1;
-  const pergunta = tema.perguntas[indiceDaPergunta];
-  const resposta = respostas[indiceDaPergunta];
-  const total = tema.pontos.length + 1 + tema.perguntas.length;
-  const acertos = respostas.filter((r, i) => r === tema.perguntas[i]?.gabarito).length;
-  const fim = passo >= total;
-
-  const avancar = () => {
-    if (passo + 1 >= total) jogoStore.getState().registrarTema(tema.id, acertos);
-    setPasso(passo + 1);
-  };
-
-  let corpo: ReactNode;
-  if (fim) {
-    corpo = (
-      <div className="resultado certo">
-        <strong>Tema concluído!</strong>
-        <span>
-          Você acertou {acertos} de {tema.perguntas.length}. Cada acerto novo vale{" "}
-          {PONTOS_POR_AFIRMATIVA} pontos.
-        </span>
-      </div>
-    );
-  } else if (pergunta) {
-    corpo = (
-      <>
-        <p className="tema-rotulo">Certo ou errado?</p>
-        <p className="afirmativa">{pergunta.enunciado}</p>
-        {resposta === undefined ? (
-          <div className="julgar">
-            {(["C", "E"] as const).map((opcao) => (
-              <button
-                key={opcao}
-                type="button"
-                className={opcao === "C" ? "certo" : "errado"}
-                onClick={() => setRespostas([...respostas, opcao])}
-              >
-                {opcao === "C" ? "✓ Certo" : "✗ Errado"}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className={`resultado ${resposta === pergunta.gabarito ? "certo" : "errado"}`}>
-            <strong>
-              {resposta === pergunta.gabarito ? "Acertou!" : "Não foi dessa vez."} A afirmativa está{" "}
-              {pergunta.gabarito === "C" ? "certa" : "errada"}.
-            </strong>
-            <span>{pergunta.explicacao}</span>
-          </div>
-        )}
-      </>
-    );
-  } else if (noExemplo) {
-    corpo = (
-      <>
-        <p className="tema-rotulo">Na Chapa da Praça</p>
-        <p className="tema-ponto tema-exemplo">{tema.exemplo}</p>
-      </>
-    );
-  } else {
-    corpo = (
-      <>
-        <p className="tema-rotulo">
-          Ponto {passo + 1} de {tema.pontos.length}
-        </p>
-        <p className="tema-ponto">{tema.pontos[passo]}</p>
-      </>
-    );
-  }
-
-  const esperandoResposta = pergunta !== undefined && resposta === undefined;
-  return (
-    <>
-      <Voltar para="Teoria" aoVoltar={aoVoltar} />
-      <article className="cartao tema" key={passo}>
-        <h3>{tema.titulo}</h3>
-        {corpo}
-      </article>
-      <div className="tema-rodape">
-        {passo > 0 && !fim ? (
-          <button type="button" className="conversa-voltar" onClick={() => setPasso(passo - 1)}>
-            ‹ Voltar
-          </button>
-        ) : (
-          <span />
-        )}
-        <span
-          className="conversa-pontos"
-          role="img"
-          aria-label={`Passo ${Math.min(passo + 1, total)} de ${total}`}
-        >
-          {Array.from({ length: total }, (_, i) => (
-            <i key={i} className={i === passo ? "atual" : i < passo ? "lida" : ""} />
-          ))}
-        </span>
-        <span />
-      </div>
-      {fim ? (
-        <button type="button" className="botao-principal" onClick={aoVoltar}>
-          Voltar aos temas
-        </button>
-      ) : (
-        !esperandoResposta && (
-          <button type="button" className="botao-principal" onClick={avancar}>
-            {passo + 1 >= total ? "Concluir" : "Continuar ›"}
-          </button>
-        )
-      )}
     </>
   );
 }
@@ -544,6 +439,7 @@ function Escolhas({
   }
   const responder = (opcao: string) => {
     setEscolha(opcao);
+    tocar(opcao === rodada.correta ? "acerto" : "erro");
     if (opcao === rodada.correta) setAcertos(acertos + 1);
   };
   return (
@@ -613,9 +509,11 @@ function MontarDre({
     if (linha === ORDEM_DA_DRE[montadas.length]) {
       setMontadas([...montadas, linha]);
       setErrada(null);
+      tocar(montadas.length + 1 === ORDEM_DA_DRE.length ? "missao" : "acerto");
     } else {
       setErros(erros + 1);
       setErrada(linha);
+      tocar("erro");
     }
   };
   return (

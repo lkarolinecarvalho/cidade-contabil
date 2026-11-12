@@ -109,6 +109,17 @@ describe("conteúdo do jogo", () => {
     }
   });
 
+  it("a primeira missão começa pelas aulas de base, e toda aula é um tema de teoria", () => {
+    expect(conteudo.missoes[0]?.aulas).toEqual(["o-patrimonio", "contas-debito-e-credito"]);
+    expect(conteudo.teoria[0]?.id).toBe("o-patrimonio");
+    const temas = new Set(conteudo.teoria.map((t) => t.id));
+    const aulas = conteudo.missoes.flatMap((m) => m.aulas ?? []);
+    expect(aulas.length).toBeGreaterThanOrEqual(5);
+    for (const aula of aulas) expect(temas.has(aula), aula).toBe(true);
+    // Nenhuma aula se repete em duas missões.
+    expect(new Set(aulas).size).toBe(aulas.length);
+  });
+
   it("toda missão está num estabelecimento onde o NPC atende", () => {
     const npcs = new Map(conteudo.npcs.map((n) => [n.id, n]));
     for (const m of conteudo.missoes) {
@@ -283,6 +294,15 @@ describe("conteúdo inválido é recusado", () => {
     ).join("\n");
     expect(problemas).toMatch(/deveria ser o número 2/);
     expect(problemas).toMatch(/capítulo inexistente 2/);
+  });
+
+  it("missão com aula que não é tema de teoria", () => {
+    const problemas = problemasDe(
+      alterar((d) => {
+        missao(d, "m001-constituicao").aulas = ["tema-fantasma"];
+      }),
+    );
+    expect(problemas.join("\n")).toMatch(/aula inexistente "tema-fantasma"/);
   });
 
   it("requisito inexistente e requisitos em ciclo", () => {

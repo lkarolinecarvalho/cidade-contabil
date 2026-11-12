@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { Retrato } from "./icones";
+import { Ouvir } from "./Tema";
 
 export interface Fala {
   readonly fala: "npc" | "jogador";
@@ -46,6 +47,7 @@ export function Conversa({ falas, npc, acaoFinal, aoConcluir, anexo, inicio = 0 
             <strong>{doJogador ? "Você" : npc.nome}</strong>
             {!doJogador && ` · ${npc.papel}`}
           </span>
+          <Ouvir texto={fala.texto} />
         </div>
         <button
           type="button"
