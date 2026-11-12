@@ -14,6 +14,7 @@ import {
   IconeMapa,
 } from "./icones";
 import {
+  PainelDasDemonstracoes,
   PainelDeConfiguracoes,
   PainelDeMissoes,
   PainelDeProgresso,
@@ -26,8 +27,8 @@ import {
 const EMPRESA = "Mercado Vila Nova";
 
 type Atalho = "missoes" | "calendario" | "escritorio" | "progresso";
-/** Painéis abertos por um botão: os atalhos da base e as Configurações, no HUD. */
-type PainelFixo = Atalho | "configuracoes";
+/** Painéis abertos por um botão: os atalhos da base e, no HUD, as Configurações e o Balanço. */
+type PainelFixo = Atalho | "configuracoes" | "balanco";
 
 /** Painel aberto: um dos atalhos da base ou o estabelecimento a que o avatar chegou. */
 type Painel =
@@ -60,6 +61,12 @@ const ATALHOS: Readonly<Record<PainelFixo, DefinicaoDoAtalho>> = {
     titulo: "Escritório Contábil",
     icone: () => <IconeBalanca />,
     conteudo: () => <PainelDoEscritorio />,
+  },
+  balanco: {
+    rotulo: "Balanço",
+    titulo: "Balanço e DRE",
+    icone: () => <IconeBalanca />,
+    conteudo: () => <PainelDasDemonstracoes />,
   },
   configuracoes: {
     rotulo: "Configurações",
@@ -139,7 +146,7 @@ export function App() {
         bancosCentavos={bancosCentavos}
         pontos={pontos}
         data={data}
-        aoVerBalanco={() => setPainel({ tipo: "atalho", atalho: "escritorio" })}
+        aoVerBalanco={() => setPainel({ tipo: "atalho", atalho: "balanco" })}
         aoAbrirConfiguracoes={() => setPainel({ tipo: "atalho", atalho: "configuracoes" })}
       />
       {!mundoPronto && <p className="carregando">Carregando a cidade…</p>}

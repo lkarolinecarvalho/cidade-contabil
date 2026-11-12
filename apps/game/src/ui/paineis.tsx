@@ -21,9 +21,10 @@ import { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
 import { PainelDeRevisao } from "./Estudo";
 import { FluxoDaMissao } from "./FluxoDaMissao";
 
+export { PainelDoEscritorio as PainelDasDemonstracoes } from "./Demonstracoes";
 export { PainelDeConfiguracoes, PainelDeProgresso } from "./Estudo";
 
-/** Escritório Contábil: a Revisão, o Balanço e a DRE. */
+/** Atalho do Escritório: a Revisão, o Balanço e a DRE. */
 export function PainelDoEscritorio() {
   return (
     <>
@@ -195,11 +196,6 @@ export function PainelDoEstabelecimento({ estabelecimento }: { readonly estabele
       {estabelecimento === "posto-fiscal" && (
         <div className="painel-secao">
           <PainelDoIcms />
-        </div>
-      )}
-      {estabelecimento === "escritorio-contabil" && (
-        <div className="painel-secao">
-          <PainelDoEscritorio />
         </div>
       )}
     </>

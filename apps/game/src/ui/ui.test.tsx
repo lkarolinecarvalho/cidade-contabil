@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { BottomSheet } from "./BottomSheet";
+import { Conversa, type Fala } from "./Conversa";
 import { Hud } from "./Hud";
 
 describe("Hud", () => {
@@ -51,6 +52,58 @@ describe("Hud", () => {
     expect(html).toContain("50%");
     expect(html).toContain("410 pts");
     expect(html).toContain("Ver Balanço");
+  });
+});
+
+describe("Conversa", () => {
+  const falas = [
+    { fala: "npc", texto: "Primeira fala." },
+    { fala: "jogador", texto: "Segunda fala." },
+    { fala: "npc", texto: "Terceira fala." },
+  ] as const;
+  const conversa = (inicio: number, lista: readonly Fala[] = falas) =>
+    renderToStaticMarkup(
+      <Conversa
+        falas={lista}
+        npc={{ id: "marta-contadora", nome: "Marta", papel: "Contadora" }}
+        acaoFinal="Aceitar a proposta"
+        aoConcluir={() => {}}
+        inicio={inicio}
+      />,
+    );
+
+  it("mostra uma fala por vez, com o botão de continuar", () => {
+    const html = conversa(0);
+    expect(html).toContain("Primeira fala.");
+    expect(html).not.toContain("Segunda fala.");
+    expect(html).not.toContain("Terceira fala.");
+    expect(html).toContain("Continuar");
+    expect(html).toContain('aria-label="Fala 1 de 3"');
+    // A decisão só aparece na última fala.
+    expect(html).not.toContain("Aceitar a proposta");
+    expect(html).not.toContain("Voltar");
+  });
+
+  it("a fala do jogador aparece com o retrato dele", () => {
+    const html = conversa(1);
+    expect(html).toContain("Segunda fala.");
+    expect(html).toContain("conversa-do-jogador");
+    expect(html).toContain('alt="Você"');
+    expect(html).toContain("Voltar");
+  });
+
+  it("na última fala, troca o continuar pela decisão", () => {
+    const html = conversa(2);
+    expect(html).toContain("Terceira fala.");
+    expect(html).toContain("Aceitar a proposta");
+    expect(html).not.toContain("Continuar");
+    expect(html).toContain('aria-label="Fala 3 de 3"');
+  });
+
+  it("com uma fala só, já mostra a decisão, sem o andamento", () => {
+    const html = conversa(0, [falas[0]]);
+    expect(html).toContain("Aceitar a proposta");
+    expect(html).not.toContain('aria-label="Fala');
   });
 });
 

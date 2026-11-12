@@ -19,9 +19,10 @@ import { acoesRestantes, operacoesExecutadas } from "../state/jogo";
 import { conteudo, jogoStore, useJogo } from "../state/store";
 import { formatarReais } from "../texto/dinheiro";
 import { JulgarAfirmativas } from "./Afirmativas";
+import { Conversa } from "./Conversa";
 import { PainelDaDre } from "./Demonstracoes";
 import { EditorDeLancamento } from "./EditorDeLancamento";
-import { IconeCerto, IconeEstrela, Retrato } from "./icones";
+import { IconeCerto, IconeEstrela } from "./icones";
 import { RegraCitada } from "./RegraCitada";
 
 type Etapa = "negociacao" | "efeito" | "afirmativas" | "lancamento" | "conclusao";
@@ -143,26 +144,17 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
       <Passos etapa={etapa} temEfeito={temEfeito} />
 
       {etapa === "negociacao" && (
-        <>
-          <div className="conversa">
-            <div className="conversa-quem">
-              <Retrato personagem={missao.npc} nome={npc?.nome ?? ""} />
-              <strong>{npc?.nome}</strong>
-              <span>{npc?.papel}</span>
-            </div>
-            <div className="conversa-falas">
-              {missao.dialogo.map((fala) => (
-                <p key={fala.texto} className="balao">
-                  {fala.texto}
-                </p>
-              ))}
-            </div>
-          </div>
-          <button type="button" className="botao-principal" onClick={aposNegociacao}>
-            <IconeCerto />
-            {temEfeito ? "Aceitar a proposta" : "Responder"}
-          </button>
-        </>
+        <Conversa
+          falas={missao.dialogo}
+          npc={{ id: missao.npc, nome: npc?.nome ?? "", papel: npc?.papel ?? "" }}
+          acaoFinal={
+            <>
+              <IconeCerto />
+              {temEfeito ? "Aceitar a proposta" : "Responder"}
+            </>
+          }
+          aoConcluir={aposNegociacao}
+        />
       )}
 
       {etapa === "efeito" && (
