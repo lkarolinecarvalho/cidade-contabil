@@ -11,33 +11,49 @@ calculado pelo `ledger` a partir da operação (ADR-0005).
 
 ```jsonc
 {
-  "id": "m004-compra-prazo",
-  "titulo": "Segunda compra a prazo",
-  "capitulo": 4,                             // capítulo da campanha (omitir no modo livre)
-  "nivel": 2,
+  "id": "m008-desconto-na-nota",
+  "titulo": "Desconto para compensar",
+  "capitulo": 3,                             // capítulo da campanha (omitir no modo livre)
+  "nivel": 3,
   "estabelecimento": "fornecedor",          // id do estabelecimento no mapa
   "npc": "joao-fornecedor",
-  "requisitos": ["m004-compra-avista"],      // missões concluídas antes
-  "dialogo": [
-    { "fala": "npc", "texto": "Tenho mais 4.000 unidades a R$ 5,00, R$ 20.000,00 no total, com pagamento em 30 dias. Fechamos?" }
+  "requisitos": ["m008-abatimento-compra"],  // missões concluídas antes
+  "dialogo": [                               // no máximo 3 falas curtas, uma por vez
+    { "fala": "npc", "texto": "Para compensar o transtorno, a próxima carne sai com desconto, já na nota." }
   ],
-  "operacoes": [{                           // várias operações, em ordem; pode ser [] (fato sem lançamento, R-CAP-02)
-    "tipo": "compra",                        // compra | venda | deposito | pagamento | recebimento | subscricao | integralizacao | compra_imobilizado | despesa | provisao_salarios | depreciacao | apuracao_icms
-    "itens": [{ "produto": "mercadorias-diversas", "quantidade": 4000, "precoUnitarioCentavos": 500 }], // um produto por nota, por enquanto
+  "proposta": {                              // cartão com os dados da operação: os valores ficam aqui
+    "titulo": "Nota c2 do fornecedor",
+    "linhas": ["500 carnes a R$ 4,00: R$ 2.000,00", "Desconto de 10% na nota: R$ 200,00", "A prazo: 30 dias"]
+  },
+  "operacoes": [{                           // várias operações, em ordem
+    "tipo": "compra",
+    "nota": "c2",                            // identificador, para devoluções e abatimentos depois
+    "itens": [{ "produto": "carne", "quantidade": 500, "precoUnitarioCentavos": 400 }], // vários itens por nota
     "ipiAliquota": 0,                        // em pontos-base: 10% = 1000
     "freteCentavos": 0,
+    "descontoComercial": 1000,               // opcional, em pontos-base
     "condicao": { "tipo": "prazo", "dias": 30 } // ou { "tipo": "avista", "meio": "caixa" | "bancos" | "escolha_do_jogador" }
   }],
   "ajudaLancamento": "auto",                 // auto (pelo nível) | pronto | contas_sugeridas | contas_e_valores | livre
-  "conceitos": ["icms-por-dentro", "compra-a-prazo-fornecedores", "custo-aquisicao"],
+  "conceitos": ["desconto-comercial", "custo-medio"],
   "recompensa": { "pontos": 80 }
 }
 ```
 
+Tipos de operação: `subscricao`, `integralizacao`, `deposito`, `compra_imobilizado`,
+`compra`, `venda`, `recebimento`, `pagamento`, `devolucao_compra`, `abatimento_compra`,
+`devolucao_venda`, `abatimento_venda`, `recebimento_consignacao`, `venda_consignada`,
+`devolucao_consignacao`, `inventario_consumo`, `producao`, `provisao_salarios`,
+`despesa`, `depreciacao`, `apuracao_icms` e `apuracao_ipi`. Receber e devolver
+mercadoria em consignação não geram lançamento.
+
+Os arquivos de missão têm um número na frente do nome (`08-m004-compra-prazo.json`),
+que guarda a ordem da campanha.
+
 Só existem os tipos de operação que o motor sabe lançar. Dinheiro vai em centavos
 inteiros e percentuais em **pontos-base** (100% = 10000), nunca em fração (ADR-0006).
-Na subscrição, `participacoes` traz a parte de cada acionista em pontos-base, somando
-10000, com `avatar` e pelo menos mais um acionista NPC:
+Na subscrição, `participacoes` traz a parte de cada sócio em pontos-base, somando
+10000, com `avatar` e pelo menos mais um sócio NPC:
 
 ```jsonc
 { "tipo": "subscricao", "valorCentavos": 30000000, "participacoes": { "avatar": 9000, "osvaldo": 1000 } }

@@ -51,14 +51,38 @@ describe("conteúdo do jogo", () => {
     ]);
   });
 
-  it("tem missões para os capítulos 1 a 7, em ordem de jogo", () => {
+  it("tem missões para os capítulos 1 a 6, em ordem de jogo, com nível que nunca cai", () => {
     const capitulos = conteudo.missoes.map((m) => m.capitulo);
-    expect([...new Set(capitulos)]).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect([...new Set(capitulos)]).toEqual([1, 2, 3, 4, 5, 6]);
     expect(capitulos).toEqual([...capitulos].sort());
-    // O nível de cada capítulo segue a progressão do GDD (seção 9).
-    const nivelPorCapitulo: Record<number, number> = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 4 };
+    const niveis = conteudo.missoes.map((m) => m.nivel);
+    expect(niveis).toEqual([...niveis].sort());
+    expect([...new Set(niveis)]).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("toda missão tem no máximo três falas curtas e um cartão com os dados da operação", () => {
     for (const m of conteudo.missoes) {
-      expect(m.nivel, m.id).toBe(nivelPorCapitulo[m.capitulo ?? 0]);
+      expect(m.dialogo.length, m.id).toBeLessThanOrEqual(3);
+      for (const fala of m.dialogo) expect(fala.texto.length, m.id).toBeLessThanOrEqual(140);
+      expect(m.proposta.linhas.length, m.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("toda nota citada numa devolução ou abatimento foi emitida numa missão anterior", () => {
+    const emitidas = new Set<string>();
+    for (const m of conteudo.missoes) {
+      for (const operacao of m.operacoes) {
+        if ((operacao.tipo === "compra" || operacao.tipo === "venda") && operacao.nota) {
+          emitidas.add(operacao.nota);
+        }
+        if (
+          operacao.tipo === "devolucao_compra" ||
+          operacao.tipo === "abatimento_compra" ||
+          operacao.tipo === "devolucao_venda"
+        ) {
+          expect(emitidas.has(operacao.nota), `${m.id}: nota ${operacao.nota}`).toBe(true);
+        }
+      }
     }
   });
 
@@ -123,7 +147,7 @@ describe("conteúdo inválido é recusado", () => {
     expect(problemas.join("\n")).toMatch(/missão m006-energia/);
   });
 
-  it("formato: compra com mais de um produto (regra faltante)", () => {
+  it("formato: nota que repete o mesmo produto", () => {
     const problemas = problemasDe(
       alterar((d) => {
         const operacoes = missao(d, "m004-compra-avista").operacoes as Registro[];
@@ -131,7 +155,7 @@ describe("conteúdo inválido é recusado", () => {
         itens.push({ ...itens[0] });
       }),
     );
-    expect(problemas.join("\n")).toMatch(/exatamente um produto/);
+    expect(problemas.join("\n")).toMatch(/não pode repetir o mesmo produto/);
   });
 
   it("regra inexistente em docs/regras-contabeis.md", () => {
@@ -220,11 +244,11 @@ describe("conteúdo inválido é recusado", () => {
   it("missão cujo conceito não tem afirmativa para o nível dela", () => {
     const problemas = problemasDe(
       alterar((d) => {
-        for (const a of d.afirmativas) if (a.conceitoId === "capital-autorizado") a.nivelMin = 2;
+        for (const a of d.afirmativas) if (a.conceitoId === "capital-subscrito") a.nivelMin = 2;
       }),
     );
     expect(problemas).toContain(
-      'missão m001-capital-autorizado: o conceito "capital-autorizado" não tem afirmativa para o nível 1',
+      'missão m001-constituicao: o conceito "capital-subscrito" não tem afirmativa para o nível 1',
     );
   });
 
@@ -238,7 +262,7 @@ describe("conteúdo inválido é recusado", () => {
     ).toMatch(/requisito inexistente "m999-nao-existe"/);
 
     const comCiclo = alterar((d) => {
-      missao(d, "m001-capital-autorizado").requisitos = ["m001-integralizacao"];
+      missao(d, "m001-constituicao").requisitos = ["m001-integralizacao"];
     });
     expect(problemasDe(comCiclo)).toContain("missões: os requisitos formam um ciclo");
     expect(ordenarMissoes(carregarConteudoDoJogo().missoes)).not.toBeNull();
@@ -250,10 +274,10 @@ describe("conteúdo inválido é recusado", () => {
         if (d.produtos[0]) d.produtos.push({ ...d.produtos[0] });
       }),
     );
-    expect(problemas).toContain("produto mercadorias-diversas: id repetido");
+    expect(problemas).toContain("produto pao: id repetido");
   });
 
-  it("participações que não somam 100%, sem o avatar ou com um só acionista (R-CAP-01)", () => {
+  it("participações que não somam 100%, sem o avatar ou com um só sócio (R-CAP-01)", () => {
     const comParticipacoes = (participacoes: Record<string, number>) =>
       problemasDe(
         alterar((d) => {
@@ -262,7 +286,7 @@ describe("conteúdo inválido é recusado", () => {
         }),
       ).join("\n");
     expect(comParticipacoes({ avatar: 9000, osvaldo: 900 })).toMatch(/somar 10000/);
-    expect(comParticipacoes({ avatar: 10000 })).toMatch(/pelo menos dois acionistas/);
+    expect(comParticipacoes({ avatar: 10000 })).toMatch(/pelo menos dois sócios/);
     expect(comParticipacoes({ osvaldo: 5000, "marta-contadora": 5000 })).toMatch(
       /falta o acionista/,
     );

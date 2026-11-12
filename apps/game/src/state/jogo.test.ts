@@ -9,6 +9,7 @@ import {
   type EstadoDoJogo,
   executarOperacao,
   executarProximaOperacao,
+  irParaOUltimoDia,
   jogarMissaoInteira,
   nivelDoJogador,
   novoJogo,
@@ -37,7 +38,7 @@ function jogarAte(id: string): EstadoDoJogo {
 describe("estado do jogo", () => {
   it("começa com a carteira do avatar, a empresa vazia e nenhum ponto", () => {
     const estado = novoJogo();
-    expect(estado.carteiraCentavos).toBe(28_000_000);
+    expect(estado.carteiraCentavos).toBe(10_000_000);
     expect(estado.contabil.lancamentos).toEqual([]);
     expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(0);
     expect(estado.pontos).toBe(0);
@@ -53,9 +54,9 @@ describe("estado do jogo", () => {
 
   it("R-ENT-02: na integralização a carteira cai pela parte do avatar e a empresa recebe o total", () => {
     const estado = jogarAte("m001-integralizacao");
-    // R$ 200.000,00 integralizados: R$ 180.000,00 do avatar, R$ 20.000,00 do NPC.
-    expect(estado.carteiraCentavos).toBe(10_000_000);
-    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(20_000_000);
+    // R$ 80.000,00 integralizados: R$ 72.000,00 do avatar, R$ 8.000,00 do sócio.
+    expect(estado.carteiraCentavos).toBe(2_800_000);
+    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(8_000_000);
   });
 
   it("o HUD reflete o razão: disponibilidades = Caixa + Bancos do balancete", () => {
@@ -63,9 +64,9 @@ describe("estado do jogo", () => {
     const linhas = balancete(estado.contabil).linhas;
     const saldoDe = (nome: string) =>
       linhas.find((l) => l.nome === nome)?.saldoDevedorCentavos ?? 0;
-    expect(saldoDe("Caixa")).toBe(50_000);
-    expect(saldoDe("Bancos Conta Movimento")).toBe(6_000_000);
-    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(6_050_000);
+    expect(saldoDe("Caixa")).toBe(720_000);
+    expect(saldoDe("Bancos Conta Movimento")).toBe(2_044_000);
+    expect(disponibilidadesDaEmpresa(estado.contabil)).toBe(2_764_000);
   });
 
   it("R-ENT-01: a carteira pessoal nunca aparece no razão", () => {
@@ -74,7 +75,7 @@ describe("estado do jogo", () => {
 
     // Nenhuma conta do plano representa a carteira.
     const contas = estado.contabil.planoDeContas.contas;
-    expect(contas.some((c) => /carteira|pessoal|acionista/i.test(c.nome))).toBe(false);
+    expect(contas.some((c) => /carteira|pessoal|sócio/i.test(c.nome))).toBe(false);
 
     // O razão é o mesmo com qualquer carteira: nada do estado contábil depende dela.
     let rico = { ...novoJogo(), carteiraCentavos: 99_000_000 };
@@ -82,7 +83,7 @@ describe("estado do jogo", () => {
     expect(rico.contabil).toEqual(estado.contabil);
 
     // O que saiu da carteira é só a parte do avatar no capital integralizado.
-    expect(CARTEIRA_INICIAL - estado.carteiraCentavos).toBe(27_000_000);
+    expect(CARTEIRA_INICIAL - estado.carteiraCentavos).toBe(9_000_000);
     // O estado contábil não guarda a carteira em lugar nenhum.
     expect(JSON.stringify(estado.contabil)).not.toMatch(/carteira/i);
   });
@@ -106,51 +107,66 @@ describe("estado do jogo", () => {
   });
 
   it("a próxima missão e o nível acompanham o progresso", () => {
-    expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m001-capital-autorizado");
-    const noCapitulo4 = jogarAte("m003-equipamentos");
-    expect(proximaMissao(noCapitulo4, missoes)?.id).toBe("m004-compra-avista");
-    expect(nivelDoJogador(noCapitulo4, missoes)).toBe(2);
+    expect(proximaMissao(novoJogo(), missoes)?.id).toBe("m001-constituicao");
+    const noCapitulo2 = jogarAte("m003-equipamentos");
+    expect(proximaMissao(noCapitulo2, missoes)?.id).toBe("m004-compra-avista");
+    expect(nivelDoJogador(noCapitulo2, missoes)).toBe(2);
     const fim = jogarAte("m007-apuracao-icms");
     expect(proximaMissao(fim, missoes)).toBeUndefined();
-    expect(nivelDoJogador(fim, missoes)).toBe(4);
+    expect(nivelDoJogador(fim, missoes)).toBe(5);
+  });
+
+  it("a empresa do jogo é a hamburgueria: o hambúrguer baixa os insumos da receita", () => {
+    const antes = jogarAte("m004-compra-prazo");
+    const depois = jogarAte("m005-venda-avista");
+    for (const insumo of ["pao", "carne", "queijo", "alface"]) {
+      expect(antes.contabil.estoque[insumo]?.quantidade, insumo).toBe(1000);
+      expect(depois.contabil.estoque[insumo]?.quantidade, insumo).toBe(700);
+    }
+    expect(depois.contabil.estoque.refrigerante?.quantidade).toBe(300);
   });
 });
 
 describe("andamento da missão", () => {
-  it("missão sem operação conclui direto e não gera lançamento (R-CAP-02)", () => {
-    const primeira = missao("m001-capital-autorizado");
-    const estado = concluirMissao(novoJogo(), primeira);
-    expect(estado.pontos).toBe(primeira.recompensa.pontos);
-    expect(estado.missoesConcluidas).toEqual([primeira.id]);
-    expect(estado.contabil.lancamentos).toEqual([]);
+  it("operação sem lançamento gasta uma ação, muda o controle e não toca o razão (R-CSG-01)", () => {
+    const consignacao = missao("m009-consignacao");
+    const antes = jogarAte("m009-receber-antes");
+    const depois = executarProximaOperacao(antes, consignacao);
+    expect(depois.contabil.lancamentos).toEqual(antes.contabil.lancamentos);
+    expect(depois.contabil.consignado.refrigerante?.quantidade).toBe(300);
+    expect(depois.acoesUsadasHoje).toBe(antes.acoesUsadasHoje + 1);
+
+    const concluida = concluirMissao(depois, consignacao);
+    expect(concluida.pontos).toBe(antes.pontos + consignacao.recompensa.pontos);
+    expect(concluida.missoesConcluidas).toContain(consignacao.id);
   });
 
   it("grava uma operação por vez e lembra onde parou", () => {
-    const salarios = missao("m006-salarios");
-    const antes = jogarAte("m006-pagamento-fornecedor");
-    expect(operacoesExecutadas(antes, salarios)).toBe(0);
+    const fechamento = missao("m007-depreciacao");
+    const antes = irParaOUltimoDia(jogarAte("m010-venda-congelado"));
+    expect(operacoesExecutadas(antes, fechamento)).toBe(0);
 
-    // Primeira operação: os salários do mês.
-    const comProvisao = executarProximaOperacao(antes, salarios);
-    expect(operacoesExecutadas(comProvisao, salarios)).toBe(1);
-    expect(comProvisao.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 1);
-    // Ainda falta o pagamento: a missão não pode ser concluída.
-    expect(() => concluirMissao(comProvisao, salarios)).toThrow(/operações dessa missão/);
+    // Primeira operação: a depreciação, um lançamento por classe de bem.
+    const comDepreciacao = executarProximaOperacao(antes, fechamento);
+    expect(operacoesExecutadas(comDepreciacao, fechamento)).toBe(1);
+    expect(comDepreciacao.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 3);
+    // Ainda falta o inventário: a missão não pode ser concluída.
+    expect(() => concluirMissao(comDepreciacao, fechamento)).toThrow(/operações dessa missão/);
 
-    // Segunda operação: o pagamento. Não repete a primeira.
-    const comPagamento = executarProximaOperacao(comProvisao, salarios);
-    expect(comPagamento.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 2);
-    expect(() => executarProximaOperacao(comPagamento, salarios)).toThrow(/já foram feitas/);
+    // Segunda operação: o inventário do material de consumo. Não repete a primeira.
+    const comInventario = executarProximaOperacao(comDepreciacao, fechamento);
+    expect(comInventario.contabil.lancamentos.length).toBe(antes.contabil.lancamentos.length + 4);
+    expect(() => executarProximaOperacao(comInventario, fechamento)).toThrow(/já foram feitas/);
 
-    const concluida = concluirMissao(comPagamento, salarios);
+    const concluida = concluirMissao(comInventario, fechamento);
     expect(concluida.andamento).toBeNull();
-    expect(concluida.missoesConcluidas).toContain(salarios.id);
-    expect(concluida.contabil).toEqual(jogarAte("m006-salarios").contabil);
+    expect(concluida.missoesConcluidas).toContain(fechamento.id);
+    expect(concluida.contabil).toEqual(jogarAte("m007-depreciacao").contabil);
   });
 
   it("respeita requisitos e não repete missão concluída", () => {
-    const primeira = missao("m001-capital-autorizado");
-    const estado = concluirMissao(novoJogo(), primeira);
+    const primeira = missao("m001-constituicao");
+    const estado = jogarMissaoInteira(novoJogo(), primeira);
     expect(() => concluirMissao(estado, primeira)).toThrow(/já foi concluída/);
     expect(() => executarProximaOperacao(novoJogo(), missao("m002-compra-imovel"))).toThrow(
       /anteriores/,

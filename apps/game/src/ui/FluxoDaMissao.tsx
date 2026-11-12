@@ -1,4 +1,4 @@
-import { type Missao, paraOperacaoDoMotor } from "@cidade/content";
+import { type Missao, type Proposta, paraOperacaoDoMotor } from "@cidade/content";
 import {
   ErroDeOperacao,
   type Lancamento,
@@ -156,6 +156,7 @@ export function FluxoDaMissao({ missao }: { readonly missao: Missao }) {
             </>
           }
           aoConcluir={aposNegociacao}
+          anexo={<CartaoDaProposta proposta={missao.proposta} />}
         />
       )}
 
@@ -299,6 +300,20 @@ function EtapaDoEfeito({
 }
 
 /** Passo "Faça o Lançamento": o jogador monta, o motor confere, e o erro vira prévia. */
+/** Cartão com os dados da operação: a "nota" que o jogador consulta para lançar. */
+function CartaoDaProposta({ proposta }: { readonly proposta: Proposta }) {
+  return (
+    <aside className="proposta" aria-label={proposta.titulo}>
+      <strong>{proposta.titulo}</strong>
+      <ul>
+        {proposta.linhas.map((linha) => (
+          <li key={linha}>{linha}</li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
 function EtapaDoLancamento({
   missao,
   operacao,
@@ -334,8 +349,11 @@ function EtapaDoLancamento({
         {[...new Set(lancamentos.flatMap((l) => l.regras))].slice(0, 3).map((regra) => (
           <RegraCitada key={regra} regra={regra} />
         ))}
-        {semLancamento && missao.conceitos.includes("capital-autorizado") && (
-          <RegraCitada regra="R-CAP-02" />
+        {semLancamento && operacao?.tipo === "recebimento_consignacao" && (
+          <RegraCitada regra="R-CSG-01" />
+        )}
+        {semLancamento && operacao?.tipo === "devolucao_consignacao" && (
+          <RegraCitada regra="R-CSG-03" />
         )}
         <button type="button" className="botao-principal" onClick={aoContinuar}>
           Continuar
@@ -348,6 +366,7 @@ function EtapaDoLancamento({
     return (
       <section className="etapa">
         <h4>Faça o Lançamento</h4>
+        <CartaoDaProposta proposta={missao.proposta} />
         <p className="etapa-instrucao">Esse fato gera lançamento contábil?</p>
         <div className="julgar">
           <button type="button" className="neutro" onClick={() => conferir([])}>
@@ -364,6 +383,7 @@ function EtapaDoLancamento({
   return (
     <section className="etapa">
       <h4>Faça o Lançamento</h4>
+      <CartaoDaProposta proposta={missao.proposta} />
       <EditorDeLancamento
         ajuda={semLancamento ? "livre" : ajudaDaMissao(missao)}
         esperadas={esperadas}

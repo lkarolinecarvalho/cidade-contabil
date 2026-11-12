@@ -1,6 +1,38 @@
 [
   {
-    "id": "mercadorias-diversas",
-    "nome": "Mercadorias diversas"
+    "id": "pao",
+    "nome": "Pão"
+  },
+  {
+    "id": "carne",
+    "nome": "Carne (disco de hambúrguer)"
+  },
+  {
+    "id": "queijo",
+    "nome": "Queijo"
+  },
+  {
+    "id": "alface",
+    "nome": "Alface"
+  },
+  {
+    "id": "refrigerante",
+    "nome": "Refrigerante"
+  },
+  {
+    "id": "material-de-limpeza",
+    "nome": "Material de limpeza"
+  },
+  {
+    "id": "embalagem",
+    "nome": "Embalagem do congelado"
+  },
+  {
+    "id": "hamburguer",
+    "nome": "Hambúrguer"
+  },
+  {
+    "id": "hamburguer-congelado",
+    "nome": "Hambúrguer congelado"
   }
 ]

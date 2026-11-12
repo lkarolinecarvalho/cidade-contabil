@@ -771,6 +771,45 @@ button {
   }
 }
 
+/* Cartão da proposta: os dados da operação, como uma nota em papel. */
+.proposta {
+  margin: 10px 0 0;
+  padding: 9px 12px 10px;
+  border-radius: 10px;
+  background: #fffdf5;
+  border: 1.5px dashed var(--contorno);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  animation: decisao-entra 0.3s ease-out;
+}
+
+.proposta strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.proposta ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proposta li + li {
+  margin-top: 2px;
+  padding-top: 2px;
+  border-top: 1px dotted var(--borda);
+}
+
+.etapa > .proposta {
+  margin: 0 0 10px;
+  animation: none;
+}
+
 .recompensa {
   display: flex;
   align-items: center;

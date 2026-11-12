@@ -1,0 +1,31 @@
+{
+  "id": "m009-devolver-consignado",
+  "titulo": "O que sobrou volta",
+  "capitulo": 4,
+  "nivel": 4,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m009-venda-consignada"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Vim buscar o que sobrou na geladeira, como combinado."
+    }
+  ],
+  "proposta": {
+    "titulo": "Devolução do consignado",
+    "linhas": ["150 refrigerantes voltam para a marca", "Eles nunca foram da hamburgueria"]
+  },
+  "operacoes": [
+    {
+      "tipo": "devolucao_consignacao",
+      "produto": "refrigerante",
+      "quantidade": 150
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["consignacao"],
+  "recompensa": {
+    "pontos": 70
+  }
+}

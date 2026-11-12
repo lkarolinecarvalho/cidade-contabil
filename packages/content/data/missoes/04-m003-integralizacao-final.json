@@ -1,0 +1,31 @@
+{
+  "id": "m003-integralizacao-final",
+  "titulo": "O resto do capital",
+  "capitulo": 1,
+  "nivel": 1,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m002-compra-imovel"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Chegou o restante do capital que vocês combinaram no contrato."
+    }
+  ],
+  "proposta": {
+    "titulo": "Depósito de capital",
+    "linhas": ["Entram no banco: R$ 20.000,00", "Você: R$ 18.000,00", "Sr. Osvaldo: R$ 2.000,00"]
+  },
+  "operacoes": [
+    {
+      "tipo": "integralizacao",
+      "valorCentavos": 2000000,
+      "meio": "bancos"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["capital-a-integralizar"],
+  "recompensa": {
+    "pontos": 40
+  }
+}

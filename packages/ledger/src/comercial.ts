@@ -759,7 +759,14 @@ export function calcularDevolucaoDeVenda(
     imobilizado: estado.imobilizado,
     estoque,
     notas: { ...estado.notas, [operacao.nota]: marcarDevolvido(nota, partes) },
-    valores: { receitaBruta: liquido, icms, pis, cofins, cmv: somarPartes(partes, "custo") },
+    valores: {
+      receitaBruta: liquido,
+      icms,
+      pis,
+      cofins,
+      cmv: somarPartes(partes, "custo"),
+      ...(ipi > 0 ? { ipi } : {}),
+    },
     rascunhos: [
       rascunho(
         "Devolução de venda",

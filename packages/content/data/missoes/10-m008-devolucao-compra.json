@@ -1,0 +1,40 @@
+{
+  "id": "m008-devolucao-compra",
+  "titulo": "Carne fora do padrão",
+  "capitulo": 3,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m005-venda-avista"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Cem discos de carne fora do padrão? Pode devolver: eu desconto da sua nota."
+    }
+  ],
+  "proposta": {
+    "titulo": "Devolução ao fornecedor",
+    "linhas": [
+      "100 carnes da nota c1 voltam para o João",
+      "Valor na nota: R$ 400,00",
+      "A dívida com o fornecedor diminui"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "devolucao_compra",
+      "nota": "c1",
+      "itens": [
+        {
+          "produto": "carne",
+          "quantidade": 100
+        }
+      ]
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["devolucao-de-compra"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

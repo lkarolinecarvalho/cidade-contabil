@@ -1,0 +1,41 @@
+{
+  "id": "m006-pagamento-fornecedor",
+  "titulo": "Pagar antes vale a pena",
+  "capitulo": 3,
+  "nivel": 3,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m008-desconto-na-nota"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "A nota c1 só vence no mês que vem."
+    },
+    {
+      "fala": "npc",
+      "texto": "Mas o João dá desconto para quem paga antes. Quer quitar hoje?"
+    }
+  ],
+  "proposta": {
+    "titulo": "Pagamento antecipado",
+    "linhas": [
+      "Saldo da nota c1: R$ 6.000,00",
+      "Desconto por pagar antes: R$ 120,00",
+      "Sai do banco: R$ 5.880,00"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "pagamento",
+      "obrigacao": "fornecedores",
+      "valorCentavos": 600000,
+      "meio": "bancos",
+      "descontoFinanceiroCentavos": 12000
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["desconto-financeiro", "pagamento-de-obrigacoes"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

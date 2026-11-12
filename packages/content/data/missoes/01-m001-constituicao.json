@@ -1,0 +1,43 @@
+{
+  "id": "m001-constituicao",
+  "titulo": "O contrato social",
+  "capitulo": 1,
+  "nivel": 1,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": [],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Bem-vindo! Vamos abrir a Chapa da Praça. Você e o Sr. Osvaldo serão sócios numa sociedade limitada."
+    },
+    {
+      "fala": "npc",
+      "texto": "No contrato social, vocês se comprometem a colocar dinheiro na empresa. Esse compromisso se chama subscrição."
+    }
+  ],
+  "proposta": {
+    "titulo": "Contrato social",
+    "linhas": [
+      "Capital subscrito: R$ 100.000,00",
+      "Você: 90% das quotas (R$ 90.000,00)",
+      "Sr. Osvaldo: 10% das quotas (R$ 10.000,00)",
+      "Nenhum dinheiro entrou ainda"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "subscricao",
+      "valorCentavos": 10000000,
+      "participacoes": {
+        "avatar": 9000,
+        "osvaldo": 1000
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["capital-subscrito", "capital-a-integralizar"],
+  "recompensa": {
+    "pontos": 50
+  }
+}

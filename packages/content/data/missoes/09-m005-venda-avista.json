@@ -1,0 +1,53 @@
+{
+  "id": "m005-venda-avista",
+  "titulo": "A inauguração",
+  "capitulo": 2,
+  "nivel": 2,
+  "estabelecimento": "minha-loja",
+  "npc": "lurdes-cliente",
+  "requisitos": ["m004-compra-prazo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Que cheiro bom! A praça inteira veio para a inauguração."
+    },
+    {
+      "fala": "npc",
+      "texto": "Todo mundo pagou na hora. Já fechou o caixa do dia?"
+    }
+  ],
+  "proposta": {
+    "titulo": "Vendas do dia",
+    "linhas": [
+      "300 hambúrgueres a R$ 20,00: R$ 6.000,00",
+      "200 refrigerantes a R$ 6,00: R$ 1.200,00",
+      "Total: R$ 7.200,00, à vista",
+      "Cada hambúrguer leva 1 pão, 1 carne, 1 queijo e 1 alface"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "venda",
+      "itens": [
+        {
+          "produto": "hamburguer",
+          "quantidade": 300,
+          "precoUnitarioCentavos": 2000
+        },
+        {
+          "produto": "refrigerante",
+          "quantidade": 200,
+          "precoUnitarioCentavos": 600
+        }
+      ],
+      "condicao": {
+        "tipo": "avista"
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["receita-e-deducoes", "receita-do-lanche", "cmv"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

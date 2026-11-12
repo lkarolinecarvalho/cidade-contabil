@@ -1,0 +1,38 @@
+{
+  "id": "m009-venda-consignada",
+  "titulo": "A geladeira esvaziou",
+  "capitulo": 4,
+  "nivel": 4,
+  "estabelecimento": "minha-loja",
+  "npc": "lurdes-cliente",
+  "requisitos": ["m009-consignacao"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Essa geladeira nova fez sucesso! Levei refrigerante para a família toda."
+    }
+  ],
+  "proposta": {
+    "titulo": "Vendas da geladeira",
+    "linhas": [
+      "150 refrigerantes consignados a R$ 6,00: R$ 900,00, à vista",
+      "A pagar à marca: 150 × R$ 3,00 = R$ 450,00"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "venda_consignada",
+      "produto": "refrigerante",
+      "quantidade": 150,
+      "precoUnitarioCentavos": 600,
+      "condicao": {
+        "tipo": "avista"
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["consignacao", "cmv"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

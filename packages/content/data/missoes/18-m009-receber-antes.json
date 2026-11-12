@@ -1,0 +1,36 @@
+{
+  "id": "m009-receber-antes",
+  "titulo": "O cliente quer pagar antes",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "banco",
+  "npc": "helena-gerente",
+  "requisitos": ["m009-abatimento-venda"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O Antônio quer pagar a nota antes do vencimento, se tiver um desconto."
+    }
+  ],
+  "proposta": {
+    "titulo": "Recebimento antecipado",
+    "linhas": [
+      "Saldo da nota v1: R$ 3.932,00",
+      "Desconto por receber antes: R$ 78,64",
+      "Entra no banco: R$ 3.853,36"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "recebimento",
+      "valorCentavos": 393200,
+      "meio": "bancos",
+      "descontoFinanceiroCentavos": 7864
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["desconto-financeiro"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

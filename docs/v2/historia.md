@@ -1,9 +1,8 @@
-# História e estrutura do jogo — v2 (proposta aprovada, a detalhar)
+# História e estrutura do jogo — v2
 
-> Este documento registra a direção nova do jogo. As regras novas já foram validadas
-> e estão em [regras-contabeis.md](../regras-contabeis.md), seções 15 a 22. Ele ainda
-> **não** substitui `gdd.md`, `campanha.md` nem os cenários dourados: isso acontece na
-> reescrita da campanha.
+> A hamburgueria, as regras novas, o cenário dourado e a campanha em 6 capítulos **já
+> estão aplicados** (ver [campanha.md](../campanha.md) e o ADR-0010). O que este
+> documento ainda guarda como plano é o **Escritório Contábil com quatro portas**.
 
 ## Decisões já tomadas
 
@@ -86,8 +85,8 @@ Ao entrar, o jogador escolhe uma de quatro portas. Cada uma abre uma tela curta.
 
 ## Ordem de trabalho
 
-1. ~~Validar as regras novas~~ (feito) e implementá-las no motor (feito).
-2. Reescrever os cenários dourados e a campanha com os valores.
-3. Trocar o conteúdo (produtos, missões, diálogos) e adaptar o motor.
-4. Construir o Escritório com as quatro portas. A Consulta, a Teoria e a Revisão não
-   dependem das regras novas e podem começar antes.
+1. ~~Validar as regras novas e implementá-las no motor.~~ Feito.
+2. ~~Reescrever os cenários dourados e a campanha.~~ Feito. Na campanha aplicada, a
+   fábrica é o capítulo 5 e o fechamento do mês é o capítulo 6, para tudo caber no mês 1.
+3. ~~Trocar o conteúdo (produtos, missões, diálogos) e adaptar o app.~~ Feito.
+4. Construir o Escritório com as quatro portas: Consulta, Teoria, Revisão e Desafios.

@@ -1,0 +1,35 @@
+{
+  "id": "m010-producao",
+  "titulo": "Linha de produção",
+  "capitulo": 5,
+  "nivel": 4,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m010-embalagens"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Bora produzir! Cada congelado leva um disco de carne e uma embalagem."
+    }
+  ],
+  "proposta": {
+    "titulo": "Ordem de produção",
+    "linhas": [
+      "300 hambúrgueres congelados",
+      "Consomem 300 carnes e 300 embalagens do estoque",
+      "Ficam prontos para vender"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "producao",
+      "produto": "hamburguer-congelado",
+      "quantidade": 300
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["producao"],
+  "recompensa": {
+    "pontos": 90
+  }
+}

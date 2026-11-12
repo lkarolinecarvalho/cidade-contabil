@@ -7,6 +7,7 @@ import {
   parteDoAcionista,
 } from "@cidade/content";
 import {
+  CATALOGO_DA_HAMBURGUERIA,
   type Centavos,
   criarEmpresa,
   type DataJogo,
@@ -73,12 +74,12 @@ export interface EstadoDoJogo {
 export const PONTOS_POR_AFIRMATIVA = 10;
 
 /** Carteira inicial do avatar (docs/cenario-campanha.md). */
-export const CARTEIRA_INICIAL: Centavos = 28_000_000;
+export const CARTEIRA_INICIAL: Centavos = 10_000_000;
 
 export function novoJogo(): EstadoDoJogo {
   return {
     versaoSchema: 1,
-    contabil: criarEmpresa(),
+    contabil: criarEmpresa({ catalogo: CATALOGO_DA_HAMBURGUERIA }),
     carteiraCentavos: CARTEIRA_INICIAL,
     participacoes: {},
     pontos: 0,
@@ -147,9 +148,19 @@ export function irParaOUltimoDia(estado: EstadoDoJogo): EstadoDoJogo {
   return { ...estado, data: { ...estado.data, dia: DIAS_NO_MES }, acoesUsadasHoje: 0 };
 }
 
+/** Operações que só podem ser feitas no último dia do mês. */
+const OPERACOES_DE_FECHAMENTO: readonly Operacao["tipo"][] = [
+  "depreciacao",
+  "apuracao_icms",
+  "apuracao_ipi",
+  "inventario_consumo",
+];
+/** Prazo, em dias, para acertar com o consignante o que foi vendido. */
+const PRAZO_DO_CONSIGNANTE = 30;
+
 /** Missão de fechamento do mês: só pode ser feita no último dia. */
 export function missaoDeFechamento(missao: Missao): boolean {
-  return missao.operacoes.some((o) => o.tipo === "depreciacao" || o.tipo === "apuracao_icms");
+  return missao.operacoes.some((o) => OPERACOES_DE_FECHAMENTO.includes(o.tipo));
 }
 
 export function missaoDisponivelHoje(missao: Missao, data: DataJogo): boolean {
@@ -166,10 +177,7 @@ export function missaoDisponivelHoje(missao: Missao, data: DataJogo): boolean {
  */
 function aplicarNoMotor(estado: EstadoDoJogo, operacao: Operacao): EstadoDoJogo {
   const { data } = estado;
-  if (
-    (operacao.tipo === "depreciacao" || operacao.tipo === "apuracao_icms") &&
-    !ehUltimoDiaDoMes(data)
-  ) {
+  if (OPERACOES_DE_FECHAMENTO.includes(operacao.tipo) && !ehUltimoDiaDoMes(data)) {
     throw new ErroDeJogo(`O fechamento do mês é feito no último dia (dia ${DIAS_NO_MES}).`);
   }
 
@@ -198,8 +206,31 @@ function aplicarNoMotor(estado: EstadoDoJogo, operacao: Operacao): EstadoDoJogo 
   if (operacao.tipo === "compra" && operacao.condicao.tipo === "prazo") {
     novoTitulo("pagar", "Fornecedor", valores.totalNota ?? 0, operacao.condicao.dias);
   }
+  // O cliente deve o valor da nota: a receita, menos o desconto dado nela, mais o IPI.
+  const totalDaVenda = (valores.receitaBruta ?? 0) - (valores.desconto ?? 0) + (valores.ipi ?? 0);
   if (operacao.tipo === "venda" && operacao.condicao.tipo === "prazo") {
-    novoTitulo("receber", "Cliente", valores.receitaBruta ?? 0, operacao.condicao.dias);
+    novoTitulo("receber", "Cliente", totalDaVenda, operacao.condicao.dias);
+  }
+  if (operacao.tipo === "venda_consignada") {
+    // R-CSG-02: a dívida com o consignante nasce na venda.
+    novoTitulo("pagar", "Consignante", valores.totalNota ?? 0, PRAZO_DO_CONSIGNANTE);
+    if (operacao.condicao.tipo === "prazo") {
+      novoTitulo("receber", "Cliente", totalDaVenda, operacao.condicao.dias);
+    }
+  }
+  // Devoluções e abatimentos de notas a prazo reduzem o título em aberto.
+  const notaAPrazo = (id: string) => estado.contabil.notas[id]?.aPrazo === true;
+  if (operacao.tipo === "devolucao_compra" && notaAPrazo(operacao.nota)) {
+    titulos = baixarTitulos(titulos, "pagar", valores.totalNota ?? 0);
+  }
+  if (operacao.tipo === "abatimento_compra" && notaAPrazo(operacao.nota)) {
+    titulos = baixarTitulos(titulos, "pagar", operacao.valorCentavos);
+  }
+  if (operacao.tipo === "devolucao_venda" && notaAPrazo(operacao.nota)) {
+    titulos = baixarTitulos(titulos, "receber", (valores.receitaBruta ?? 0) + (valores.ipi ?? 0));
+  }
+  if (operacao.tipo === "abatimento_venda" && operacao.contrapartida === "clientes") {
+    titulos = baixarTitulos(titulos, "receber", operacao.valorCentavos);
   }
   if (operacao.tipo === "pagamento" && operacao.obrigacao === "fornecedores") {
     titulos = baixarTitulos(titulos, "pagar", operacao.valorCentavos);
@@ -413,7 +444,8 @@ export function pagarIcms(estado: EstadoDoJogo): EstadoDoJogo {
 
 /**
  * Fechamento do mês fora da campanha: lança a depreciação (se ainda não foi) e apura
- * o ICMS, direto pelo motor. Na campanha, o fechamento é feito pelas missões do capítulo 7.
+ * o IPI e o ICMS, direto pelo motor. Na campanha, o fechamento é feito pelas missões do
+ * último capítulo.
  */
 export function fecharMes(estado: EstadoDoJogo): EstadoDoJogo {
   if (!ehUltimoDiaDoMes(estado.data)) {
@@ -425,7 +457,9 @@ export function fecharMes(estado: EstadoDoJogo): EstadoDoJogo {
     (l) => l.operacao === "depreciacao" && l.data.ano === mes.ano && l.data.mes === mes.mes,
   );
   const comDepreciacao = depreciado ? estado : aplicarNoMotor(estado, { tipo: "depreciacao", mes });
-  return aplicarNoMotor(comDepreciacao, { tipo: "apuracao_icms", mes });
+  // R-IPI-06 e R-ICMS-06: as duas apurações; a do ICMS fecha o mês.
+  const comIpi = aplicarNoMotor(comDepreciacao, { tipo: "apuracao_ipi", mes });
+  return aplicarNoMotor(comIpi, { tipo: "apuracao_icms", mes });
 }
 
 // ---------------------------------------------------------------------------

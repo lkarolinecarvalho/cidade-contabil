@@ -29,6 +29,7 @@ export {
   operacaoSchema,
   PLACEHOLDERS,
   type Produto,
+  type Proposta,
   produtoSchema,
   TOTAL_EM_PONTOS_BASE,
 } from "./schemas";

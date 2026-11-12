@@ -1,0 +1,40 @@
+{
+  "id": "m007-apuracao-icms",
+  "titulo": "Acerto com o Fisco",
+  "capitulo": 6,
+  "nivel": 5,
+  "estabelecimento": "posto-fiscal",
+  "npc": "sergio-fiscal",
+  "requisitos": ["m007-depreciacao"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Vamos acertar os impostos do mês."
+    },
+    {
+      "fala": "npc",
+      "texto": "A conta é simples: o que você cobrou nas vendas menos o crédito das compras."
+    }
+  ],
+  "proposta": {
+    "titulo": "Apuração dos impostos",
+    "linhas": [
+      "ICMS: a recolher menos a recuperar",
+      "IPI: a recolher menos a recuperar",
+      "O saldo devedor fica para pagar"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "apuracao_icms"
+    },
+    {
+      "tipo": "apuracao_ipi"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["apuracao-icms", "ipi-na-venda", "dre", "balanco-patrimonial"],
+  "recompensa": {
+    "pontos": 150
+  }
+}

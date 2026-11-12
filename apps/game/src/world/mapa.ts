@@ -80,7 +80,7 @@ export const EDIFICIOS: readonly Edificio[] = [
   edificio("posto-fiscal", "Posto Fiscal", PORTA_DO_POSTO, "esquerda"),
   edificio("imobiliaria", "Imobiliária", PORTA_DA_IMOBILIARIA, "direita"),
   edificio("fornecedor", "Fornecedor", PORTA_DO_FORNECEDOR, "esquerda"),
-  edificio("minha-loja", "Minha Loja", PORTA_DA_LOJA, "direita"),
+  edificio("minha-loja", "Hamburgueria", PORTA_DA_LOJA, "direita"),
 ];
 
 // Os quatro cantos do anel da praça e os pontos em que os caminhos das portas chegam nele.

@@ -13,6 +13,8 @@ interface Props {
   /** Botão da última fala: a decisão do jogador (aceitar a proposta, responder). */
   readonly acaoFinal: ReactNode;
   readonly aoConcluir: () => void;
+  /** Mostrado na última fala, antes da decisão (ex.: o cartão com os dados da operação). */
+  readonly anexo?: ReactNode;
   /** Fala em que a conversa começa. Só para testes. */
   readonly inicio?: number;
 }
@@ -21,7 +23,7 @@ interface Props {
  * Conversa com o NPC, uma fala por vez: o jogador toca em "Continuar" (ou no balão)
  * para ouvir a próxima, e só na última decide. Evita o paredão de texto.
  */
-export function Conversa({ falas, npc, acaoFinal, aoConcluir, inicio = 0 }: Props) {
+export function Conversa({ falas, npc, acaoFinal, aoConcluir, anexo, inicio = 0 }: Props) {
   const [indice, setIndice] = useState(inicio);
   const fala = falas[indice];
   if (!fala) return null;
@@ -78,6 +80,8 @@ export function Conversa({ falas, npc, acaoFinal, aoConcluir, inicio = 0 }: Prop
           <span />
         </div>
       )}
+
+      {ultima && anexo}
 
       {ultima ? (
         <button type="button" className="botao-principal conversa-decisao" onClick={aoConcluir}>

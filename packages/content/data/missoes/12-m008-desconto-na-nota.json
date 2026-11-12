@@ -1,0 +1,50 @@
+{
+  "id": "m008-desconto-na-nota",
+  "titulo": "Desconto para compensar",
+  "capitulo": 3,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m008-abatimento-compra"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Para compensar o transtorno, a próxima carne sai com desconto, já na nota."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota c2 do fornecedor",
+    "linhas": [
+      "500 carnes a R$ 4,00: R$ 2.000,00",
+      "Desconto de 10% na nota: R$ 200,00",
+      "Total da nota: R$ 1.800,00",
+      "ICMS de 18% sobre o valor com desconto",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "carne",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 400
+        }
+      ],
+      "ipiAliquota": 0,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "nota": "c2",
+      "descontoComercial": 1000
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["desconto-comercial", "custo-medio"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "m004-compra-avista",
+  "titulo": "Refrigerante para revender",
+  "capitulo": 2,
+  "nivel": 2,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m003-equipamentos"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O refrigerante eu trago direto da fábrica. Por isso a nota vem com IPI."
+    },
+    {
+      "fala": "npc",
+      "texto": "Você só revende, então esse IPI não volta. Já o ICMS, que está dentro do preço, você recupera."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota do fornecedor",
+    "linhas": [
+      "500 refrigerantes a R$ 3,00: R$ 1.500,00",
+      "IPI de 4%: R$ 60,00",
+      "Total da nota: R$ 1.560,00",
+      "ICMS de 18% incluído no preço dos produtos",
+      "À vista, pelo banco"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "refrigerante",
+          "quantidade": 500,
+          "precoUnitarioCentavos": 300
+        }
+      ],
+      "ipiAliquota": 400,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "avista",
+        "meio": "bancos"
+      }
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["custo-aquisicao", "ipi-no-custo-comercio", "icms-a-recuperar"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "m009-consignacao",
+  "titulo": "A geladeira da marca",
+  "capitulo": 4,
+  "nivel": 4,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m009-receber-antes"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "A marca de refrigerante quer deixar uma geladeira cheia na sua casa."
+    },
+    {
+      "fala": "npc",
+      "texto": "Você só paga o que vender. O que sobrar, eu levo de volta."
+    }
+  ],
+  "proposta": {
+    "titulo": "Remessa em consignação",
+    "linhas": [
+      "300 refrigerantes ficam na geladeira",
+      "Preço combinado: R$ 3,00 por unidade vendida",
+      "A mercadoria continua sendo da marca"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "recebimento_consignacao",
+      "produto": "refrigerante",
+      "quantidade": 300,
+      "precoUnitarioCentavos": 300
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["consignacao"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

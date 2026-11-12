@@ -9,17 +9,21 @@
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "A conta da Mercado Vila Nova S.A. está aberta. Os acionistas vão integralizar R$ 200.000,00 agora: R$ 180.000,00 saem da sua carteira e R$ 20.000,00 vêm do Sr. Osvaldo."
+      "texto": "A conta da Chapa da Praça está aberta!"
     },
     {
       "fala": "npc",
-      "texto": "Repare: a sua carteira é sua, pessoa física. A partir do depósito, esse dinheiro passa a ser da empresa."
+      "texto": "Hoje entra a primeira parte do capital. A sua parte sai da sua carteira; a do Sr. Osvaldo vem dele."
     }
   ],
+  "proposta": {
+    "titulo": "Depósito de capital",
+    "linhas": ["Entram no banco: R$ 80.000,00", "Você: R$ 72.000,00", "Sr. Osvaldo: R$ 8.000,00"]
+  },
   "operacoes": [
     {
       "tipo": "integralizacao",
-      "valorCentavos": 20000000,
+      "valorCentavos": 8000000,
       "meio": "bancos"
     }
   ],

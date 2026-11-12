@@ -50,10 +50,20 @@ const itemMercadoria = z.strictObject({
   precoUnitarioCentavos: centavos,
 });
 
-/** O motor aceita um produto por nota até a regra de rateio ser escrita (regras-contabeis.md, seção 14). */
+/** Compra e venda aceitam vários itens na mesma nota (R-NOT-01), sem repetir produto. */
 const itensDeMercadoria = z
   .array(itemMercadoria)
-  .length(1, "compra e venda aceitam exatamente um produto (regras-contabeis.md, seção 14)");
+  .min(1)
+  .refine((itens) => new Set(itens.map((i) => i.produto)).size === itens.length, {
+    message: "a nota não pode repetir o mesmo produto",
+  });
+
+/** Identificador da nota, para devoluções e abatimentos (ex.: "c1", "v1"). */
+const nota = id;
+
+const itensDevolvidos = z
+  .array(z.strictObject({ produto: id, quantidade: z.number().int().positive() }))
+  .min(1);
 
 const prazo = z.strictObject({
   tipo: z.literal("prazo"),
@@ -69,11 +79,11 @@ const participacoes = z.record(id, pontosBase.min(1)).superRefine((valor, contex
       message: `as participações devem somar ${TOTAL_EM_PONTOS_BASE} pontos-base; somam ${total}`,
     });
   }
-  // R-CAP-01: uma S.A. exige pelo menos dois acionistas.
+  // R-CAP-01: a sociedade do jogo tem dois sócios.
   if (acionistas.length < 2) {
     contexto.addIssue({
       code: "custom",
-      message: "uma S.A. exige pelo menos dois acionistas (R-CAP-01)",
+      message: "a sociedade tem pelo menos dois sócios (R-CAP-01)",
     });
   }
   if (!acionistas.includes(ACIONISTA_AVATAR)) {
@@ -119,19 +129,80 @@ export const operacaoSchema = z.discriminatedUnion("tipo", [
       }),
       prazo,
     ]),
+    nota: nota.optional(),
+    /** R-DSC-01: desconto comercial dado na própria nota, em pontos-base. */
+    descontoComercial: pontosBase.optional(),
+    /** R-IPI-04: compra para a fábrica; o IPI vira crédito. */
+    ipiRecuperavel: z.boolean().optional(),
   }),
   z.strictObject({
     tipo: z.literal("venda"),
     itens: itensDeMercadoria,
     /** R-VEN-01: a venda à vista entra em Caixa. */
     condicao: z.discriminatedUnion("tipo", [z.strictObject({ tipo: z.literal("avista") }), prazo]),
+    nota: nota.optional(),
+    /** R-DSC-03: desconto incondicional dado na própria nota, em pontos-base. */
+    descontoIncondicional: pontosBase.optional(),
+    /** R-IPI-05: IPI cobrado por fora, na venda de produto fabricado. */
+    ipiAliquota: pontosBase.optional(),
   }),
-  z.strictObject({ tipo: z.literal("recebimento"), valorCentavos: centavos, meio }),
   z.strictObject({
-    tipo: z.literal("pagamento"),
-    obrigacao: z.enum(["fornecedores", "salarios", "icms"]),
+    tipo: z.literal("recebimento"),
     valorCentavos: centavos,
     meio,
+    /** R-DSC-04: desconto concedido por receber antes do vencimento. */
+    descontoFinanceiroCentavos: centavos.optional(),
+  }),
+  z.strictObject({
+    tipo: z.literal("pagamento"),
+    obrigacao: z.enum(["fornecedores", "salarios", "icms", "ipi"]),
+    valorCentavos: centavos,
+    meio,
+    /** R-DSC-02: desconto obtido por pagar o fornecedor antes do vencimento. */
+    descontoFinanceiroCentavos: centavos.optional(),
+  }),
+  z.strictObject({ tipo: z.literal("devolucao_compra"), nota, itens: itensDevolvidos }),
+  z.strictObject({
+    tipo: z.literal("abatimento_compra"),
+    nota,
+    produto: id,
+    valorCentavos: centavos,
+  }),
+  z.strictObject({ tipo: z.literal("devolucao_venda"), nota, itens: itensDevolvidos }),
+  z.strictObject({
+    tipo: z.literal("abatimento_venda"),
+    valorCentavos: centavos,
+    contrapartida: z.enum(["clientes", "caixa"]),
+  }),
+  /** R-CSG-01 e R-CSG-03: não geram lançamento. */
+  z.strictObject({
+    tipo: z.literal("recebimento_consignacao"),
+    produto: id,
+    quantidade: z.number().int().positive(),
+    precoUnitarioCentavos: centavos,
+  }),
+  z.strictObject({
+    tipo: z.literal("venda_consignada"),
+    produto: id,
+    quantidade: z.number().int().positive(),
+    precoUnitarioCentavos: centavos,
+    condicao: z.discriminatedUnion("tipo", [z.strictObject({ tipo: z.literal("avista") }), prazo]),
+  }),
+  z.strictObject({
+    tipo: z.literal("devolucao_consignacao"),
+    produto: id,
+    quantidade: z.number().int().positive(),
+  }),
+  /** R-MCO-02: o inventário do material de consumo é dado da missão. */
+  z.strictObject({
+    tipo: z.literal("inventario_consumo"),
+    produto: id,
+    quantidadeRestante: z.number().int().min(0),
+  }),
+  z.strictObject({
+    tipo: z.literal("producao"),
+    produto: id,
+    quantidade: z.number().int().positive(),
   }),
   z.strictObject({ tipo: z.literal("provisao_salarios"), valorCentavos: centavos }),
   z.strictObject({
@@ -143,7 +214,14 @@ export const operacaoSchema = z.discriminatedUnion("tipo", [
   /** Depreciação e apuração são do mês corrente do jogo; os valores vêm do motor. */
   z.strictObject({ tipo: z.literal("depreciacao") }),
   z.strictObject({ tipo: z.literal("apuracao_icms") }),
+  z.strictObject({ tipo: z.literal("apuracao_ipi") }),
 ]);
+
+/** Cartão com os dados da operação: os valores ficam aqui, e não nas falas. */
+const proposta = z.strictObject({
+  titulo: texto,
+  linhas: z.array(texto).min(1),
+});
 
 export const missaoSchema = z.strictObject({
   id,
@@ -155,8 +233,13 @@ export const missaoSchema = z.strictObject({
   npc: id,
   /** Missões que precisam estar concluídas antes. */
   requisitos: z.array(id),
-  dialogo: z.array(z.strictObject({ fala: z.enum(["npc", "jogador"]), texto })).min(1),
-  /** Em ordem. Pode ser vazio: há fatos que não geram lançamento (ex.: R-CAP-02). */
+  /** Falas curtas, uma por vez. Os valores da operação ficam em `proposta`. */
+  dialogo: z
+    .array(z.strictObject({ fala: z.enum(["npc", "jogador"]), texto }))
+    .min(1)
+    .max(3),
+  proposta,
+  /** Em ordem. Há operações que não geram lançamento (ex.: R-CSG-01). */
   operacoes: z.array(operacaoSchema),
   ajudaLancamento: z.enum(["auto", "pronto", "contas_sugeridas", "contas_e_valores", "livre"]),
   conceitos: z.array(id).min(1),
@@ -164,6 +247,8 @@ export const missaoSchema = z.strictObject({
 });
 
 /** Placeholders que o motor sabe calcular (`ValoresCalculados` do ledger). */
+export type Proposta = z.infer<typeof proposta>;
+
 export const PLACEHOLDERS = [
   "totalNota",
   "ipi",

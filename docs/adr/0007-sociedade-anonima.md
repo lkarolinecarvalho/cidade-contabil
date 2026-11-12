@@ -1,3 +1,5 @@
+> **Substituído pelo [ADR-0010](0010-hamburgueria-limitada.md):** a empresa passou a ser sociedade limitada.
+
 # ADR-0007 — Sociedade anônima com acionista NPC minoritário
 
 **Status:** aceito

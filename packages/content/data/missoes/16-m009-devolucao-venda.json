@@ -1,0 +1,39 @@
+{
+  "id": "m009-devolucao-venda",
+  "titulo": "Sobrou refrigerante",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "minha-loja",
+  "npc": "antonio-restaurante",
+  "requisitos": ["m005-venda-prazo"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O evento foi um sucesso! Só sobraram 20 refrigerantes fechados. Posso devolver?"
+    }
+  ],
+  "proposta": {
+    "titulo": "Devolução do cliente",
+    "linhas": [
+      "20 refrigerantes da nota v1 voltam para a casa",
+      "Valor na nota, já com o desconto: R$ 108,00"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "devolucao_venda",
+      "nota": "v1",
+      "itens": [
+        {
+          "produto": "refrigerante",
+          "quantidade": 20
+        }
+      ]
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["devolucao-de-venda"],
+  "recompensa": {
+    "pontos": 90
+  }
+}

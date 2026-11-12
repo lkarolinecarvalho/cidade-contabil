@@ -57,7 +57,7 @@
   {
     "id": "ipi-no-custo-comercio",
     "nome": "IPI no custo do comerciante",
-    "nivel": 3
+    "nivel": 2
   },
   {
     "id": "receita-e-deducoes",
@@ -112,6 +112,71 @@
   {
     "id": "balanco-patrimonial",
     "nome": "Balanço Patrimonial",
+    "nivel": 4
+  },
+  {
+    "id": "insumos-e-mercadorias",
+    "nome": "Insumos x mercadorias para revenda",
+    "nivel": 2
+  },
+  {
+    "id": "receita-do-lanche",
+    "nome": "Custo dos produtos vendidos",
+    "nivel": 2
+  },
+  {
+    "id": "devolucao-de-compra",
+    "nome": "Devolução de compra",
+    "nivel": 3
+  },
+  {
+    "id": "abatimento-sobre-compras",
+    "nome": "Abatimento sobre compras",
+    "nivel": 3
+  },
+  {
+    "id": "desconto-comercial",
+    "nome": "Desconto comercial (incondicional)",
+    "nivel": 3
+  },
+  {
+    "id": "desconto-financeiro",
+    "nome": "Desconto financeiro (condicional)",
+    "nivel": 3
+  },
+  {
+    "id": "material-de-consumo",
+    "nome": "Material de consumo",
+    "nivel": 3
+  },
+  {
+    "id": "devolucao-de-venda",
+    "nome": "Devolução de venda",
+    "nivel": 3
+  },
+  {
+    "id": "abatimento-sobre-vendas",
+    "nome": "Abatimento sobre vendas",
+    "nivel": 3
+  },
+  {
+    "id": "consignacao",
+    "nome": "Consignação",
+    "nivel": 4
+  },
+  {
+    "id": "ipi-recuperavel",
+    "nome": "IPI recuperável na indústria",
+    "nivel": 4
+  },
+  {
+    "id": "ipi-na-venda",
+    "nome": "IPI na venda e apuração",
+    "nivel": 4
+  },
+  {
+    "id": "producao",
+    "nome": "Produção e produtos acabados",
     "nivel": 4
   }
 ]

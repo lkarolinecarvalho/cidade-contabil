@@ -1,47 +1,51 @@
-# Campanha — "O Primeiro Negócio"
+# Campanha — "Chapa da Praça"
 
-Versão reconciliada da [história original](referencias/historia-campanha.md). O MVP
-cobre os **capítulos 1 a 7**. Os valores completos estão em
-[cenario-campanha.md](cenario-campanha.md).
+A empresa é uma hamburgueria de bairro: a **Chapa da Praça Ltda.** O avatar tem 90% das
+quotas; o **Sr. Osvaldo**, sócio investidor, tem 10% e só aparece na narrativa
+(ADR-0010). Os valores completos estão em [cenario-campanha.md](cenario-campanha.md).
 
-A empresa: **Mercado Vila Nova S.A.** O avatar é o acionista controlador (90%); o
-**Sr. Osvaldo**, investidor NPC, tem 10% e só aparece na narrativa (ADR-0007).
+A campanha tem **6 capítulos** e 28 missões, todas no mês 1. O catálogo é fixo e
+pequeno: pão, carne, queijo e alface (insumos), refrigerante (mercadoria para revenda)
+e material de limpeza (consumo). No capítulo 5 entram a embalagem e o hambúrguer
+congelado. A casa vende hambúrguer e refrigerante.
 
-| Cap. | Título | Estabelecimento | Operações | Conceitos principais | Nível |
+| Cap. | Título | Onde | Operações | Conceitos principais | Nível |
 |---|---|---|---|---|---|
-| 1 | Nasce uma empresa | Escritório Contábil, Banco | Capital autorizado; subscrição; integralização parcial | PL, capital autorizado/subscrito/a integralizar, entidade | 1 |
-| 2 | Comprando o terreno e a loja | Imobiliária, Banco | Compra de terreno e edificação | ANC, Imobilizado x Estoque x Propriedade para Investimento | 1 |
-| 3 | Equipando a loja | Banco, Minha Loja | Integralização final; móveis e equipamentos | Imobilizado, disponibilidades | 1 |
-| 4 | Comprando as mercadorias | Fornecedor (Distribuidora) | Compra à vista e a prazo **com ICMS** | Estoque, custo de aquisição, ICMS por dentro e a recuperar, Fornecedores | 2 |
-| 5 | A grande inauguração | Minha Loja | Venda à vista e a prazo | Receita bruta, deduções, CMV, Clientes, custo médio | 2 |
-| 6 | Pagando as obrigações | Fornecedor, Banco, Minha Loja | Pagamento parcial; salários; energia | Passivo, despesas, competência | 3 |
-| 7 | O primeiro fechamento | Escritório Contábil, Posto Fiscal | Depreciação; apuração do ICMS; DRE e Balanço | Depreciação, não cumulatividade, DRE, BP | 4 |
-| 8 | A empresa começa a crescer | Banco, Imobiliária, Prefeitura | Empréstimo, veículo, PPI, inadimplência, fechamento anual | — | 5 (pós-MVP) |
+| 1 | Abrindo as portas | Escritório, Banco, Imobiliária, Hamburgueria | Contrato social, duas integralizações, ponto comercial, mesas e balcão, chapa e freezer | Capital subscrito e a integralizar, entidade, imobilizado | 1 |
+| 2 | Primeira semana | Fornecedor, Hamburgueria | Refrigerante à vista com IPI; insumos a prazo (nota com quatro itens); inauguração | Custo de aquisição, ICMS, IPI no custo, insumos x mercadorias, receita, CMV e CPV | 2 |
+| 3 | Problemas de todo dia | Fornecedor, Banco | Devolução e abatimento de compra; compra com desconto na nota; pagamento antecipado; material de limpeza | Devolução, abatimento, desconto comercial e financeiro, material de consumo | 3 |
+| 4 | A casa cresce | Hamburgueria, Banco, Fornecedor | Encomenda a prazo com desconto; devolução e abatimento de venda; recebimento antecipado; consignação; salários; energia | Venda a prazo, deduções da receita, consignação, competência, despesas | 3–4 |
+| 5 | A fábrica | Fornecedor, Hamburgueria | Embalagens com IPI recuperável; produção; venda do congelado com IPI | Industrialização, IPI recuperável, IPI na venda, produtos acabados | 4 |
+| 6 | Fechando o mês | Escritório, Posto Fiscal | Depreciação; inventário do material de consumo; apuração do ICMS e do IPI | Depreciação, não cumulatividade, DRE, Balanço | 5 |
 
-## Consequências no mundo
+## Como as missões são contadas
 
-| Cap. | O que muda na cidade |
-|---|---|
-| 1 | Placa "Mercado Vila Nova S.A." no terreno vazio; HUD mostra carteira e banco da empresa |
-| 2 | O jogador recebe as chaves; a construção aparece no mapa |
-| 3 | A loja ganha balcões, prateleiras e computador |
-| 4 | Um caminhão entrega as mercadorias; Fornecedores aparece em "contas a pagar" |
-| 5 | A loja abre; clientes NPC entram; o restaurante aparece como cliente devedor |
-| 6 | Funcionários aparecem na loja; alertas de vencimento |
-| 7 | O contador chama o jogador ao Escritório; o Posto Fiscal mostra o saldo credor de ICMS |
+- Cada conversa tem no máximo três falas curtas, uma por vez.
+- Os valores da operação ficam no **cartão da proposta** (a "nota"), que aparece na
+  última fala e na etapa do lançamento.
+- Receber e devolver mercadoria em consignação são missões **sem lançamento**: o
+  jogador precisa perceber que não há o que lançar.
 
 ## Erros didáticos previstos (prévia do erro)
 
 O lançamento do jogador nunca é gravado (ADR-0005). Quando ele erra com um lançamento
 equilibrado, o jogo mostra a **prévia** de como ficariam a DRE e o Balanço, comparada
-com o correto, e o contador comenta. Erros-chave para roteirizar:
+com o correto, e o contador comenta.
 
 | Capítulo | Erro | O que a prévia mostra |
 |---|---|---|
-| 1 | Lançar o capital autorizado | PL inflado sem dinheiro entrando |
-| 2 | Imóvel de uso como Estoque | Ativo Circulante inflado; imóvel "à venda" |
-| 4 | Estoque pelo valor da nota | Estoque superavaliado; ICMS a Recuperar zerado |
-| 4 | Compra como despesa | Prejuízo falso no mês |
-| 5 | Venda sem CMV | Lucro superavaliado; estoque que não diminui |
-| 6 | Salário só no pagamento | Despesa no mês errado (competência) |
-| 8 | Empréstimo como receita | Lucro falso (pós-MVP) |
+| 1 | Imóvel de uso como Estoque | Ativo Circulante inflado; imóvel "à venda" |
+| 2 | Estoque pelo valor da nota | Estoque superavaliado; ICMS a Recuperar zerado |
+| 2 | Compra como despesa | Prejuízo falso no mês |
+| 2 | Venda sem baixar o custo | Lucro superavaliado; estoque que não diminui |
+| 3 | Pagamento de obrigação como despesa nova | Resultado pior do que é |
+| 4 | Lançar a mercadoria recebida em consignação | Ativo e Passivo maiores do que são |
+| 4 | Salário lançado como pagamento | A despesa é do mês; o pagamento é outro fato |
+
+Os erros próprios das operações novas (devolução, abatimento, descontos, IPI) ainda
+caem no comentário genérico, que descreve o que a prévia mostra.
+
+## Depois da campanha
+
+O jogo segue em modo livre: o jogador liquida os títulos em aberto e fecha os meses
+seguintes. Ainda não há ofertas novas depois do capítulo 6.

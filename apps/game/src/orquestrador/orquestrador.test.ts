@@ -58,11 +58,13 @@ const CONTAS = {
   caixa: "1.1.1",
   bancos: "1.1.2",
   estoque: "1.1.4",
+  estoqueInsumos: "1.1.6",
   icmsARecuperar: "1.1.5",
   fornecedores: "2.1.1",
   salariosAPagar: "2.1.5",
   capital: "2.3.1",
   cmv: "4.1.1",
+  cpv: "4.1.2",
   despesaSalarios: "4.2.1",
 } as const;
 const D = (conta: string, reais: string): Partida => ({
@@ -77,7 +79,7 @@ const C = (conta: string, reais: string): Partida => ({
 });
 
 describe("efeito no patrimônio", () => {
-  it("compra a prazo: Estoque, ICMS a Recuperar e Fornecedores aumentam", () => {
+  it("compra de insumos a prazo: Estoque de Insumos, ICMS a Recuperar e Fornecedores aumentam", () => {
     const estado = antesDe("m004-compra-prazo");
     const { lancamentos } = preverLancamentos(
       estado.contabil,
@@ -91,9 +93,9 @@ describe("efeito no patrimônio", () => {
         e.valorCentavos,
       ]),
     ).toEqual([
-      ["Estoque de Mercadorias", "aumenta", 1_640_000],
-      ["ICMS a Recuperar", "aumenta", 360_000],
-      ["Fornecedores", "aumenta", 2_000_000],
+      ["Estoque de Insumos", "aumenta", 533_000],
+      ["ICMS a Recuperar", "aumenta", 117_000],
+      ["Fornecedores", "aumenta", 650_000],
     ]);
   });
 
@@ -123,10 +125,14 @@ describe("efeito no patrimônio", () => {
       estado.data,
     );
     const efeito = efeitoDosLancamentos(estado.contabil.planoDeContas, lancamentos);
-    expect(efeito).toHaveLength(10);
+    expect(efeito).toHaveLength(12);
+    // O refrigerante sai pelo custo; os insumos, pela receita do hambúrguer.
     expect(
       efeito.filter((e) => e.direcao === "diminui").map((e) => [e.nome, e.valorCentavos]),
-    ).toEqual([["Estoque de Mercadorias", 20_500]]);
+    ).toEqual([
+      ["Estoque de Mercadorias", 51_600],
+      ["Estoque de Insumos", 159_900],
+    ]);
   });
 });
 
@@ -144,14 +150,14 @@ describe("seleção de afirmativas", () => {
   });
 
   it("prefere a variante menos vista do conceito", () => {
-    const m = missao("m001-capital-autorizado");
+    const m = missao("m003-integralizacao-final");
     const [primeira] = selecionarAfirmativas(m, conteudo.afirmativas, novoJogo());
     expect(primeira).toBeDefined();
     const [segunda] = selecionarAfirmativas(m, conteudo.afirmativas, {
       ...novoJogo(),
       afirmativasVistas: { [primeira?.id ?? ""]: 1 },
     });
-    expect(segunda?.conceitoId).toBe("capital-autorizado");
+    expect(segunda?.conceitoId).toBe("capital-a-integralizar");
     expect(segunda?.id).not.toBe(primeira?.id);
   });
 });
@@ -206,9 +212,9 @@ describe("níveis de ajuda no lançamento", () => {
       estado.data,
     );
     const linhas = linhasEsperadas(lancamentos);
-    // Três lançamentos de depreciação viram um débito de 608,33 e três créditos.
+    // Três lançamentos de depreciação viram um débito de 383,33 e três créditos.
     expect(linhas).toHaveLength(4);
-    expect(linhas[0]).toMatchObject({ lado: "D", valorCentavos: 60_833 });
+    expect(linhas[0]).toMatchObject({ lado: "D", valorCentavos: 38_333 });
   });
 
   it("lerLinhas aponta o que falta em cada linha", () => {
@@ -242,9 +248,9 @@ describe("conferência do lançamento e comentário do contador (erros didático
       estado.contabil,
       operacaoDe(estado, "m004-compra-prazo"),
       [
-        D(CONTAS.estoque, "16.400,00"),
-        D(CONTAS.icmsARecuperar, "3.600,00"),
-        C(CONTAS.fornecedores, "20.000,00"),
+        D(CONTAS.estoqueInsumos, "5.330,00"),
+        D(CONTAS.icmsARecuperar, "1.170,00"),
+        C(CONTAS.fornecedores, "6.500,00"),
       ],
       estado.data,
     );
@@ -267,8 +273,31 @@ describe("conferência do lançamento e comentário do contador (erros didático
     expect(conferencia.regras).toEqual(["R-GER-01"]);
   });
 
-  it("capítulo 1 — lançar o capital autorizado: PL inflado sem dinheiro entrando", () => {
-    const estado = antesDe("m001-capital-autorizado");
+  it("consignação — lançar a mercadoria recebida: ela não é da casa", () => {
+    const estado = antesDe("m009-consignacao");
+    const operacao = operacaoDe(estado, "m009-consignacao");
+    const conferencia = conferirLancamento(
+      estado.contabil,
+      operacao,
+      [D(CONTAS.estoque, "900,00"), C(CONTAS.fornecedores, "900,00")],
+      estado.data,
+    );
+    expect(conferencia.comparacao.correto).toBe(false);
+    expect(conferencia.regras).toEqual(["R-CSG-01"]);
+    expect(conferencia.comentario).toMatch(/não gera lançamento/);
+    // Com o lançamento errado, o Ativo e o Passivo apareceriam maiores do que são.
+    expect(
+      (conferencia.previa?.comOSeuLancamento.totalDoAtivoCentavos ?? 0) -
+        (conferencia.previa?.correto.totalDoAtivoCentavos ?? 0),
+    ).toBe(90_000);
+    // Sem lançamento informado, está correto.
+    expect(conferirLancamento(estado.contabil, operacao, [], estado.data).comparacao.correto).toBe(
+      true,
+    );
+  });
+
+  it("fato que não é operação do motor: o esperado é nenhum lançamento", () => {
+    const estado = novoJogo();
     const conferencia = conferirLancamento(
       estado.contabil,
       null,
@@ -278,8 +307,6 @@ describe("conferência do lançamento e comentário do contador (erros didático
     expect(conferencia.comparacao.correto).toBe(false);
     expect(conferencia.regras).toEqual(["R-CAP-02"]);
     expect(conferencia.comentario).toContain("R$ 500.000,00 maior");
-    expect(conferencia.previa?.correto.patrimonioLiquidoCentavos).toBe(0);
-    // Sem lançamento informado, o fato sem lançamento está correto.
     expect(conferirLancamento(estado.contabil, null, [], estado.data).comparacao.correto).toBe(
       true,
     );
@@ -290,13 +317,13 @@ describe("conferência do lançamento e comentário do contador (erros didático
     const conferencia = conferirLancamento(
       estado.contabil,
       operacaoDe(estado, "m002-compra-imovel"),
-      [D(CONTAS.estoque, "180.000,00"), C(CONTAS.bancos, "180.000,00")],
+      [D(CONTAS.estoque, "60.000,00"), C(CONTAS.bancos, "60.000,00")],
       estado.data,
     );
     expect(conferencia.regras).toContain("R-IMO-02");
-    expect(conferencia.comentario).toContain("R$ 180.000,00 maior");
+    expect(conferencia.comentario).toContain("R$ 60.000,00 maior");
     expect(conferencia.previa?.comOSeuLancamento.ativoNaoCirculanteCentavos).toBe(0);
-    expect(conferencia.previa?.correto.ativoNaoCirculanteCentavos).toBe(18_000_000);
+    expect(conferencia.previa?.correto.ativoNaoCirculanteCentavos).toBe(6_000_000);
   });
 
   it("capítulo 4 — estoque pelo valor da nota: estoque superavaliado, ICMS a Recuperar zerado", () => {
@@ -304,7 +331,7 @@ describe("conferência do lançamento e comentário do contador (erros didático
     const conferencia = conferirLancamento(
       estado.contabil,
       operacaoDe(estado, "m004-compra-avista"),
-      [D(CONTAS.estoque, "40.000,00"), C(CONTAS.bancos, "40.000,00")],
+      [D(CONTAS.estoque, "1.560,00"), C(CONTAS.bancos, "1.560,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-COM-01", "R-ICMS-04"]);
@@ -319,12 +346,12 @@ describe("conferência do lançamento e comentário do contador (erros didático
     const conferencia = conferirLancamento(
       estado.contabil,
       operacaoDe(estado, "m004-compra-avista"),
-      [D(CONTAS.cmv, "40.000,00"), C(CONTAS.bancos, "40.000,00")],
+      [D(CONTAS.cmv, "1.560,00"), C(CONTAS.bancos, "1.560,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-COM-04"]);
-    expect(conferencia.comentario).toContain("prejuízo falso de R$ 40.000,00");
-    expect(conferencia.previa?.comOSeuLancamento.resultadoDoMesCentavos).toBe(-4_000_000);
+    expect(conferencia.comentario).toContain("prejuízo falso de R$ 1.560,00");
+    expect(conferencia.previa?.comOSeuLancamento.resultadoDoMesCentavos).toBe(-156_000);
     expect(conferencia.previa?.correto.resultadoDoMesCentavos).toBe(0);
   });
 
@@ -333,14 +360,21 @@ describe("conferência do lançamento e comentário do contador (erros didático
     const operacao = operacaoDe(estado, "m005-venda-avista");
     const semCmv = preverLancamentos(estado.contabil, operacao, estado.data)
       .lancamentos.flatMap((l) => l.partidas)
-      .filter((p) => p.conta !== CONTAS.cmv && p.conta !== CONTAS.estoque);
+      .filter(
+        (p) =>
+          p.conta !== CONTAS.cmv &&
+          p.conta !== CONTAS.cpv &&
+          p.conta !== CONTAS.estoque &&
+          p.conta !== CONTAS.estoqueInsumos,
+      );
     const conferencia = conferirLancamento(estado.contabil, operacao, semCmv, estado.data);
     expect(conferencia.regras).toEqual(["R-VEN-02"]);
-    expect(conferencia.comentario).toContain("R$ 205,00 maior");
+    // 516,00 de refrigerante mais 1.599,00 de insumos dos hambúrgueres.
+    expect(conferencia.comentario).toContain("R$ 2.115,00 maior");
     expect(
       (conferencia.previa?.comOSeuLancamento.ativoCirculanteCentavos ?? 0) -
         (conferencia.previa?.correto.ativoCirculanteCentavos ?? 0),
-    ).toBe(20_500);
+    ).toBe(211_500);
   });
 
   it("capítulo 6 — salário lançado como pagamento: a despesa é do mês, o pagamento é outro fato", () => {
@@ -348,23 +382,24 @@ describe("conferência do lançamento e comentário do contador (erros didático
     const conferencia = conferirLancamento(
       estado.contabil,
       operacaoDe(estado, "m006-salarios"),
-      [D(CONTAS.despesaSalarios, "4.000,00"), C(CONTAS.bancos, "4.000,00")],
+      [D(CONTAS.despesaSalarios, "3.000,00"), C(CONTAS.bancos, "3.000,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-DES-01", "R-DES-02"]);
     expect(conferencia.comentario).toMatch(/Salários a Pagar/);
   });
 
-  it("capítulo 6 — pagamento de salário como despesa nova: resultado pior do que é", () => {
-    const estado = executarProximaOperacao(antesDe("m006-salarios"), missao("m006-salarios"));
+  it("pagamento a fornecedor lançado como despesa nova: resultado pior do que é", () => {
+    const estado = antesDe("m006-pagamento-fornecedor");
     const conferencia = conferirLancamento(
       estado.contabil,
-      operacaoDe(estado, "m006-salarios", 1),
-      [D(CONTAS.despesaSalarios, "4.000,00"), C(CONTAS.bancos, "4.000,00")],
+      operacaoDe(estado, "m006-pagamento-fornecedor"),
+      [D(CONTAS.despesaSalarios, "6.000,00"), C(CONTAS.bancos, "6.000,00")],
       estado.data,
     );
     expect(conferencia.regras).toEqual(["R-DES-01"]);
-    expect(conferencia.comentario).toContain("R$ 4.000,00 pior");
+    // A despesa falsa de 6.000,00 e a receita financeira de 120,00 que deixou de aparecer.
+    expect(conferencia.comentario).toContain("R$ 6.120,00 pior");
   });
 
   it("lados trocados: a prévia lista as contas que ficariam com saldo diferente", () => {
@@ -373,9 +408,9 @@ describe("conferência do lançamento e comentário do contador (erros didático
       estado.contabil,
       operacaoDe(estado, "m004-compra-avista"),
       [
-        C(CONTAS.estoque, "32.800,00"),
-        C(CONTAS.icmsARecuperar, "7.200,00"),
-        D(CONTAS.bancos, "40.000,00"),
+        C(CONTAS.estoque, "1.290,00"),
+        C(CONTAS.icmsARecuperar, "270,00"),
+        D(CONTAS.bancos, "1.560,00"),
       ],
       estado.data,
     );
@@ -389,9 +424,9 @@ describe("conferência do lançamento e comentário do contador (erros didático
         c.corretoCentavos,
       ]),
     ).toEqual([
-      ["Bancos Conta Movimento", 14_000_000, 6_000_000],
-      ["Estoque de Mercadorias", -3_280_000, 3_280_000],
-      ["ICMS a Recuperar", -720_000, 720_000],
+      ["Bancos Conta Movimento", 2_356_000, 2_044_000],
+      ["Estoque de Mercadorias", -129_000, 129_000],
+      ["ICMS a Recuperar", -27_000, 27_000],
     ]);
   });
 
@@ -418,9 +453,10 @@ describe("texto das regras", () => {
 });
 
 describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
-  it("capítulos 1 a 7 de ponta a ponta; a DRE e o Balanço batem com o cenário da campanha", () => {
+  it("capítulos 1 a 6 de ponta a ponta; a DRE e o Balanço batem com o cenário da campanha", () => {
     let estado = novoJogo();
     let afirmativasRespondidas = 0;
+    const semLancamento: string[] = [];
 
     for (const m of conteudo.missoes) {
       // Negociação aceita → afirmativas da missão.
@@ -440,17 +476,25 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
         estado = prepararParaOperacao(estado, m);
         const operacao = paraOperacaoDoMotor(operacaoDaMissao, { mes: estado.data });
         const { lancamentos } = preverLancamentos(estado.contabil, operacao, estado.data);
-        // Efeito: toda operação da campanha mexe em pelo menos duas contas.
-        expect(
-          efeitoDosLancamentos(estado.contabil.planoDeContas, lancamentos).length,
-          m.id,
-        ).toBeGreaterThanOrEqual(2);
+        // Efeito: toda operação com lançamento mexe em pelo menos duas contas. As da
+        // consignação (receber e devolver) não geram lançamento nem efeito.
+        const efeitos = efeitoDosLancamentos(estado.contabil.planoDeContas, lancamentos).length;
+        if (lancamentos.length === 0) {
+          semLancamento.push(m.id);
+          expect(efeitos, m.id).toBe(0);
+        } else {
+          expect(efeitos, m.id).toBeGreaterThanOrEqual(2);
+        }
         // Lançamento: o jogador monta o lançamento certo e o motor confirma.
-        const leitura = lerLinhas(linhasIniciais("pronto", linhasEsperadas(lancamentos)));
-        if (!leitura.ok) throw new Error(leitura.erro);
+        // Quando não há o que lançar, a resposta certa é nenhuma linha.
+        let partidas: readonly Partida[] = [];
+        if (lancamentos.length > 0) {
+          const leitura = lerLinhas(linhasIniciais("pronto", linhasEsperadas(lancamentos)));
+          if (!leitura.ok) throw new Error(leitura.erro);
+          partidas = leitura.partidas;
+        }
         expect(
-          conferirLancamento(estado.contabil, operacao, leitura.partidas, estado.data).comparacao
-            .correto,
+          conferirLancamento(estado.contabil, operacao, partidas, estado.data).comparacao.correto,
           m.id,
         ).toBe(true);
         estado = executarProximaOperacao(estado, m);
@@ -459,21 +503,22 @@ describe("campanha jogada pelo ciclo completo (aceite do M5)", () => {
     }
 
     expect(estado.missoesConcluidas).toHaveLength(conteudo.missoes.length);
+    expect(semLancamento).toEqual(["m009-consignacao", "m009-devolver-consignado"]);
     expect(afirmativasRespondidas).toBeGreaterThan(12);
 
     const fim = { ...estado.data, dia: 30 };
     const d = dre(estado.contabil, { de: { ...fim, dia: 1 }, ate: fim });
-    expect(d.totalReceitaBrutaCentavos).toBe(350_000);
-    expect(d.receitaLiquidaCentavos).toBe(276_524);
-    expect(d.lucroBrutoCentavos).toBe(133_024);
-    expect(d.resultadoCentavos).toBe(-427_809);
+    expect(d.totalReceitaBrutaCentavos).toBe(1_570_000);
+    expect(d.receitaLiquidaCentavos).toBe(1_185_534);
+    expect(d.lucroBrutoCentavos).toBe(715_890);
+    expect(d.resultadoCentavos).toBe(291_693);
 
     const bp = balanco(estado.contabil, fim);
-    expect(bp.ativo.totalCirculanteCentavos).toBe(10_643_500);
-    expect(bp.ativo.totalNaoCirculanteCentavos).toBe(19_939_167);
-    expect(bp.ativo.totalCentavos).toBe(30_582_667);
-    expect(bp.passivo.totalCirculanteCentavos).toBe(1_010_476);
-    expect(bp.patrimonioLiquido.totalCentavos).toBe(29_572_191);
+    expect(bp.ativo.totalCirculanteCentavos).toBe(3_243_192);
+    expect(bp.ativo.totalNaoCirculanteCentavos).toBe(7_761_667);
+    expect(bp.ativo.totalCentavos).toBe(11_004_859);
+    expect(bp.passivo.totalCirculanteCentavos).toBe(713_166);
+    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_291_693);
     expect(estado.carteiraCentavos).toBe(1_000_000);
   });
 });

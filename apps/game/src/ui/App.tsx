@@ -24,7 +24,7 @@ import {
 } from "./paineis";
 
 /** Nome da empresa do jogador na campanha (docs/campanha.md). */
-const EMPRESA = "Mercado Vila Nova";
+const EMPRESA = "Chapa da Praça";
 
 type Atalho = "missoes" | "calendario" | "escritorio" | "progresso";
 /** Painéis abertos por um botão: os atalhos da base e, no HUD, as Configurações e o Balanço. */

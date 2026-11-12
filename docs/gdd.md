@@ -42,9 +42,8 @@ Regra explícita do jogo (ADR-0004):
 - **Caixa e Bancos da empresa:** fazem parte do razão.
 - O HUD mostra as duas, com rótulos e ícones diferentes ("Sua carteira" e
   "Caixa da empresa").
-- A empresa é a **Mercado Vila Nova S.A.**: o avatar é o acionista controlador (90%) e
-  um investidor NPC tem 10% (ADR-0007). No capítulo 1, o avatar subscreve e integraliza
-  capital, e a carteira diminui pela parte dele.
+- A empresa é a **Chapa da Praça Ltda.**, uma hamburgueria: o avatar tem 90% das quotas e
+  o Sr. Osvaldo, sócio investidor que só aparece na narrativa, tem 10% (ADR-0010).
 - Pagar uma despesa pessoal com o caixa da empresa é bloqueado e gera uma explicação
   sobre o princípio da entidade.
 
@@ -62,8 +61,8 @@ Regra explícita do jogo (ADR-0004):
 
 | Estabelecimento | Operações na v1 | Conteúdos |
 |---|---|---|
-| Minha Loja | Vendas à vista e a prazo; equipar a loja; salários e energia | Receita, deduções, CMV, Clientes, imobilizado, despesas |
-| Fornecedor (Distribuidora) | Compras à vista e a prazo; nota com ICMS, IPI e frete; pagamentos | Custo de aquisição, ICMS a Recuperar, Fornecedores |
+| Hamburgueria | Vendas à vista e a prazo; devoluções e abatimentos de venda; equipar a casa; produção; salários e energia | Receita, deduções, CMV e CPV, Clientes, imobilizado, despesas |
+| Fornecedor (Distribuidora) | Compras de insumos, refrigerante e material de limpeza; devoluções, abatimentos e descontos; consignação | Custo de aquisição, ICMS e IPI, Fornecedores, consignação |
 | Banco | Integralizações, depósitos, pagamentos e recebimentos | Disponibilidades |
 | Escritório Contábil | Constituição da empresa; Diário, Razão, Balancete, DRE, Balanço; Revisão | Capital social, demonstrações, repetição espaçada |
 | Posto Fiscal (SEFAZ) | Apuração e pagamento do ICMS | Não cumulatividade, ICMS a Recolher |
@@ -74,9 +73,14 @@ veículos e propriedade para investimento (capítulo 8 da campanha).
 
 ## 7A. Campanha
 
-O MVP é a campanha "O Primeiro Negócio", capítulos 1 a 7 ([campanha.md](campanha.md),
-ADR-0008). Os tributos sobre mercadorias entram no capítulo 4. Depois da campanha, o
-jogo segue em modo livre: o jogador continua operando a loja com as mesmas regras.
+O jogo é a campanha "Chapa da Praça", em 6 capítulos ([campanha.md](campanha.md),
+ADR-0010). O catálogo é fixo e pequeno (quatro insumos, o refrigerante e o material de
+limpeza); o que muda é a condição de cada operação. Depois da campanha, o jogo segue
+em modo livre.
+
+O jogo tem dois ambientes: a **empresa**, que ensina a prática pelas operações do dia a
+dia, e o **Escritório Contábil**, que será a central de consulta, teoria, revisão e
+desafios ([v2/historia.md](v2/historia.md)).
 
 ## 8. Tempo de jogo
 

@@ -1,0 +1,54 @@
+{
+  "id": "m010-embalagens",
+  "titulo": "Embalagens para o congelado",
+  "capitulo": 5,
+  "nivel": 4,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m006-energia"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "O seu hambúrguer ficou famoso. Os mercados querem vender congelado!"
+    },
+    {
+      "fala": "npc",
+      "texto": "Para isso você vai fabricar e embalar. Aí a casa vira indústria, e o IPI da embalagem volta como crédito."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota c3 do fornecedor",
+    "linhas": [
+      "400 embalagens a R$ 1,00: R$ 400,00",
+      "IPI de 5%: R$ 20,00 (recuperável)",
+      "Total da nota: R$ 420,00",
+      "ICMS de 18% incluído no preço dos produtos",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "embalagem",
+          "quantidade": 400,
+          "precoUnitarioCentavos": 100
+        }
+      ],
+      "ipiAliquota": 500,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "nota": "c3",
+      "ipiRecuperavel": true
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["ipi-recuperavel"],
+  "recompensa": {
+    "pontos": 100
+  }
+}

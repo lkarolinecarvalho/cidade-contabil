@@ -1,28 +1,32 @@
 {
   "id": "m006-energia",
-  "titulo": "A conta de energia",
-  "capitulo": 6,
-  "nivel": 3,
+  "titulo": "A conta de luz",
+  "capitulo": 4,
+  "nivel": 4,
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
   "requisitos": ["m006-salarios"],
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Chegou a conta de energia elétrica da loja: R$ 1.000,00. Vamos pagar agora mesmo, pelo banco."
+      "texto": "Chegou a conta de luz. A chapa não perdoa! Vence hoje."
     }
   ],
+  "proposta": {
+    "titulo": "Conta de energia",
+    "linhas": ["Energia elétrica do mês: R$ 600,00", "Paga hoje, pelo banco"]
+  },
   "operacoes": [
     {
       "tipo": "despesa",
       "natureza": "energia_eletrica",
-      "valorCentavos": 100000,
+      "valorCentavos": 60000,
       "meio": "bancos"
     }
   ],
   "ajudaLancamento": "auto",
   "conceitos": ["despesas-operacionais"],
   "recompensa": {
-    "pontos": 100
+    "pontos": 60
   }
 }

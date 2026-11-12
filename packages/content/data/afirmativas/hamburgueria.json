@@ -1,0 +1,392 @@
+[
+  {
+    "id": "af-insumos-e-mercadorias-01",
+    "conceitoId": "insumos-e-mercadorias",
+    "nivelMin": 2,
+    "enunciado": "O pão e a carne que uma hamburgueria compra para preparar os lanches são insumos, e não mercadorias para revenda.",
+    "gabarito": "C",
+    "explicacao": "Insumo é o que a empresa transforma no produto que vende. Mercadoria para revenda é o que ela compra pronto e vende como está.",
+    "regras": ["R-INS-01", "R-INS-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-insumos-e-mercadorias-02",
+    "conceitoId": "insumos-e-mercadorias",
+    "nivelMin": 2,
+    "enunciado": "Na compra de insumos por empresa contribuinte do ICMS, o imposto destacado na nota integra o custo do estoque, pois só há crédito de ICMS na compra de mercadorias para revenda.",
+    "gabarito": "E",
+    "explicacao": "A compra de insumos também dá crédito de ICMS. O imposto vai para ICMS a Recuperar e fica fora do custo do estoque.",
+    "regras": ["R-INS-01", "R-INS-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-insumos-e-mercadorias-03",
+    "conceitoId": "insumos-e-mercadorias",
+    "nivelMin": 2,
+    "enunciado": "O refrigerante que a hamburgueria compra pronto e vende sem transformar é mercadoria para revenda, registrada em conta de estoque separada da dos insumos.",
+    "gabarito": "C",
+    "explicacao": "Insumos ficam em Estoque de Insumos; mercadorias para revenda, em Estoque de Mercadorias. As duas contas são do Ativo Circulante.",
+    "regras": ["R-INS-01", "R-INS-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-receita-do-lanche-01",
+    "conceitoId": "receita-do-lanche",
+    "nivelMin": 2,
+    "enunciado": "Quando o lanche é vendido, o custo dos insumos consumidos no preparo sai do estoque e é reconhecido no resultado como custo dos produtos vendidos.",
+    "gabarito": "C",
+    "explicacao": "O custo acompanha a receita: os insumos usados deixam o Ativo e vão ao resultado na mesma venda.",
+    "regras": ["R-INS-03", "R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-receita-do-lanche-02",
+    "conceitoId": "receita-do-lanche",
+    "nivelMin": 2,
+    "enunciado": "O custo dos insumos deve ser levado ao resultado no momento da compra, porque eles serão consumidos em poucos dias.",
+    "gabarito": "E",
+    "explicacao": "Na compra, o insumo é ativo (estoque). Ele só vira custo quando o lanche em que foi usado é vendido.",
+    "regras": ["R-INS-03", "R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-receita-do-lanche-03",
+    "conceitoId": "receita-do-lanche",
+    "nivelMin": 2,
+    "enunciado": "O custo dos produtos vendidos de uma lanchonete é calculado sobre o preço de venda dos lanches.",
+    "gabarito": "E",
+    "explicacao": "O custo vem do estoque: é a soma do custo médio dos insumos consumidos em cada lanche vendido. O preço de venda forma a receita, não o custo.",
+    "regras": ["R-INS-03", "R-COM-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-compra-01",
+    "conceitoId": "devolucao-de-compra",
+    "nivelMin": 3,
+    "enunciado": "Na devolução de uma compra a prazo de mercadorias, a empresa debita Fornecedores e credita Estoque e ICMS a Recuperar.",
+    "gabarito": "C",
+    "explicacao": "A dívida diminui, a mercadoria sai do estoque e o crédito de ICMS da parte devolvida é estornado.",
+    "regras": ["R-DVC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-compra-02",
+    "conceitoId": "devolucao-de-compra",
+    "nivelMin": 3,
+    "enunciado": "A devolução de compra é registrada como receita do período, pois reduz a dívida com o fornecedor.",
+    "gabarito": "E",
+    "explicacao": "Não há receita: a dívida diminui porque a mercadoria voltou. É uma troca entre contas patrimoniais.",
+    "regras": ["R-DVC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-compra-03",
+    "conceitoId": "devolucao-de-compra",
+    "nivelMin": 3,
+    "enunciado": "A mercadoria devolvida ao fornecedor sai do estoque pelo custo com que entrou naquela compra, e o crédito de ICMS correspondente é estornado.",
+    "gabarito": "C",
+    "explicacao": "A devolução desfaz a compra original, pelo valor original. Ela não sai pelo custo médio do dia.",
+    "regras": ["R-DVC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-compras-01",
+    "conceitoId": "abatimento-sobre-compras",
+    "nivelMin": 3,
+    "enunciado": "O abatimento sobre compras reduz o custo das mercadorias adquiridas sem alterar a quantidade em estoque.",
+    "gabarito": "C",
+    "explicacao": "A empresa fica com a mercadoria e paga menos por ela. O valor do estoque e a dívida diminuem; a quantidade, não.",
+    "regras": ["R-ABC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-compras-02",
+    "conceitoId": "abatimento-sobre-compras",
+    "nivelMin": 3,
+    "enunciado": "No abatimento sobre compras, parte das mercadorias volta para o fornecedor.",
+    "gabarito": "E",
+    "explicacao": "Se a mercadoria volta, é devolução. No abatimento nada é devolvido: só o preço é reduzido.",
+    "regras": ["R-ABC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-compras-03",
+    "conceitoId": "abatimento-sobre-compras",
+    "nivelMin": 3,
+    "enunciado": "O abatimento obtido do fornecedor depois da compra, por defeito na mercadoria, deve ser registrado como receita financeira.",
+    "gabarito": "E",
+    "explicacao": "O abatimento reduz o custo de aquisição do estoque. Receita financeira é o desconto por pagar antes do vencimento.",
+    "regras": ["R-ABC-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-comercial-01",
+    "conceitoId": "desconto-comercial",
+    "nivelMin": 3,
+    "enunciado": "O desconto comercial obtido na compra, destacado na própria nota fiscal, não é contabilizado: a mercadoria entra no estoque pelo valor líquido.",
+    "gabarito": "C",
+    "explicacao": "O desconto incondicional já vem na nota. A compra é registrada pelo que de fato foi cobrado.",
+    "regras": ["R-DSC-01", "R-DSC-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-comercial-02",
+    "conceitoId": "desconto-comercial",
+    "nivelMin": 3,
+    "enunciado": "O desconto incondicional concedido na nota de venda é uma despesa financeira do vendedor.",
+    "gabarito": "E",
+    "explicacao": "O desconto incondicional é dedução da Receita Bruta. Despesa financeira é o desconto dado depois, por receber antes do vencimento.",
+    "regras": ["R-DSC-01", "R-DSC-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-comercial-03",
+    "conceitoId": "desconto-comercial",
+    "nivelMin": 3,
+    "enunciado": "Na venda com desconto incondicional, o ICMS incide sobre o valor da operação já deduzido do desconto.",
+    "gabarito": "C",
+    "explicacao": "O desconto dado na própria nota não integra a base de cálculo do ICMS.",
+    "regras": ["R-DSC-01", "R-DSC-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-financeiro-01",
+    "conceitoId": "desconto-financeiro",
+    "nivelMin": 3,
+    "enunciado": "O desconto obtido por pagar uma duplicata antes do vencimento é uma receita financeira.",
+    "gabarito": "C",
+    "explicacao": "É o desconto condicional: depende de pagar antes. Nas provas, ele é receita financeira de quem paga.",
+    "regras": ["R-DSC-02", "R-DSC-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-financeiro-02",
+    "conceitoId": "desconto-financeiro",
+    "nivelMin": 3,
+    "enunciado": "O desconto concedido ao cliente que paga antes do vencimento reduz a Receita Bruta de Vendas.",
+    "gabarito": "E",
+    "explicacao": "O desconto por antecipação é despesa financeira. A dedução da Receita Bruta é o desconto incondicional, dado na nota.",
+    "regras": ["R-DSC-02", "R-DSC-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-desconto-financeiro-03",
+    "conceitoId": "desconto-financeiro",
+    "nivelMin": 3,
+    "enunciado": "O desconto financeiro obtido no pagamento antecipado a fornecedor é registrado como redução do estoque comprado.",
+    "gabarito": "E",
+    "explicacao": "No jogo, como nas provas, ele é receita financeira e não mexe no estoque. Pelo CPC 16, descontos reduzem o custo de aquisição.",
+    "regras": ["R-DSC-02", "R-DSC-04"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-material-de-consumo-01",
+    "conceitoId": "material-de-consumo",
+    "nivelMin": 3,
+    "enunciado": "O material de limpeza comprado para uso do próprio estabelecimento não dá direito a crédito de ICMS.",
+    "gabarito": "C",
+    "explicacao": "Material de uso e consumo não gera crédito: ele entra no estoque pelo valor total da nota.",
+    "regras": ["R-MCO-01", "R-MCO-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-material-de-consumo-02",
+    "conceitoId": "material-de-consumo",
+    "nivelMin": 3,
+    "enunciado": "O material de consumo comprado para durar vários meses é despesa integral do mês da compra.",
+    "gabarito": "E",
+    "explicacao": "Ele fica no Ativo Circulante, em Material de Consumo, e vira despesa aos poucos, conforme é usado.",
+    "regras": ["R-MCO-01", "R-MCO-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-material-de-consumo-03",
+    "conceitoId": "material-de-consumo",
+    "nivelMin": 3,
+    "enunciado": "No fim do mês, o material de consumo utilizado é baixado do Ativo Circulante e reconhecido como despesa.",
+    "gabarito": "C",
+    "explicacao": "O inventário mostra o que sobrou. A diferença é o consumo do mês, lançado em Despesa com Material de Consumo.",
+    "regras": ["R-MCO-01", "R-MCO-02"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-venda-01",
+    "conceitoId": "devolucao-de-venda",
+    "nivelMin": 3,
+    "enunciado": "Devoluções de Vendas é conta redutora da Receita Bruta, apresentada na DRE entre as deduções.",
+    "gabarito": "C",
+    "explicacao": "A venda continua na Receita Bruta; a devolução aparece logo abaixo, como dedução.",
+    "regras": ["R-DVV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-venda-02",
+    "conceitoId": "devolucao-de-venda",
+    "nivelMin": 3,
+    "enunciado": "Na devolução de uma venda, a empresa registra só a dedução da receita: o estoque e o custo das mercadorias vendidas não mudam.",
+    "gabarito": "E",
+    "explicacao": "A mercadoria volta ao estoque pelo custo com que saiu, e o custo correspondente é estornado.",
+    "regras": ["R-DVV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-devolucao-de-venda-03",
+    "conceitoId": "devolucao-de-venda",
+    "nivelMin": 3,
+    "enunciado": "Na devolução de venda, os tributos que incidiram sobre a parte devolvida são estornados.",
+    "gabarito": "C",
+    "explicacao": "Se a venda foi desfeita, o ICMS, o PIS e a COFINS daquela parte deixam de ser devidos.",
+    "regras": ["R-DVV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-vendas-01",
+    "conceitoId": "abatimento-sobre-vendas",
+    "nivelMin": 3,
+    "enunciado": "O abatimento sobre vendas é dedução da Receita Bruta e não altera a quantidade em estoque.",
+    "gabarito": "C",
+    "explicacao": "O cliente fica com a mercadoria e paga menos. Nada volta para o estoque.",
+    "regras": ["R-ABV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-vendas-02",
+    "conceitoId": "abatimento-sobre-vendas",
+    "nivelMin": 3,
+    "enunciado": "O abatimento concedido a um cliente por defeito na mercadoria é registrado como despesa operacional.",
+    "gabarito": "E",
+    "explicacao": "Ele é dedução da Receita Bruta, na conta Abatimentos sobre Vendas.",
+    "regras": ["R-ABV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-abatimento-sobre-vendas-03",
+    "conceitoId": "abatimento-sobre-vendas",
+    "nivelMin": 3,
+    "enunciado": "No abatimento sobre vendas, a mercadoria retorna ao estoque do vendedor pelo custo com que saiu.",
+    "gabarito": "E",
+    "explicacao": "Quem retorna ao estoque é a mercadoria devolvida. No abatimento não há devolução.",
+    "regras": ["R-ABV-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-consignacao-01",
+    "conceitoId": "consignacao",
+    "nivelMin": 4,
+    "enunciado": "A mercadoria recebida em consignação não integra o estoque do consignatário, pois ele não tem o controle sobre ela.",
+    "gabarito": "C",
+    "explicacao": "A mercadoria continua sendo do consignante até ser vendida. Por isso não é ativo de quem a recebeu.",
+    "regras": ["R-CSG-01", "R-CSG-02", "R-CSG-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-consignacao-02",
+    "conceitoId": "consignacao",
+    "nivelMin": 4,
+    "enunciado": "Ao receber mercadorias em consignação, o consignatário debita Estoque e credita Fornecedores pelo valor total da remessa.",
+    "gabarito": "E",
+    "explicacao": "Receber em consignação não gera lançamento patrimonial: não houve compra nem nasceu dívida.",
+    "regras": ["R-CSG-01", "R-CSG-02", "R-CSG-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-consignacao-03",
+    "conceitoId": "consignacao",
+    "nivelMin": 4,
+    "enunciado": "Quando vende uma mercadoria consignada, o consignatário registra a compra dessa unidade e, em seguida, a venda, com o respectivo custo.",
+    "gabarito": "C",
+    "explicacao": "A compra só acontece na venda: nesse momento nascem a dívida com o consignante, a receita e o custo.",
+    "regras": ["R-CSG-01", "R-CSG-02", "R-CSG-03"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-recuperavel-01",
+    "conceitoId": "ipi-recuperavel",
+    "nivelMin": 4,
+    "enunciado": "Para a indústria, o IPI pago na compra de matéria-prima e de material de embalagem é recuperável e não integra o custo do estoque.",
+    "gabarito": "C",
+    "explicacao": "Quem industrializa é contribuinte do IPI e compensa o imposto das compras com o das vendas.",
+    "regras": ["R-IPI-03", "R-IPI-04", "R-IPI-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-recuperavel-02",
+    "conceitoId": "ipi-recuperavel",
+    "nivelMin": 4,
+    "enunciado": "O preparo de lanches em uma lanchonete, para venda direta ao consumidor, é industrialização e torna a empresa contribuinte do IPI.",
+    "gabarito": "E",
+    "explicacao": "O regulamento do IPI não considera industrialização o preparo de alimentos em lanchonetes para venda direta ao consumidor.",
+    "regras": ["R-IPI-03", "R-IPI-04", "R-IPI-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-recuperavel-03",
+    "conceitoId": "ipi-recuperavel",
+    "nivelMin": 4,
+    "enunciado": "A empresa comercial que compra mercadorias para revenda recupera o IPI destacado na nota do fabricante.",
+    "gabarito": "E",
+    "explicacao": "Quem só revende não é contribuinte do IPI. O imposto entra no custo da mercadoria.",
+    "regras": ["R-IPI-03", "R-IPI-04", "R-IPI-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-venda-01",
+    "conceitoId": "ipi-na-venda",
+    "nivelMin": 4,
+    "enunciado": "O IPI cobrado do cliente na venda de produto industrializado não é receita do vendedor: é registrado como obrigação, em IPI a Recolher.",
+    "gabarito": "C",
+    "explicacao": "O vendedor cobra o IPI em nome do Fisco. O valor passa pelo caixa, mas pertence ao governo.",
+    "regras": ["R-IPI-05", "R-IPI-06"],
+    "momentos": ["pos_operacao", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-venda-02",
+    "conceitoId": "ipi-na-venda",
+    "nivelMin": 4,
+    "enunciado": "O IPI é calculado por dentro: o imposto já está incluído no preço do produto.",
+    "gabarito": "E",
+    "explicacao": "O IPI é cobrado por fora, somado ao preço. Por dentro é o ICMS.",
+    "regras": ["R-IPI-05", "R-IPI-06"],
+    "momentos": ["pos_operacao", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-ipi-na-venda-03",
+    "conceitoId": "ipi-na-venda",
+    "nivelMin": 4,
+    "enunciado": "Na apuração do IPI, o imposto cobrado nas vendas é compensado com o crédito das compras, e só o saldo devedor é recolhido.",
+    "gabarito": "C",
+    "explicacao": "É a não cumulatividade: debita-se IPI a Recolher e credita-se IPI a Recuperar pelo menor dos dois saldos.",
+    "regras": ["R-IPI-05", "R-IPI-06"],
+    "momentos": ["pos_operacao", "fechamento_mes", "revisao"]
+  },
+  {
+    "id": "af-producao-01",
+    "conceitoId": "producao",
+    "nivelMin": 4,
+    "enunciado": "Ao concluir a produção, o custo dos insumos consumidos é transferido para a conta Produtos Acabados, no Ativo Circulante.",
+    "gabarito": "C",
+    "explicacao": "O estoque muda de forma, de insumo para produto pronto, mas continua sendo ativo.",
+    "regras": ["R-PRD-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-producao-02",
+    "conceitoId": "producao",
+    "nivelMin": 4,
+    "enunciado": "A transferência de insumos para produtos acabados reduz o resultado do período em que ocorre a produção.",
+    "gabarito": "E",
+    "explicacao": "Produzir é trocar um ativo por outro. O resultado só é afetado quando o produto é vendido.",
+    "regras": ["R-PRD-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  },
+  {
+    "id": "af-producao-03",
+    "conceitoId": "producao",
+    "nivelMin": 4,
+    "enunciado": "O custo dos produtos acabados é reconhecido no resultado quando a produção é concluída.",
+    "gabarito": "E",
+    "explicacao": "Ele vai ao resultado, como custo dos produtos vendidos, só na venda. Até lá fica no estoque.",
+    "regras": ["R-PRD-01"],
+    "momentos": ["pos_operacao", "revisao"]
+  }
+]

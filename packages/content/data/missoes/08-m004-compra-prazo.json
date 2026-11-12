@@ -1,0 +1,70 @@
+{
+  "id": "m004-compra-prazo",
+  "titulo": "Pão, carne, queijo e alface",
+  "capitulo": 2,
+  "nivel": 2,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m004-compra-avista"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Aqui está tudo para os lanches: pão, carne, queijo e alface."
+    },
+    {
+      "fala": "npc",
+      "texto": "Isso você não revende como está: você transforma em hambúrguer. Pode pagar em 30 dias."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota c1 do fornecedor",
+    "linhas": [
+      "1.000 pães a R$ 1,00",
+      "1.000 carnes a R$ 4,00",
+      "1.000 queijos a R$ 1,00",
+      "1.000 alfaces a R$ 0,50",
+      "Total da nota: R$ 6.500,00",
+      "ICMS de 18% incluído no preço",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "compra",
+      "itens": [
+        {
+          "produto": "pao",
+          "quantidade": 1000,
+          "precoUnitarioCentavos": 100
+        },
+        {
+          "produto": "carne",
+          "quantidade": 1000,
+          "precoUnitarioCentavos": 400
+        },
+        {
+          "produto": "queijo",
+          "quantidade": 1000,
+          "precoUnitarioCentavos": 100
+        },
+        {
+          "produto": "alface",
+          "quantidade": 1000,
+          "precoUnitarioCentavos": 50
+        }
+      ],
+      "ipiAliquota": 0,
+      "freteCentavos": 0,
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "nota": "c1"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["insumos-e-mercadorias", "compra-a-prazo-fornecedores", "icms-por-dentro"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

@@ -8,7 +8,7 @@
   {
     "id": "osvaldo",
     "nome": "Sr. Osvaldo",
-    "papel": "Acionista minoritário"
+    "papel": "Sócio investidor"
   },
   {
     "id": "helena-gerente",
@@ -31,19 +31,25 @@
   {
     "id": "bia-funcionaria",
     "nome": "Bia",
-    "papel": "Funcionária da loja",
+    "papel": "Chapeira da casa",
     "estabelecimento": "minha-loja"
   },
   {
     "id": "lurdes-cliente",
     "nome": "Dona Lurdes",
-    "papel": "Cliente da loja",
+    "papel": "Cliente da praça",
     "estabelecimento": "minha-loja"
   },
   {
     "id": "antonio-restaurante",
     "nome": "Antônio",
-    "papel": "Dono do restaurante",
+    "papel": "Dono da empresa de eventos",
+    "estabelecimento": "minha-loja"
+  },
+  {
+    "id": "celia-mercado",
+    "nome": "Célia",
+    "papel": "Dona do mercado",
     "estabelecimento": "minha-loja"
   },
   {

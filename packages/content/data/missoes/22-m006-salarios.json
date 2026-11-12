@@ -1,0 +1,34 @@
+{
+  "id": "m006-salarios",
+  "titulo": "A folha do mês",
+  "capitulo": 4,
+  "nivel": 4,
+  "estabelecimento": "minha-loja",
+  "npc": "bia-funcionaria",
+  "requisitos": ["m009-devolver-consignado"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Fim de mês chegando, chefe!"
+    },
+    {
+      "fala": "npc",
+      "texto": "O salário da equipe é pago no dia 5 do mês que vem. Mas o trabalho foi deste mês."
+    }
+  ],
+  "proposta": {
+    "titulo": "Folha de pagamento",
+    "linhas": ["Salários do mês: R$ 3.000,00", "Pagamento: só no mês seguinte"]
+  },
+  "operacoes": [
+    {
+      "tipo": "provisao_salarios",
+      "valorCentavos": 300000
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["competencia", "despesas-operacionais"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

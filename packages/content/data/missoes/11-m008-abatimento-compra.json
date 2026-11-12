@@ -1,0 +1,36 @@
+{
+  "id": "m008-abatimento-compra",
+  "titulo": "Pão amassado",
+  "capitulo": 3,
+  "nivel": 3,
+  "estabelecimento": "fornecedor",
+  "npc": "joao-fornecedor",
+  "requisitos": ["m008-devolucao-compra"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "E o pão chegou amassado... Dá para usar, não dá?"
+    },
+    {
+      "fala": "npc",
+      "texto": "Se você ficar com ele, eu abato um valor da nota."
+    }
+  ],
+  "proposta": {
+    "titulo": "Abatimento na nota c1",
+    "linhas": ["Abatimento de R$ 100,00 sobre o pão", "Nenhuma unidade é devolvida"]
+  },
+  "operacoes": [
+    {
+      "tipo": "abatimento_compra",
+      "nota": "c1",
+      "produto": "pao",
+      "valorCentavos": 10000
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["abatimento-sobre-compras"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

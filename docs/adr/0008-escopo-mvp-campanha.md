@@ -1,3 +1,5 @@
+> **Alterado pelo [ADR-0010](0010-hamburgueria-limitada.md):** a campanha passou a ter 6 capítulos, numa hamburgueria. Os 6 estabelecimentos continuam.
+
 # ADR-0008 — O MVP é a campanha dos capítulos 1 a 7
 
 **Status:** aceito

@@ -1,0 +1,41 @@
+{
+  "id": "m007-depreciacao",
+  "titulo": "O desgaste e o que foi usado",
+  "capitulo": 6,
+  "nivel": 5,
+  "estabelecimento": "escritorio-contabil",
+  "npc": "marta-contadora",
+  "requisitos": ["m010-venda-congelado"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Último dia do mês: hora de fechar as contas."
+    },
+    {
+      "fala": "npc",
+      "texto": "Primeiro, o desgaste dos bens. Depois, contamos o material de limpeza que sobrou."
+    }
+  ],
+  "proposta": {
+    "titulo": "Fechamento: bens e material",
+    "linhas": [
+      "Depreciação do mês: edificação, móveis e equipamentos",
+      "Inventário: restam 8 das 20 unidades de material de limpeza"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "depreciacao"
+    },
+    {
+      "tipo": "inventario_consumo",
+      "produto": "material-de-limpeza",
+      "quantidadeRestante": 8
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["depreciacao", "material-de-consumo"],
+  "recompensa": {
+    "pontos": 120
+  }
+}

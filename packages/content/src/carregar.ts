@@ -221,11 +221,16 @@ export function carregarConteudo(bruto: ConteudoBruto): Conteudo {
       }
     }
     for (const operacao of missao.operacoes) {
-      if (operacao.tipo === "compra" || operacao.tipo === "venda") {
-        for (const item of operacao.itens) {
-          if (!idsDeProdutos.has(item.produto)) {
-            problemas.push(`missão ${missao.id}: produto inexistente "${item.produto}"`);
-          }
+      // Todo produto citado numa operação existe no catálogo.
+      const citados =
+        "itens" in operacao && operacao.tipo !== "compra_imobilizado"
+          ? operacao.itens.map((item) => item.produto)
+          : "produto" in operacao
+            ? [operacao.produto]
+            : [];
+      for (const produto of citados) {
+        if (!idsDeProdutos.has(produto)) {
+          problemas.push(`missão ${missao.id}: produto inexistente "${produto}"`);
         }
       }
       if (operacao.tipo === "subscricao") {

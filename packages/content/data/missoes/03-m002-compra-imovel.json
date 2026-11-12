@@ -1,7 +1,7 @@
 {
   "id": "m002-compra-imovel",
-  "titulo": "Comprando o terreno e a loja",
-  "capitulo": 2,
+  "titulo": "O ponto na praça",
+  "capitulo": 1,
   "nivel": 1,
   "estabelecimento": "imobiliaria",
   "npc": "rui-corretor",
@@ -9,24 +9,32 @@
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "Tenho o imóvel ideal para o seu mercado: o terreno por R$ 60.000,00 e a edificação por R$ 120.000,00. São R$ 180.000,00 à vista, já com ITBI e registro."
+      "texto": "Achei o ponto ideal: de frente para a praça, com movimento o dia todo."
     },
     {
       "fala": "npc",
-      "texto": "A Marta pediu para eu lembrar: como vocês vão usar o imóvel para a própria loja, e não para revender nem para alugar, a classificação muda. E terreno e edificação entram em contas separadas."
+      "texto": "É para a hamburgueria funcionar, não para revender. Fechamos pelo banco?"
     }
   ],
+  "proposta": {
+    "titulo": "Compra do ponto comercial",
+    "linhas": [
+      "Terreno: R$ 20.000,00",
+      "Edificação: R$ 40.000,00",
+      "Total: R$ 60.000,00, à vista, pelo banco"
+    ]
+  },
   "operacoes": [
     {
       "tipo": "compra_imobilizado",
       "itens": [
         {
           "classe": "terrenos",
-          "valorCentavos": 6000000
+          "valorCentavos": 2000000
         },
         {
           "classe": "edificacoes",
-          "valorCentavos": 12000000
+          "valorCentavos": 4000000
         }
       ],
       "meio": "bancos"

@@ -76,20 +76,20 @@ describe("caixas de Leitner", () => {
 });
 
 describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => {
-  const afirmativa = doConceito("capital-autorizado");
-  const m = missao("m001-capital-autorizado");
+  const afirmativa = doConceito("capital-a-integralizar");
+  const m = missao("m003-integralizacao-final");
   const selecionadas = (estado: EstadoDoJogo) =>
     selecionarAfirmativas(m, conteudo.afirmativas, estado).map((a) => a.conceitoId);
 
   it("depois de um erro, o conceito volta na próxima oportunidade, com outra redação", () => {
     const estado = registrarResposta(novoJogo(), afirmativa, errada(afirmativa));
-    expect(estado.estudo["capital-autorizado"]?.caixa).toBe(1);
+    expect(estado.estudo["capital-a-integralizar"]?.caixa).toBe(1);
     const [deNovo] = selecionarAfirmativas(m, conteudo.afirmativas, estado);
-    expect(deNovo?.conceitoId).toBe("capital-autorizado");
+    expect(deNovo?.conceitoId).toBe("capital-a-integralizar");
     expect(deNovo?.id).not.toBe(afirmativa.id);
     // E aparece na Revisão.
     expect(selecionarParaRevisao(conteudo.afirmativas, estado, 1).map((a) => a.conceitoId)).toEqual(
-      ["capital-autorizado"],
+      ["capital-a-integralizar"],
     );
   });
 
@@ -100,24 +100,24 @@ describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => 
     expect(selecionadas(estado)).toEqual([]);
     expect(selecionarParaRevisao(conteudo.afirmativas, estado, 1)).toEqual([]);
     // Caixa 2: volta depois de 1 dia.
-    expect(selecionadas(noDia(estado, 2))).toEqual(["capital-autorizado"]);
+    expect(selecionadas(noDia(estado, 2))).toEqual(["capital-a-integralizar"]);
 
     // Segundo acerto, no dia 2: caixa 3, volta só depois de 3 dias.
     estado = registrarResposta(noDia(estado, 2), afirmativa, certa(afirmativa));
     expect(selecionadas(noDia(estado, 4))).toEqual([]);
-    expect(selecionadas(noDia(estado, 5))).toEqual(["capital-autorizado"]);
+    expect(selecionadas(noDia(estado, 5))).toEqual(["capital-a-integralizar"]);
 
     // Terceiro acerto, no dia 5: caixa 4, volta só depois de 7 dias.
     estado = registrarResposta(noDia(estado, 5), afirmativa, certa(afirmativa));
     expect(selecionadas(noDia(estado, 11))).toEqual([]);
-    expect(selecionadas(noDia(estado, 12))).toEqual(["capital-autorizado"]);
+    expect(selecionadas(noDia(estado, 12))).toEqual(["capital-a-integralizar"]);
   });
 
   it("entre conceitos vencidos, a caixa mais baixa vem primeiro", () => {
-    const compra = missao("m004-compra-avista"); // custo-aquisicao, icms-por-dentro, icms-a-recuperar
+    const compra = missao("m004-compra-avista"); // custo-aquisicao, ipi-no-custo-comercio, icms-a-recuperar
     const custo = doConceito("custo-aquisicao");
-    const porDentro = doConceito("icms-por-dentro");
-    // custo-aquisicao acertado duas vezes (caixa 3); icms-por-dentro errado (caixa 1).
+    const porDentro = doConceito("ipi-no-custo-comercio");
+    // custo-aquisicao acertado duas vezes (caixa 3); ipi-no-custo-comercio errado (caixa 1).
     let estado = registrarResposta(novoJogo(), custo, certa(custo));
     estado = registrarResposta(estado, custo, certa(custo));
     estado = registrarResposta(estado, porDentro, errada(porDentro));
@@ -125,7 +125,7 @@ describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => 
     const escolhidos = selecionarAfirmativas(compra, conteudo.afirmativas, noDia(estado, 10)).map(
       (a) => a.conceitoId,
     );
-    expect(escolhidos).toEqual(["icms-por-dentro", "icms-a-recuperar"]);
+    expect(escolhidos).toEqual(["ipi-no-custo-comercio", "icms-a-recuperar"]);
   });
 
   it("a Revisão só cobra conceitos já encontrados, respeita o nível e o limite", () => {
@@ -147,7 +147,7 @@ describe("aceite do M7: errar faz o conceito voltar; acertos o espaçam", () => 
 });
 
 describe("aceite do M7: o modo banca pontua +1 / −1 / 0", () => {
-  const a = doConceito("capital-autorizado");
+  const a = doConceito("capital-a-integralizar");
   const banca = () => definirModoBanca(novoJogo(), true);
 
   it("vem desligado: acerto dá pontos, erro não tira nada", () => {

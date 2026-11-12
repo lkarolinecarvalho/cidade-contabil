@@ -9,7 +9,7 @@ os lançamentos.
 
 **Status:** marcos M0 a M7 concluídos: motor contábil, conteúdo, HUD e painéis, mapa da cidade,
 ciclo completo da missão, calendário com fechamento do mês, repetição espaçada, Revisão,
-Progresso e modo banca. A campanha dos capítulos 1 a 7 é jogável de ponta a ponta. Falta o M8
+Progresso e modo banca. A campanha "Chapa da Praça" (uma hamburgueria, em 6 capítulos) é jogável de ponta a ponta. Falta o M8
 (persistência e build mobile), que fica para depois de uma rodada de ajustes de layout.
 
 ## Documentos

@@ -2,6 +2,7 @@ import {
   aplicar,
   balancete,
   balanco,
+  CATALOGO_DA_HAMBURGUERIA,
   criarEmpresa,
   type DataJogo,
   dre,
@@ -18,18 +19,22 @@ import {
 
 /**
  * As missões declaram só as operações. Jogadas em ordem pelo motor, elas têm de
- * chegar aos números de docs/cenario-campanha.md.
+ * chegar aos números de docs/cenario-campanha.md (a campanha da hamburgueria).
  */
-describe("campanha dos capítulos 1 a 7 jogada pelo motor", () => {
+describe("campanha da hamburgueria jogada pelo motor", () => {
   const { missoes } = carregarConteudoDoJogo();
   const mes = { ano: 1, mes: 1 };
   const dia = (d: number): DataJogo => ({ ...mes, dia: d });
 
-  let estado: EstadoContabil = criarEmpresa();
-  let carteiraDoAvatar = 28_000_000; // R$ 280.000,00, fora do razão (ADR-0004)
+  let estado: EstadoContabil = criarEmpresa({ catalogo: CATALOGO_DA_HAMBURGUERIA });
+  let carteiraDoAvatar = 10_000_000; // R$ 100.000,00, fora do razão (ADR-0004)
   let participacaoDoAvatar = 0;
 
   missoes.forEach((missao, indice) => {
+    // As missões de fechamento são do último dia do mês.
+    const fechamento = missao.operacoes.some(
+      (o) => o.tipo === "depreciacao" || o.tipo === "apuracao_icms",
+    );
     for (const operacao of missao.operacoes) {
       if (operacao.tipo === "subscricao") {
         participacaoDoAvatar = operacao.participacoes[ACIONISTA_AVATAR] ?? 0;
@@ -37,44 +42,54 @@ describe("campanha dos capítulos 1 a 7 jogada pelo motor", () => {
       if (operacao.tipo === "integralizacao") {
         carteiraDoAvatar -= parteDoAcionista(operacao.valorCentavos, participacaoDoAvatar);
       }
-      estado = aplicar(estado, paraOperacaoDoMotor(operacao, { mes }), dia(indice + 1));
+      estado = aplicar(
+        estado,
+        paraOperacaoDoMotor(operacao, { mes }),
+        dia(fechamento ? 30 : indice + 1),
+      );
     }
   });
 
   const fimDoMes = dia(30);
 
   it("todas as operações das missões são aceitas pelo motor, na ordem da campanha", () => {
-    expect(missoes).toHaveLength(16);
-    expect(estado.lancamentos.length).toBeGreaterThan(20);
+    expect(missoes).toHaveLength(28);
+    expect(missoes.reduce((soma, m) => soma + m.operacoes.length, 0)).toBe(30);
+    expect(estado.lancamentos.length).toBeGreaterThan(40);
   });
 
   it("a DRE do mês bate com o cenário da campanha", () => {
     const d = dre(estado, { de: dia(1), ate: fimDoMes });
-    expect(d.totalReceitaBrutaCentavos).toBe(350_000);
-    expect(d.receitaLiquidaCentavos).toBe(276_524);
-    expect(d.lucroBrutoCentavos).toBe(133_024);
-    expect(d.resultadoCentavos).toBe(-427_809);
+    expect(d.totalReceitaBrutaCentavos).toBe(1_570_000);
+    expect(d.receitaLiquidaCentavos).toBe(1_185_534);
+    expect(d.lucroBrutoCentavos).toBe(715_890);
+    expect(d.resultadoFinanceiroCentavos).toBe(4_136);
+    expect(d.resultadoCentavos).toBe(291_693);
   });
 
   it("o Balanço Patrimonial bate com o cenário da campanha", () => {
     const bp = balanco(estado, fimDoMes);
-    expect(bp.ativo.totalCirculanteCentavos).toBe(10_643_500);
-    expect(bp.ativo.totalNaoCirculanteCentavos).toBe(19_939_167);
-    expect(bp.ativo.totalCentavos).toBe(30_582_667);
-    expect(bp.passivo.totalCirculanteCentavos).toBe(1_010_476);
-    expect(bp.patrimonioLiquido.totalCentavos).toBe(29_572_191);
-    expect(bp.totalPassivoEPatrimonioLiquidoCentavos).toBe(30_582_667);
+    expect(bp.ativo.totalCirculanteCentavos).toBe(3_243_192);
+    expect(bp.ativo.totalNaoCirculanteCentavos).toBe(7_761_667);
+    expect(bp.ativo.totalCentavos).toBe(11_004_859);
+    expect(bp.passivo.totalCirculanteCentavos).toBe(713_166);
+    expect(bp.patrimonioLiquido.totalCentavos).toBe(10_291_693);
+    expect(bp.totalPassivoEPatrimonioLiquidoCentavos).toBe(11_004_859);
   });
 
-  it("o balancete fecha em 314.213,09", () => {
+  it("o balancete fecha em 123.334,99", () => {
     const b = balancete(estado);
-    expect(b.totalDevedorCentavos).toBe(31_421_309);
-    expect(b.totalCredorCentavos).toBe(31_421_309);
+    expect(b.totalDevedorCentavos).toBe(12_333_499);
+    expect(b.totalCredorCentavos).toBe(12_333_499);
   });
 
   it("a carteira pessoal do avatar termina com R$ 10.000,00, fora do razão", () => {
     expect(participacaoDoAvatar).toBe(9000);
     expect(carteiraDoAvatar).toBe(1_000_000);
+  });
+
+  it("a consignação termina zerada: o que sobrou voltou para a marca", () => {
+    expect(estado.consignado.refrigerante?.quantidade).toBe(0);
   });
 });
 
@@ -84,7 +99,7 @@ describe("paraOperacaoDoMotor", () => {
   it("usa o meio escolhido pelo jogador quando a missão deixa a escolha com ele", () => {
     const compra: OperacaoDeMissao = {
       tipo: "compra",
-      itens: [{ produto: "mercadorias-diversas", quantidade: 1, precoUnitarioCentavos: 500 }],
+      itens: [{ produto: "refrigerante", quantidade: 1, precoUnitarioCentavos: 500 }],
       ipiAliquota: 0,
       freteCentavos: 0,
       condicao: { tipo: "avista", meio: "escolha_do_jogador" },
@@ -93,6 +108,34 @@ describe("paraOperacaoDoMotor", () => {
       condicao: { tipo: "avista", meio: "caixa" },
     });
     expect(() => paraOperacaoDoMotor(compra, { mes })).toThrow(/meio escolhido/);
+  });
+
+  it("campos opcionais ausentes na missão não vão ao motor", () => {
+    const venda = paraOperacaoDoMotor(
+      {
+        tipo: "venda",
+        itens: [{ produto: "refrigerante", quantidade: 1, precoUnitarioCentavos: 600 }],
+        condicao: { tipo: "avista" },
+      },
+      { mes },
+    );
+    expect(Object.keys(venda).sort()).toEqual(["condicao", "itens", "tipo"]);
+    expect(
+      paraOperacaoDoMotor(
+        {
+          tipo: "pagamento",
+          obrigacao: "fornecedores",
+          valorCentavos: 100,
+          meio: "bancos",
+          descontoFinanceiroCentavos: 2,
+        },
+        { mes },
+      ),
+    ).toMatchObject({ descontoFinanceiroCentavos: 2 });
+    expect(paraOperacaoDoMotor({ tipo: "apuracao_ipi" }, { mes })).toEqual({
+      tipo: "apuracao_ipi",
+      mes,
+    });
   });
 
   it("depreciação e apuração do ICMS usam o mês corrente do jogo", () => {

@@ -38,7 +38,11 @@
     "explicacao": "O ICMS recuperável não compõe o custo. O estoque entra por R$ {{custoEstoque}}, e R$ {{icms}} vão para ICMS a Recuperar.",
     "regras": ["R-ICMS-02", "R-ICMS-04", "R-COM-01"],
     "momentos": ["pos_operacao", "revisao"],
-    "exemplo": { "totalNota": 300000, "icms": 54000, "custoEstoque": 246000 }
+    "exemplo": {
+      "totalNota": 300000,
+      "icms": 54000,
+      "custoEstoque": 246000
+    }
   },
   {
     "id": "af-icms-por-dentro-02",
@@ -63,7 +67,7 @@
   {
     "id": "af-ipi-comercio-01",
     "conceitoId": "ipi-no-custo-comercio",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "O comerciante que adquire mercadorias para revenda pode recuperar o IPI destacado na nota fiscal do fabricante.",
     "gabarito": "E",
     "explicacao": "O comerciante não é contribuinte do IPI, então não aproveita o crédito. O IPI integra o custo de aquisição da mercadoria.",
@@ -73,7 +77,7 @@
   {
     "id": "af-ipi-comercio-02",
     "conceitoId": "ipi-no-custo-comercio",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "Para uma empresa comercial, o IPI pago na compra de mercadorias para revenda integra o custo do estoque.",
     "gabarito": "C",
     "explicacao": "Como o IPI não é recuperável pelo comerciante, ele faz parte do custo de aquisição.",
@@ -83,7 +87,7 @@
   {
     "id": "af-ipi-comercio-03",
     "conceitoId": "ipi-no-custo-comercio",
-    "nivelMin": 3,
+    "nivelMin": 2,
     "enunciado": "Na compra de mercadorias para revenda, o IPI deve ser debitado em conta de despesa tributária.",
     "gabarito": "E",
     "explicacao": "O IPI não recuperável não é despesa do período: ele entra no Estoque e só afeta o resultado como parte do CMV, quando a mercadoria for vendida.",

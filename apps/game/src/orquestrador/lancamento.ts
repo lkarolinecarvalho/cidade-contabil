@@ -174,7 +174,8 @@ const mesDe = (data: DataJogo) => ({ de: { ...data, dia: 1 }, ate: data });
 /**
  * Confere o lançamento do jogador contra o do motor. Nada é gravado: o razão só
  * recebe os lançamentos do motor, depois (ADR-0005).
- * `operacao` é `null` quando o fato não gera lançamento (ex.: capital autorizado).
+ * `operacao` é `null` quando o fato não é uma operação do motor. Há também operações
+ * que não geram lançamento, como receber mercadoria em consignação.
  */
 export function conferirLancamento(
   contabil: EstadoContabil,
@@ -263,6 +264,14 @@ function comentarDoContador(
   });
   const { comOSeuLancamento: seu, correto } = previa;
   const diferenca = (a: Centavos, b: Centavos) => formatarReais(Math.abs(a - b));
+
+  if (operacao?.tipo === "recebimento_consignacao" || operacao?.tipo === "devolucao_consignacao") {
+    return {
+      comentario:
+        "Esse fato não gera lançamento. A mercadoria em consignação é de quem a deixou aqui: a casa não comprou nada e ainda não deve nada. A compra só acontece quando uma unidade é vendida.",
+      regras: [operacao.tipo === "recebimento_consignacao" ? "R-CSG-01" : "R-CSG-03"],
+    };
+  }
 
   if (!operacao) {
     return {

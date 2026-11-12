@@ -1,7 +1,7 @@
 {
   "id": "m003-moveis",
-  "titulo": "Balcões e prateleiras",
-  "capitulo": 3,
+  "titulo": "Mesas e balcão",
+  "capitulo": 1,
   "nivel": 1,
   "estabelecimento": "minha-loja",
   "npc": "bia-funcionaria",
@@ -9,20 +9,24 @@
   "dialogo": [
     {
       "fala": "npc",
-      "texto": "A loja está vazia! Os balcões e as prateleiras saem por R$ 15.000,00, à vista, pelo banco."
+      "texto": "Oi, chefe! Sem mesa e sem balcão não dá para atender ninguém."
     },
     {
       "fala": "npc",
-      "texto": "São para a gente usar no dia a dia, não para vender."
+      "texto": "Já escolhi tudo. O pagamento é à vista, pelo banco."
     }
   ],
+  "proposta": {
+    "titulo": "Móveis da casa",
+    "linhas": ["Mesas e balcão: R$ 6.000,00", "À vista, pelo banco", "Para uso da hamburgueria"]
+  },
   "operacoes": [
     {
       "tipo": "compra_imobilizado",
       "itens": [
         {
           "classe": "moveis_utensilios",
-          "valorCentavos": 1500000
+          "valorCentavos": 600000
         }
       ],
       "meio": "bancos"

@@ -78,15 +78,38 @@ export function PainelDaDre() {
             <td>= Receita Líquida</td>
             <td>{formatarReais(d.receitaLiquidaCentavos)}</td>
           </tr>
-          <tr>
-            <td>(−) CMV</td>
-            <td>{menos(d.totalCustosCentavos)}</td>
-          </tr>
+          {/* Sem vendas, a linha do custo aparece zerada; com vendas, uma por conta (CMV, CPV). */}
+          {comValor(d.custos).length === 0 ? (
+            <tr>
+              <td>(−) Custo das vendas</td>
+              <td>{menos(0)}</td>
+            </tr>
+          ) : (
+            comValor(d.custos).map((l) => (
+              <tr key={l.conta}>
+                <td>(−) {l.nome}</td>
+                <td>{menos(l.valorCentavos)}</td>
+              </tr>
+            ))
+          )}
           <tr className="total">
             <td>= Lucro Bruto</td>
             <td>{formatarReais(d.lucroBrutoCentavos)}</td>
           </tr>
           {comValor(d.despesasOperacionais).map((l) => (
+            <tr key={l.conta}>
+              <td>(−) {l.nome}</td>
+              <td>{menos(l.valorCentavos)}</td>
+            </tr>
+          ))}
+          {/* R-DSC-02, R-DSC-04: descontos financeiros obtidos e concedidos. */}
+          {comValor(d.receitasFinanceiras).map((l) => (
+            <tr key={l.conta}>
+              <td>(+) {l.nome}</td>
+              <td>{formatarReais(l.valorCentavos)}</td>
+            </tr>
+          ))}
+          {comValor(d.despesasFinanceiras).map((l) => (
             <tr key={l.conta}>
               <td>(−) {l.nome}</td>
               <td>{menos(l.valorCentavos)}</td>

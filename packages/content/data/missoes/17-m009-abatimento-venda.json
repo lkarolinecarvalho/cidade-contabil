@@ -1,0 +1,31 @@
+{
+  "id": "m009-abatimento-venda",
+  "titulo": "Lanche frio",
+  "capitulo": 4,
+  "nivel": 3,
+  "estabelecimento": "minha-loja",
+  "npc": "antonio-restaurante",
+  "requisitos": ["m009-devolucao-venda"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Alguns lanches chegaram frios. Fico com eles, mas queria um abatimento."
+    }
+  ],
+  "proposta": {
+    "titulo": "Abatimento na nota v1",
+    "linhas": ["Abatimento de R$ 100,00", "Nada é devolvido", "Reduz o que o Antônio deve"]
+  },
+  "operacoes": [
+    {
+      "tipo": "abatimento_venda",
+      "valorCentavos": 10000,
+      "contrapartida": "clientes"
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["abatimento-sobre-vendas"],
+  "recompensa": {
+    "pontos": 80
+  }
+}

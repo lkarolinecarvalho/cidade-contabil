@@ -1,0 +1,51 @@
+{
+  "id": "m010-venda-congelado",
+  "titulo": "Na prateleira do mercado",
+  "capitulo": 5,
+  "nivel": 4,
+  "estabelecimento": "minha-loja",
+  "npc": "celia-mercado",
+  "requisitos": ["m010-producao"],
+  "dialogo": [
+    {
+      "fala": "npc",
+      "texto": "Quero os seus congelados na prateleira do meu mercado."
+    },
+    {
+      "fala": "npc",
+      "texto": "Como você fabrica, a nota vem com IPI por fora, certo? Pago em 30 dias."
+    }
+  ],
+  "proposta": {
+    "titulo": "Nota v2 para o mercado",
+    "linhas": [
+      "250 congelados a R$ 12,00: R$ 3.000,00",
+      "IPI de 5%, por fora: R$ 150,00",
+      "Total da nota: R$ 3.150,00",
+      "A prazo: 30 dias"
+    ]
+  },
+  "operacoes": [
+    {
+      "tipo": "venda",
+      "itens": [
+        {
+          "produto": "hamburguer-congelado",
+          "quantidade": 250,
+          "precoUnitarioCentavos": 1200
+        }
+      ],
+      "condicao": {
+        "tipo": "prazo",
+        "dias": 30
+      },
+      "nota": "v2",
+      "ipiAliquota": 500
+    }
+  ],
+  "ajudaLancamento": "auto",
+  "conceitos": ["ipi-na-venda", "receita-e-deducoes"],
+  "recompensa": {
+    "pontos": 110
+  }
+}
