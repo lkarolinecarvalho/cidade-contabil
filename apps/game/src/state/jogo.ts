@@ -452,6 +452,16 @@ export function nivelDoJogador(
   return proximaMissao(estado, missoes)?.nivel ?? missoes.at(-1)?.nivel ?? 1;
 }
 
+/** Saldo da conta Caixa da empresa, lido do razão. */
+export function caixaDaEmpresa(contabil: EstadoContabil): Centavos {
+  return saldoDaConta(contabil, contabil.planoDeContas.papeis.caixa);
+}
+
+/** Saldo da conta Bancos da empresa, lido do razão. */
+export function bancosDaEmpresa(contabil: EstadoContabil): Centavos {
+  return saldoDaConta(contabil, contabil.planoDeContas.papeis.bancos);
+}
+
 /** Caixa + Bancos da empresa, lidos do razão. */
 export function disponibilidadesDaEmpresa(contabil: EstadoContabil): Centavos {
   const { caixa, bancos } = contabil.planoDeContas.papeis;

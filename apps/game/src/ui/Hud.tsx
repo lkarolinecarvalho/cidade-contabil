@@ -1,13 +1,7 @@
 import type { Centavos, DataJogo } from "@cidade/ledger";
+import { useState } from "react";
 import { formatarReais } from "../texto/dinheiro";
-import {
-  IconeCalendario,
-  IconeCarteira,
-  IconeEngrenagem,
-  IconeEstrela,
-  IconeMoeda,
-  Retrato,
-} from "./icones";
+import { IconeEngrenagem, IconeEstrela, IconeSeta, Retrato } from "./icones";
 
 export interface DadosDoHud {
   readonly empresa: string;
@@ -16,59 +10,62 @@ export interface DadosDoHud {
   readonly progresso: number;
   /** Dinheiro da pessoa física do avatar: fora da contabilidade (ADR-0004). */
   readonly carteiraCentavos: Centavos;
-  /** Caixa + Bancos da empresa, lidos do razão. */
-  readonly disponibilidadesCentavos: Centavos;
+  /** Saldos das contas Caixa e Bancos da empresa, lidos do razão. */
+  readonly caixaCentavos: Centavos;
+  readonly bancosCentavos: Centavos;
   readonly pontos: number;
   readonly data: DataJogo;
+  /** Começa com o detalhe aberto. Por padrão, só a barra aparece. */
+  readonly abertoDeInicio?: boolean;
+  readonly aoVerBalanco?: () => void;
   readonly aoAbrirConfiguracoes?: () => void;
 }
 
 /**
- * Topo da tela: um painel com o perfil, os pontos e a data, e outro com os dois saldos.
- * O dinheiro do avatar e o da empresa aparecem lado a lado, com rótulos, ícones e
- * fundos diferentes: são patrimônios distintos (princípio da entidade).
+ * Topo da tela. Fechado, é uma barra com o dinheiro da empresa e a data; tocar nela
+ * abre o detalhe. Lá, a carteira do avatar e o dinheiro da empresa ficam em quadros
+ * separados: são patrimônios distintos (princípio da entidade).
  */
 export function Hud({
   empresa,
   nivel,
   progresso,
   carteiraCentavos,
-  disponibilidadesCentavos,
+  caixaCentavos,
+  bancosCentavos,
   pontos,
   data,
+  abertoDeInicio = false,
+  aoVerBalanco,
   aoAbrirConfiguracoes,
 }: DadosDoHud) {
+  const [aberto, setAberto] = useState(abertoDeInicio);
   const porcentagem = Math.round(Math.min(Math.max(progresso, 0), 1) * 100);
   return (
     <header className="hud">
       <div className="hud-linha">
-        <div className="hud-painel hud-perfil">
-          <Retrato personagem="avatar" nome="Você" />
-          <div className="hud-perfil-texto">
-            <strong>{empresa}</strong>
-            <span className="hud-nivel">Nível {nivel}</span>
-            <span
-              className="hud-barra"
-              role="progressbar"
-              aria-label="Avanço na campanha"
-              aria-valuenow={porcentagem}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <span style={{ width: `${porcentagem}%` }} />
+        <button
+          type="button"
+          className="hud-resumo"
+          aria-expanded={aberto}
+          aria-controls="hud-detalhe"
+          onClick={() => setAberto(!aberto)}
+        >
+          <span className="hud-avatar">
+            <Retrato personagem="avatar" nome="Você" />
+            <span className="hud-selo" title={`Nível ${nivel}`}>
+              {nivel}
             </span>
-          </div>
-          <div className="hud-marcadores">
-            <span className="hud-marcador">
-              <IconeEstrela />
-              {pontos} pts
-            </span>
-            <span className="hud-marcador">
-              <IconeCalendario />
-              Dia {data.dia} · Mês {data.mes}
-            </span>
-          </div>
-        </div>
+          </span>
+          <span className="hud-resumo-texto">
+            <span className="hud-rotulo hud-rotulo-empresa">Empresa</span>
+            <strong>{formatarReais(caixaCentavos + bancosCentavos)}</strong>
+          </span>
+          <abbr className="hud-data" title={`Dia ${data.dia} do mês ${data.mes}`}>
+            D{data.dia} · M{data.mes}
+          </abbr>
+          <IconeSeta paraCima={aberto} />
+        </button>
         {aoAbrirConfiguracoes && (
           <button
             type="button"
@@ -80,22 +77,61 @@ export function Hud({
           </button>
         )}
       </div>
-      <div className="hud-painel hud-saldos">
-        <div className="hud-saldo hud-saldo-pessoal">
-          <IconeCarteira />
-          <span className="hud-saldo-texto">
-            <span className="hud-saldo-rotulo">Sua carteira</span>
-            <strong>{formatarReais(carteiraCentavos)}</strong>
-          </span>
-        </div>
-        <div className="hud-saldo hud-saldo-empresa">
-          <IconeMoeda />
-          <span className="hud-saldo-texto">
-            <span className="hud-saldo-rotulo">Caixa da empresa</span>
-            <strong>{formatarReais(disponibilidadesCentavos)}</strong>
-          </span>
-        </div>
-      </div>
+      {aberto && (
+        <section id="hud-detalhe" className="hud-detalhe" aria-label="Resumo da empresa">
+          <div className="hud-titulo">
+            <strong>{empresa}</strong>
+            <span className="hud-pontos">
+              <IconeEstrela />
+              {pontos} pts
+            </span>
+          </div>
+          <div className="hud-nivel">
+            <span>Nível {nivel}</span>
+            <span
+              className="hud-barra"
+              role="progressbar"
+              aria-label="Avanço na campanha"
+              aria-valuenow={porcentagem}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <span style={{ width: `${porcentagem}%` }} />
+            </span>
+            <span className="hud-porcentagem">{porcentagem}%</span>
+          </div>
+          <div className="hud-quadros">
+            <div className="hud-quadro hud-quadro-pessoal">
+              <span className="hud-rotulo">Sua carteira</span>
+              <strong>{formatarReais(carteiraCentavos)}</strong>
+              <span className="hud-nota">Fora da contabilidade</span>
+            </div>
+            <dl className="hud-quadro hud-quadro-empresa">
+              <span className="hud-rotulo">Empresa</span>
+              <div>
+                <dt>Caixa</dt>
+                <dd>{formatarReais(caixaCentavos)}</dd>
+              </div>
+              <div>
+                <dt>Bancos</dt>
+                <dd>{formatarReais(bancosCentavos)}</dd>
+              </div>
+            </dl>
+          </div>
+          {aoVerBalanco && (
+            <button
+              type="button"
+              className="botao-principal hud-balanco"
+              onClick={() => {
+                setAberto(false);
+                aoVerBalanco();
+              }}
+            >
+              Ver Balanço
+            </button>
+          )}
+        </section>
+      )}
     </header>
   );
 }

@@ -63,7 +63,7 @@ function edificio(id: string, rotulo: string, porta: NaGrade, frente: Frente): E
 }
 
 // Portas, na grade. Cada uma fica na ponta de um caminho que sai do anel da praça.
-const PORTA_DO_BANCO: NaGrade = [-ANEL, -12.5];
+const PORTA_DO_BANCO: NaGrade = [-8.7, -13.5];
 const PORTA_DO_ESCRITORIO: NaGrade = [-9.2, 0];
 const PORTA_DO_POSTO: NaGrade = [0.5, -9.2];
 const PORTA_DA_IMOBILIARIA: NaGrade = [ANEL, 15];
@@ -90,12 +90,15 @@ const ANEL_BAIXO: NaGrade = [ANEL, ANEL];
 const ANEL_ESQUERDA: NaGrade = [-ANEL, ANEL];
 const CHEGADA_DO_ESCRITORIO: NaGrade = [-ANEL, PORTA_DO_ESCRITORIO[1]];
 const CHEGADA_DO_POSTO: NaGrade = [PORTA_DO_POSTO[0], -ANEL];
+/** Esquina da rua do Banco, na altura do canto de cima do anel. */
+const ESQUINA_DO_BANCO: NaGrade = [PORTA_DO_BANCO[0], -ANEL];
 /** Esquina da rua que desce do Fornecedor para a Minha Loja. */
 const ESQUINA_DA_LOJA: NaGrade = [PORTA_DA_LOJA[0], ANEL];
 
 /** Trechos de caminho por onde o avatar anda, na grade. Todos seguem a grade. */
 export const TRECHOS: readonly (readonly [NaGrade, NaGrade])[] = [
-  [PORTA_DO_BANCO, ANEL_CIMA],
+  [PORTA_DO_BANCO, ESQUINA_DO_BANCO],
+  [ESQUINA_DO_BANCO, ANEL_CIMA],
   [ANEL_CIMA, CHEGADA_DO_POSTO],
   [CHEGADA_DO_POSTO, ANEL_DIREITA],
   [ANEL_DIREITA, ANEL_BAIXO],
@@ -112,7 +115,7 @@ export const TRECHOS: readonly (readonly [NaGrade, NaGrade])[] = [
 
 /** Ruas que saem do mapa, para a vizinhança. São só cenário: o avatar não anda nelas. */
 export const RUAS_DA_VIZINHANCA: readonly (readonly [NaGrade, NaGrade])[] = [
-  [PORTA_DO_BANCO, [-ANEL, -30]],
+  [PORTA_DO_BANCO, [PORTA_DO_BANCO[0], -30]],
   [PORTA_DA_LOJA, [PORTA_DA_LOJA[0], 40]],
   [ESQUINA_DA_LOJA, [30, ANEL]],
   [PORTA_DO_ESCRITORIO, [-30, PORTA_DO_ESCRITORIO[1]]],

@@ -121,6 +121,20 @@ export const IconeEngrenagem = () => (
   </Icone>
 );
 
+/** Seta do HUD: para baixo quando fechado, para cima quando aberto. */
+export const IconeSeta = ({ paraCima }: { readonly paraCima: boolean }) => (
+  <Icone>
+    <path
+      d={paraCima ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}
+      stroke={TRACO}
+      strokeWidth="2.6"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icone>
+);
+
 export const IconeCerto = () => (
   <Icone>
     <path

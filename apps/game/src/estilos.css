@@ -94,42 +94,37 @@ button {
   pointer-events: auto;
 }
 
-/* HUD: dois painéis de papel creme, com contorno marrom e sombra. */
+/* HUD: uma barra sempre visível; tocar nela abre o detalhe, por cima do mapa. */
 .hud {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
+  z-index: 2;
   padding: 8px 8px 0;
 }
 
 .hud-linha {
   display: flex;
-  align-items: stretch;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
 }
 
-.hud-painel,
+.hud-resumo,
+.hud-engrenagem,
+.hud-detalhe,
 .atalhos button {
   background: var(--cartao);
   border: 2px solid var(--contorno);
   box-shadow: var(--sombra);
 }
 
-.hud-painel {
-  border-radius: 18px;
-  background: linear-gradient(#fffdf6, #fbefd2);
-  box-shadow:
-    var(--sombra),
-    0 8px 14px rgb(50 35 20 / 16%);
-}
-
-.hud-perfil {
+.hud-resumo {
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 7px 6px 6px;
+  gap: 10px;
+  padding: 5px 14px 5px 6px;
+  border-radius: 999px;
+  text-align: left;
 }
 
 .retrato {
@@ -149,97 +144,84 @@ button {
   height: 100%;
 }
 
-.hud .retrato {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: linear-gradient(#cdeeb9, #a9d98f);
+.hud-avatar {
+  position: relative;
+  flex: none;
 }
 
-.hud-perfil-texto {
-  min-width: 0;
+.hud-avatar .retrato {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  background: #f4c9a0;
+}
+
+/* Selo com o nível, no canto do retrato. */
+.hud-selo {
+  position: absolute;
+  right: -5px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--cartao);
+  background: var(--verde);
+  color: #fffaf0;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.hud-resumo-texto {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   line-height: 1.15;
 }
 
-.hud-perfil-texto strong {
-  overflow: hidden;
-  font-size: 0.8125rem;
+.hud-resumo-texto strong {
+  font-size: clamp(0.9375rem, 4.6cqw, 1.125rem);
   font-weight: 900;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hud-nivel {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--texto-suave);
-}
-
-.hud-barra {
-  display: block;
-  height: 11px;
-  margin-top: 4px;
-  overflow: hidden;
-  border-radius: 999px;
-  border: 2px solid var(--contorno);
-  background: #efe2c0;
-}
-
-.hud-barra > span {
-  display: block;
-  height: 100%;
-  min-width: 6px;
-  border-radius: 999px;
-  background: linear-gradient(#8fdc6a, #4fae3f);
-  box-shadow: inset 0 2px 0 rgb(255 255 255 / 45%);
-}
-
-.hud-marcadores {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  padding-left: 7px;
-  border-left: 2px solid var(--borda);
-}
-
-.hud-marcador {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 1px 7px 1px 3px;
-  border-radius: 999px;
-  border: 1.5px solid var(--borda);
-  background: #fff8e6;
-  font-size: 0.6875rem;
-  font-weight: 800;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.hud-marcador .icone {
-  width: 1.45em;
-  height: 1.45em;
+.hud-rotulo {
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a4a1f;
+}
+
+.hud-rotulo-empresa,
+.hud-quadro-empresa .hud-rotulo {
+  color: var(--verde);
+}
+
+.hud-data {
+  flex: none;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  color: var(--texto-suave);
+  text-decoration: none;
+}
+
+.hud-resumo > .icone {
+  width: 22px;
+  height: 22px;
 }
 
 .hud-engrenagem {
   flex: none;
-  align-self: flex-start;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   padding: 0;
-  border-radius: 14px;
-  border: 2px solid var(--contorno);
-  background: linear-gradient(#6ea3f2, #3f72d6);
-  box-shadow:
-    var(--sombra),
-    inset 0 2px 0 rgb(255 255 255 / 35%);
+  border-radius: 16px;
 }
 
 .hud-engrenagem .icone {
@@ -247,50 +229,141 @@ button {
   height: 26px;
 }
 
-.hud-saldos {
+.hud-detalhe {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 8px;
+  right: 8px;
   display: flex;
-  overflow: hidden;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 20px;
+  box-shadow:
+    var(--sombra),
+    0 12px 24px rgb(50 35 20 / 24%);
 }
 
-.hud-saldo {
-  flex: 1;
+.hud-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hud-titulo strong {
   min-width: 0;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hud-pontos {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  color: #8a5a00;
+}
+
+.hud-pontos .icone {
+  width: 1.3em;
+  height: 1.3em;
+}
+
+.hud-nivel {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 10px 5px 8px;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  color: var(--verde);
 }
 
-.hud-saldo .icone {
-  width: 30px;
-  height: 30px;
+.hud-barra {
+  flex: 1;
+  display: block;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8dcc0;
 }
 
-.hud-saldo-texto {
+.hud-barra > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--verde);
+}
+
+.hud-porcentagem {
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-quadros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.hud-quadro {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  gap: 2px;
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 14px;
+  line-height: 1.2;
 }
 
-.hud-saldo-rotulo {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  color: var(--texto-suave);
+/* A carteira é do avatar; o Caixa e os Bancos são da empresa: entidades distintas. */
+.hud-quadro-pessoal {
+  background: #f5dcc6;
 }
 
-.hud-saldo-texto strong {
-  /* Encolhe em telas estreitas, para valores grandes continuarem cabendo. */
-  font-size: clamp(0.75rem, 3.9cqw, 0.9375rem);
+.hud-quadro-empresa {
+  background: #dcebd3;
+}
+
+.hud-quadro strong {
+  font-size: clamp(0.8125rem, 4.2cqw, 1rem);
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* A empresa é outra entidade: metade com fundo próprio, separada por um traço. */
-.hud-saldo-empresa {
-  border-left: 2px solid var(--borda);
-  background: linear-gradient(#eef8e4, #dcefd0);
+.hud-nota {
+  font-size: 0.6875rem;
+  color: var(--texto-suave);
+}
+
+.hud-quadro-empresa > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: clamp(0.6875rem, 3.4cqw, 0.8125rem);
+  font-weight: 700;
+}
+
+.hud-quadro-empresa dt,
+.hud-quadro-empresa dd {
+  margin: 0;
+}
+
+.hud-quadro-empresa dd {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hud-detalhe .hud-balanco {
+  width: 100%;
+  margin: 0;
 }
 
 .carregando {

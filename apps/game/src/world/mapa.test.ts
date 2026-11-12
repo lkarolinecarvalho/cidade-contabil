@@ -100,15 +100,13 @@ describe("mapa da cidade", () => {
     }
   });
 
-  it("onde as silhuetas se cruzam, vale o edifício da frente", () => {
-    const banco = edificioPorId("banco");
-    const posto = edificioPorId("posto-fiscal");
-    if (!banco || !posto) throw new Error("sem edifícios");
-    // Entre os dois, na altura da parede do Posto Fiscal, que fica mais à frente.
-    const cruzamento = { x: (banco.centro.x + posto.centro.x) / 2, y: posto.centro.y - 55 };
-    expect(posto.centro.y).toBeGreaterThan(banco.centro.y);
-    expect(edificioNoPonto(cruzamento)?.id).toBe("posto-fiscal");
-    expect(edificioNoPonto({ x: banco.centro.x, y: banco.centro.y })?.id).toBe("banco");
+  it("as silhuetas dos estabelecimentos não se cobrem na tela", () => {
+    for (const e of EDIFICIOS) {
+      // O centro da base e o alto da parede de um nunca caem dentro de outro.
+      for (const p of [e.centro, { x: e.centro.x, y: e.centro.y - 60 }]) {
+        expect(edificioNoPonto(p)?.id, e.id).toBe(e.id);
+      }
+    }
   });
 
   it("os enfeites ficam fora dos caminhos; a fonte, no centro da praça", () => {
@@ -179,7 +177,7 @@ describe("rota do avatar", () => {
 
   it("os vizinhos de trás da praça se ligam pela borda do anel, sem dar a volta", () => {
     const rota = rotaAte(porta("escritorio-contabil"), porta("banco"));
-    expect(rota).toEqual([naTela([-5, 0]), naTela([-5, -5]), porta("banco")]);
+    expect(rota).toEqual([naTela([-5, 0]), naTela([-5, -5]), naTela([-8.7, -5]), porta("banco")]);
   });
 
   it("contorna a fonte pelo lado mais curto do anel", () => {

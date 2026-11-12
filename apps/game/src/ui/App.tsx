@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { bus } from "../bus";
 import { titulosEmAlerta } from "../state/calendario";
-import { disponibilidadesDaEmpresa, nivelDoJogador } from "../state/jogo";
+import { bancosDaEmpresa, caixaDaEmpresa, nivelDoJogador } from "../state/jogo";
 import { conteudo, useJogo } from "../state/store";
 import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
@@ -100,7 +100,8 @@ export function App() {
 
   // Valores primitivos: o HUD só redesenha quando o número muda de fato.
   const carteiraCentavos = useJogo((jogo) => jogo.carteiraCentavos);
-  const disponibilidadesCentavos = useJogo((jogo) => disponibilidadesDaEmpresa(jogo.contabil));
+  const caixaCentavos = useJogo((jogo) => caixaDaEmpresa(jogo.contabil));
+  const bancosCentavos = useJogo((jogo) => bancosDaEmpresa(jogo.contabil));
   const pontos = useJogo((jogo) => jogo.pontos);
   const data = useJogo((jogo) => jogo.data);
   const nivel = useJogo((jogo) => nivelDoJogador(jogo, conteudo.missoes));
@@ -134,9 +135,11 @@ export function App() {
         nivel={nivel}
         progresso={concluidas / conteudo.missoes.length}
         carteiraCentavos={carteiraCentavos}
-        disponibilidadesCentavos={disponibilidadesCentavos}
+        caixaCentavos={caixaCentavos}
+        bancosCentavos={bancosCentavos}
         pontos={pontos}
         data={data}
+        aoVerBalanco={() => setPainel({ tipo: "atalho", atalho: "escritorio" })}
         aoAbrirConfiguracoes={() => setPainel({ tipo: "atalho", atalho: "configuracoes" })}
       />
       {!mundoPronto && <p className="carregando">Carregando a cidade…</p>}

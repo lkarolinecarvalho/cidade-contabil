@@ -4,31 +4,53 @@ import { BottomSheet } from "./BottomSheet";
 import { Hud } from "./Hud";
 
 describe("Hud", () => {
-  const html = renderToStaticMarkup(
-    <Hud
-      empresa="Mercado Vila Nova"
-      nivel={2}
-      progresso={0.5}
-      carteiraCentavos={1_000_000}
-      disponibilidadesCentavos={6_050_000}
-      pontos={410}
-      data={{ ano: 1, mes: 3, dia: 12 }}
-    />,
-  );
+  const hud = (abertoDeInicio: boolean) =>
+    renderToStaticMarkup(
+      <Hud
+        empresa="Mercado Vila Nova"
+        nivel={2}
+        progresso={0.5}
+        carteiraCentavos={1_000_000}
+        caixaCentavos={50_000}
+        bancosCentavos={6_000_000}
+        pontos={410}
+        data={{ ano: 1, mes: 3, dia: 12 }}
+        abertoDeInicio={abertoDeInicio}
+        aoVerBalanco={() => {}}
+        aoAbrirConfiguracoes={() => {}}
+      />,
+    );
 
-  it("mostra a carteira pessoal e o caixa da empresa separados, com rótulos diferentes", () => {
-    expect(html).toContain("Sua carteira");
-    expect(html).toContain("R$ 10.000,00");
-    expect(html).toContain("Caixa da empresa");
+  it("fechado, mostra só a barra: o dinheiro da empresa (Caixa + Bancos), o nível e a data", () => {
+    const html = hud(false);
     expect(html).toContain("R$ 60.500,00");
+    expect(html).toContain("D12 · M3");
+    expect(html).toContain("Dia 12 do mês 3");
+    expect(html).toContain('title="Nível 2"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('aria-label="Configurações"');
+    // A carteira do avatar não se mistura com o dinheiro da empresa na barra.
+    expect(html).not.toContain("Sua carteira");
+    expect(html).not.toContain("Ver Balanço");
   });
 
-  it("mostra a empresa, o nível, o avanço, os pontos e o dia/mês", () => {
+  it("aberto, separa a carteira pessoal do Caixa e dos Bancos da empresa", () => {
+    const html = hud(true);
+    expect(html).toContain("Sua carteira");
+    expect(html).toContain("R$ 10.000,00");
+    expect(html).toContain("Fora da contabilidade");
+    expect(html).toContain("<dt>Caixa</dt><dd>R$ 500,00</dd>");
+    expect(html).toContain("<dt>Bancos</dt><dd>R$ 60.000,00</dd>");
+  });
+
+  it("aberto, mostra a empresa, o nível, o avanço, os pontos e o botão do Balanço", () => {
+    const html = hud(true);
     expect(html).toContain("Mercado Vila Nova");
     expect(html).toContain("Nível 2");
     expect(html).toContain('aria-valuenow="50"');
+    expect(html).toContain("50%");
     expect(html).toContain("410 pts");
-    expect(html).toContain("Dia 12 · Mês 3");
+    expect(html).toContain("Ver Balanço");
   });
 });
 
